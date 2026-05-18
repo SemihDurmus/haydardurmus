@@ -1,0 +1,16 @@
+{
+  "page": {
+    "title": "Koleksiyonlar",
+    "subtitle": "Seri, dönem ve temaya göre düzenlenmiş eserler"
+  },
+  "card": {
+    "works": "{{count}} eser",
+    "works_plural": "{{count}} eser",
+    "view": "Koleksiyonu Görüntüle"
+  },
+  "detail": {
+    "about": "Bu Koleksiyon Hakkında",
+    "works": "Koleksiyondaki Eserler",
+    "back": "Tüm Koleksiyonlar"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "page": {
+    "title": "Book",
+    "subtitle": "A monograph of collected works"
+  },
+  "details": {
+    "publisher": "Publisher",
+    "year": "Year",
+    "pages": "Pages",
+    "isbn": "ISBN",
+    "language": "Language"
+  },
+  "purchase": {
+    "title": "Get the Book",
+    "amazon": "Order on Amazon",
+    "official": "Official Website",
+    "publisher": "Publisher Store"
+  },
+  "preview": "Inside the Book"
+}

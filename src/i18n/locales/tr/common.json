@@ -1,0 +1,43 @@
+{
+  "nav": {
+    "home": "Ana Sayfa",
+    "biography": "Biyografi",
+    "paintings": "Tablolar",
+    "collections": "Koleksiyonlar",
+    "media": "Medya",
+    "book": "Kitap",
+    "contact": "İletişim"
+  },
+  "footer": {
+    "rights": "Tüm hakları saklıdır",
+    "designed": "Özenle tasarlandı"
+  },
+  "actions": {
+    "viewAll": "Tümünü Gör",
+    "learnMore": "Daha Fazla",
+    "close": "Kapat",
+    "back": "Geri",
+    "next": "İleri",
+    "previous": "Önceki",
+    "submit": "Gönder",
+    "cancel": "İptal",
+    "loading": "Yükleniyor...",
+    "retry": "Tekrar Dene",
+    "download": "İndir"
+  },
+  "language": {
+    "switcher": "Dil",
+    "en": "English",
+    "tr": "Türkçe"
+  },
+  "status": {
+    "loading": "Yükleniyor",
+    "error": "Bir şeyler yanlış gitti",
+    "empty": "Henüz içerik yok",
+    "notFound": "Sayfa bulunamadı"
+  },
+  "meta": {
+    "artist": "Çağdaş Sanatçı",
+    "nationality": "Türk"
+  }
+}

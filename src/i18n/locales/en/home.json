@@ -1,0 +1,23 @@
+{
+  "hero": {
+    "tagline": "Contemporary Artist",
+    "scroll": "Scroll to explore"
+  },
+  "featured": {
+    "title": "Selected Works",
+    "subtitle": "A glimpse into the studio"
+  },
+  "about": {
+    "label": "About the Artist",
+    "cta": "Read Full Biography"
+  },
+  "collections": {
+    "title": "Collections",
+    "subtitle": "Works grouped by series and period",
+    "cta": "View All Collections"
+  },
+  "latest": {
+    "title": "Latest Works",
+    "cta": "View All Paintings"
+  }
+}

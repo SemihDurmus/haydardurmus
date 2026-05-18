@@ -1,0 +1,53 @@
+{
+  "page": {
+    "title": "Tablolar",
+    "subtitle": "Onlarca yıllık sanatsal keşfi kapsayan bir eser kataloğu",
+    "count": "{{count}} eser",
+    "count_plural": "{{count}} eser"
+  },
+  "filters": {
+    "title": "Filtrele",
+    "clear": "Tümünü Temizle",
+    "clearFilter": "Temizle",
+    "apply": "Filtreleri Uygula",
+    "year": "Yıl",
+    "technique": "Teknik",
+    "material": "Malzeme",
+    "location": "Konum",
+    "owner": "Koleksiyon",
+    "dimensions": "Boyutlar",
+    "search": "Başlık veya numara ile ara",
+    "noResults": "Seçilen filtrelere uyan tablo yok",
+    "activeFilters": "Aktif filtreler"
+  },
+  "sort": {
+    "label": "Sırala",
+    "newest": "En Yeniler",
+    "oldest": "En Eskiler",
+    "numberAsc": "Numara (Artan)",
+    "numberDesc": "Numara (Azalan)",
+    "nameAsc": "Başlık A–Z",
+    "nameDesc": "Başlık Z–A",
+    "sizeDesc": "En Büyük Önce",
+    "sizeAsc": "En Küçük Önce"
+  },
+  "card": {
+    "untitled": "İsimsiz",
+    "year": "Yıl",
+    "technique": "Teknik",
+    "material": "Malzeme",
+    "dimensions": "Boyutlar",
+    "location": "Konum",
+    "viewDetail": "Detayları Gör"
+  },
+  "detail": {
+    "catalogueNumber": "Katalog No.",
+    "technique": "Teknik",
+    "material": "Malzeme",
+    "dimensions": "Boyutlar",
+    "year": "Yıl",
+    "location": "Konum",
+    "collection": "Koleksiyon",
+    "relatedWorks": "İlgili Eserler"
+  }
+}

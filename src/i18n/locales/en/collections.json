@@ -1,0 +1,16 @@
+{
+  "page": {
+    "title": "Collections",
+    "subtitle": "Works organized by series, period, and theme"
+  },
+  "card": {
+    "works": "{{count}} work",
+    "works_plural": "{{count}} works",
+    "view": "View Collection"
+  },
+  "detail": {
+    "about": "About this Collection",
+    "works": "Works in this Collection",
+    "back": "All Collections"
+  }
+}

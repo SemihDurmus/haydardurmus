@@ -1,0 +1,20 @@
+{
+  "page": {
+    "title": "Kitap",
+    "subtitle": "Toplu eserlerin bir monografisi"
+  },
+  "details": {
+    "publisher": "Yayınevi",
+    "year": "Yıl",
+    "pages": "Sayfa",
+    "isbn": "ISBN",
+    "language": "Dil"
+  },
+  "purchase": {
+    "title": "Kitabı Edinin",
+    "amazon": "Amazon'da Sipariş Ver",
+    "official": "Resmi Web Sitesi",
+    "publisher": "Yayınevi Mağazası"
+  },
+  "preview": "Kitabın İçinden"
+}

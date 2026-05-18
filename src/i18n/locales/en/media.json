@@ -1,0 +1,20 @@
+{
+  "page": {
+    "title": "Media",
+    "subtitle": "Press, exhibitions, and interviews"
+  },
+  "tabs": {
+    "all": "All",
+    "press": "Press",
+    "interviews": "Interviews",
+    "exhibitions": "Exhibitions",
+    "videos": "Videos"
+  },
+  "card": {
+    "readMore": "Read Article",
+    "watchVideo": "Watch",
+    "viewExhibition": "Exhibition Details",
+    "source": "Source",
+    "date": "Date"
+  }
+}

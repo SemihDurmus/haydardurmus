@@ -1,0 +1,42 @@
+{
+  "page": {
+    "title": "Contact",
+    "subtitle": "For inquiries about exhibitions, acquisitions, and commissions"
+  },
+  "form": {
+    "name": "Full Name",
+    "namePlaceholder": "Your name",
+    "email": "Email Address",
+    "emailPlaceholder": "your@email.com",
+    "subject": "Subject",
+    "subjectPlaceholder": "What is your inquiry about?",
+    "message": "Message",
+    "messagePlaceholder": "Please describe your inquiry in detail...",
+    "submit": "Send Message",
+    "sending": "Sending...",
+    "success": "Your message has been sent. We will be in touch shortly.",
+    "error": "Something went wrong. Please try again or email us directly."
+  },
+  "subjects": {
+    "exhibition": "Exhibition Inquiry",
+    "acquisition": "Acquisition / Purchase",
+    "commission": "Commission",
+    "press": "Press & Media",
+    "collaboration": "Collaboration",
+    "other": "Other"
+  },
+  "info": {
+    "studio": "Studio",
+    "email": "Email",
+    "representation": "Representation",
+    "social": "Follow"
+  },
+  "validation": {
+    "nameRequired": "Name is required",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Please enter a valid email address",
+    "subjectRequired": "Subject is required",
+    "messageRequired": "Message is required",
+    "messageTooShort": "Message must be at least 20 characters"
+  }
+}

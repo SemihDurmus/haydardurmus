@@ -1,0 +1,42 @@
+{
+  "page": {
+    "title": "İletişim",
+    "subtitle": "Sergi, eser edinimi ve komisyon talepleri için"
+  },
+  "form": {
+    "name": "Ad Soyad",
+    "namePlaceholder": "Adınız",
+    "email": "E-posta Adresi",
+    "emailPlaceholder": "sizin@email.com",
+    "subject": "Konu",
+    "subjectPlaceholder": "Talebiniz hakkında kısa bir başlık",
+    "message": "Mesaj",
+    "messagePlaceholder": "Talebinizi ayrıntılı olarak açıklayın...",
+    "submit": "Mesaj Gönder",
+    "sending": "Gönderiliyor...",
+    "success": "Mesajınız iletildi. En kısa sürede dönüş yapacağız.",
+    "error": "Bir hata oluştu. Lütfen tekrar deneyin veya bize doğrudan e-posta gönderin."
+  },
+  "subjects": {
+    "exhibition": "Sergi Talebi",
+    "acquisition": "Eser Edinimi / Satın Alma",
+    "commission": "Komisyon",
+    "press": "Basın ve Medya",
+    "collaboration": "İşbirliği",
+    "other": "Diğer"
+  },
+  "info": {
+    "studio": "Atölye",
+    "email": "E-posta",
+    "representation": "Temsil",
+    "social": "Takip Et"
+  },
+  "validation": {
+    "nameRequired": "Ad alanı zorunludur",
+    "emailRequired": "E-posta alanı zorunludur",
+    "emailInvalid": "Geçerli bir e-posta adresi girin",
+    "subjectRequired": "Konu alanı zorunludur",
+    "messageRequired": "Mesaj alanı zorunludur",
+    "messageTooShort": "Mesaj en az 20 karakter olmalıdır"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "page": {
+    "title": "Biography",
+    "subtitle": "A life devoted to art"
+  },
+  "sections": {
+    "earlyLife": "Early Life",
+    "education": "Education",
+    "career": "Career",
+    "exhibitions": "Selected Exhibitions",
+    "awards": "Awards & Recognition",
+    "statement": "Artist Statement"
+  },
+  "born": "Born",
+  "nationality": "Nationality",
+  "lives": "Lives & Works",
+  "studio": "Studio",
+  "downloadCV": "Download CV"
+}

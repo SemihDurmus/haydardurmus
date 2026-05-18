@@ -1,0 +1,53 @@
+{
+  "page": {
+    "title": "Paintings",
+    "subtitle": "A catalogue of works spanning decades of artistic exploration",
+    "count": "{{count}} work",
+    "count_plural": "{{count}} works"
+  },
+  "filters": {
+    "title": "Filter",
+    "clear": "Clear All",
+    "clearFilter": "Clear",
+    "apply": "Apply Filters",
+    "year": "Year",
+    "technique": "Technique",
+    "material": "Material",
+    "location": "Location",
+    "owner": "Collection",
+    "dimensions": "Dimensions",
+    "search": "Search by title or number",
+    "noResults": "No paintings match the selected filters",
+    "activeFilters": "Active filters"
+  },
+  "sort": {
+    "label": "Sort",
+    "newest": "Newest First",
+    "oldest": "Oldest First",
+    "numberAsc": "Number (Ascending)",
+    "numberDesc": "Number (Descending)",
+    "nameAsc": "Title A–Z",
+    "nameDesc": "Title Z–A",
+    "sizeDesc": "Largest First",
+    "sizeAsc": "Smallest First"
+  },
+  "card": {
+    "untitled": "Untitled",
+    "year": "Year",
+    "technique": "Technique",
+    "material": "Material",
+    "dimensions": "Dimensions",
+    "location": "Location",
+    "viewDetail": "View Details"
+  },
+  "detail": {
+    "catalogueNumber": "Catalogue No.",
+    "technique": "Technique",
+    "material": "Material",
+    "dimensions": "Dimensions",
+    "year": "Year",
+    "location": "Location",
+    "collection": "Collection",
+    "relatedWorks": "Related Works"
+  }
+}

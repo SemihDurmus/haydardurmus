@@ -1,0 +1,19 @@
+{
+  "page": {
+    "title": "Biyografi",
+    "subtitle": "Sanata adanmış bir yaşam"
+  },
+  "sections": {
+    "earlyLife": "Erken Dönem",
+    "education": "Eğitim",
+    "career": "Kariyer",
+    "exhibitions": "Seçili Sergiler",
+    "awards": "Ödüller ve Tanınma",
+    "statement": "Sanatçı Beyanı"
+  },
+  "born": "Doğum",
+  "nationality": "Milliyet",
+  "lives": "Yaşadığı Yer",
+  "studio": "Atölye",
+  "downloadCV": "CV İndir"
+}

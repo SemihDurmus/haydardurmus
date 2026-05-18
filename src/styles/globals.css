@@ -1,0 +1,136 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================================================
+   Base layer — resets and global defaults
+   ========================================================= */
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    @apply scroll-smooth antialiased;
+    font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-background text-text-primary font-sans text-body;
+    min-height: 100dvh;
+  }
+
+  /* Typography resets — headings inherit from Typography component */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif font-normal;
+  }
+
+  p {
+    @apply text-body leading-relaxed;
+  }
+
+  img, video {
+    @apply max-w-full block;
+  }
+
+  /* Focus ring */
+  :focus-visible {
+    @apply outline-none ring-2 ring-accent ring-offset-2;
+  }
+
+  /* Selection color */
+  ::selection {
+    background-color: theme('colors.accent.subtle');
+    color: theme('colors.primary.DEFAULT');
+  }
+}
+
+/* =========================================================
+   Component layer — reusable utility classes
+   ========================================================= */
+@layer components {
+  /* Consistent section padding */
+  .section-padding {
+    @apply py-section-md md:py-section-lg;
+  }
+
+  .section-padding-sm {
+    @apply py-section-sm md:py-section-md;
+  }
+
+  /* Container — centered with responsive gutter */
+  .page-container {
+    @apply mx-auto w-full max-w-container-lg px-4 sm:px-6 lg:px-8;
+  }
+
+  .page-container-wide {
+    @apply mx-auto w-full max-w-container-xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .page-container-narrow {
+    @apply mx-auto w-full max-w-container-xs px-4 sm:px-6;
+  }
+
+  /* Divider */
+  .divider {
+    @apply border-t border-border;
+  }
+
+  /* Image utilities */
+  .img-cover {
+    @apply h-full w-full object-cover;
+  }
+
+  /* Painting grid */
+  .painting-grid {
+    @apply grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4;
+  }
+
+  /* Hover image effect */
+  .hover-reveal {
+    @apply overflow-hidden;
+  }
+
+  .hover-reveal img {
+    @apply transition-transform duration-700 ease-out will-change-transform;
+  }
+
+  .hover-reveal:hover img {
+    @apply scale-105;
+  }
+}
+
+/* =========================================================
+   Utilities
+   ========================================================= */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  /* Visually hidden — accessible */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+}

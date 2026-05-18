@@ -1,0 +1,23 @@
+{
+  "hero": {
+    "tagline": "Çağdaş Sanatçı",
+    "scroll": "Keşfetmek için kaydırın"
+  },
+  "featured": {
+    "title": "Seçili Eserler",
+    "subtitle": "Atölyeden bir bakış"
+  },
+  "about": {
+    "label": "Sanatçı Hakkında",
+    "cta": "Biyografiyi Oku"
+  },
+  "collections": {
+    "title": "Koleksiyonlar",
+    "subtitle": "Seri ve dönemlere göre gruplandırılmış eserler",
+    "cta": "Tüm Koleksiyonları Gör"
+  },
+  "latest": {
+    "title": "Son Eserler",
+    "cta": "Tüm Tabloları Gör"
+  }
+}

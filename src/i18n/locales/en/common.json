@@ -1,0 +1,43 @@
+{
+  "nav": {
+    "home": "Home",
+    "biography": "Biography",
+    "paintings": "Paintings",
+    "collections": "Collections",
+    "media": "Media",
+    "book": "Book",
+    "contact": "Contact"
+  },
+  "footer": {
+    "rights": "All rights reserved",
+    "designed": "Designed with care"
+  },
+  "actions": {
+    "viewAll": "View All",
+    "learnMore": "Learn More",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "loading": "Loading...",
+    "retry": "Retry",
+    "download": "Download"
+  },
+  "language": {
+    "switcher": "Language",
+    "en": "English",
+    "tr": "Türkçe"
+  },
+  "status": {
+    "loading": "Loading",
+    "error": "Something went wrong",
+    "empty": "Nothing here yet",
+    "notFound": "Page not found"
+  },
+  "meta": {
+    "artist": "Contemporary Artist",
+    "nationality": "Turkish"
+  }
+}
