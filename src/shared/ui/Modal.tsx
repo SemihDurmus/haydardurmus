@@ -1,6 +1,10 @@
-import { useEffect, useRef, type ReactNode } from 'react';
-import { createPortal } from 'react-dom';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import IconButton from '@mui/material/IconButton';
+import Box from '@mui/material/Box';
+import { type ReactNode } from 'react';
 import { X } from 'lucide-react';
+import { Typography } from './Typography';
 import { cn } from '@shared/utils/cn';
 
 export interface ModalProps {
@@ -20,72 +24,41 @@ const sizeClasses = {
   full: 'max-w-[95vw]',
 };
 
+/**
+ * MUI-backed modal wrapper.
+ *
+ * App code depends on this stable wrapper, not on MUI's Dialog API directly.
+ */
 export function Modal({ isOpen, onClose, title, children, size = 'md', className }: ModalProps) {
-  const overlayRef = useRef<HTMLDivElement>(null);
-
-  // Close on Escape
-  useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    if (isOpen) {
-      document.addEventListener('keydown', handleKey);
-      document.body.style.overflow = 'hidden';
-    }
-    return () => {
-      document.removeEventListener('keydown', handleKey);
-      document.body.style.overflow = '';
-    };
-  }, [isOpen, onClose]);
-
-  if (!isOpen) return null;
-
-  return createPortal(
-    <div
-      ref={overlayRef}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      role="dialog"
-      aria-modal="true"
+  return (
+    <Dialog
+      open={isOpen}
+      onClose={onClose}
       aria-labelledby={title ? 'modal-title' : undefined}
-      onClick={(e) => {
-        if (e.target === overlayRef.current) onClose();
+      maxWidth={false}
+      slotProps={{
+        paper: {
+          className: cn('w-full border border-border bg-surface', sizeClasses[size], className),
+        },
       }}
     >
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-primary-900/70 backdrop-blur-sm" aria-hidden="true" />
-
-      {/* Panel */}
-      <div
-        className={cn(
-          'relative z-10 w-full rounded-lg bg-surface',
-          'border border-border',
-          'animate-scale-in',
-          sizeClasses[size],
-          className
+      <Box className="flex items-center justify-between border-b border-border p-6">
+        {title && (
+          <Typography id="modal-title" level="h3">
+            {title}
+          </Typography>
         )}
-      >
-        {/* Header */}
-        {(title || true) && (
-          <div className="flex items-center justify-between border-b border-border p-6">
-            {title && (
-              <h2 id="modal-title" className="font-serif text-h3">
-                {title}
-              </h2>
-            )}
-            <button
-              onClick={onClose}
-              className="ml-auto flex h-8 w-8 items-center justify-center rounded transition-colors hover:bg-muted"
-              aria-label="Close modal"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-        )}
+        <IconButton
+          onClick={onClose}
+          aria-label="Close modal"
+          className="ml-auto text-text-primary hover:bg-muted"
+          size="small"
+        >
+          <X className="h-4 w-4" />
+        </IconButton>
+      </Box>
 
-        {/* Body */}
-        <div className="p-6">{children}</div>
-      </div>
-    </div>,
-    document.body
+      <DialogContent className="p-6">{children}</DialogContent>
+    </Dialog>
   );
 }

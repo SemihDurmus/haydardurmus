@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { MuiThemeProvider } from './MuiThemeProvider';
 import { QueryProvider } from './QueryProvider';
 
 /**
@@ -10,5 +11,9 @@ interface AppProvidersProps {
 }
 
 export function AppProviders({ children }: AppProvidersProps) {
-  return <QueryProvider>{children}</QueryProvider>;
+  return (
+    <MuiThemeProvider>
+      <QueryProvider>{children}</QueryProvider>
+    </MuiThemeProvider>
+  );
 }

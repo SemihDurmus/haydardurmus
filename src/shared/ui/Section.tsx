@@ -1,3 +1,4 @@
+import Box from '@mui/material/Box';
 import { type HTMLAttributes, type ElementType, type Ref } from 'react';
 import { cn } from '@shared/utils/cn';
 
@@ -27,7 +28,7 @@ export interface SectionProps extends HTMLAttributes<HTMLElement> {
 }
 
 /**
- * Full-width page section with consistent vertical rhythm.
+ * MUI-backed full-width page section with consistent vertical rhythm.
  * Spacing and background are controlled via design tokens.
  */
 export function Section({
@@ -41,12 +42,13 @@ export function Section({
 }: SectionProps) {
   const As = Tag as ElementType;
   return (
-    <As
+    <Box
+      component={As}
       ref={ref}
       className={cn(spacingClasses[spacing], backgroundClasses[background], className)}
       {...props}
     >
       {children}
-    </As>
+    </Box>
   );
 }

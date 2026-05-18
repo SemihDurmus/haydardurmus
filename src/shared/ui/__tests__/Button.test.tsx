@@ -26,9 +26,7 @@ describe('Button', () => {
 
   it('shows loading spinner when isLoading is true', () => {
     render(<Button isLoading>Save</Button>);
-    // Loading state should render the spinner element
-    const button = screen.getByRole('button');
-    expect(button.querySelector('.animate-spin')).toBeInTheDocument();
+    expect(screen.getByRole('progressbar', { hidden: true })).toBeInTheDocument();
   });
 
   it('applies primary variant by default', () => {

@@ -1,3 +1,5 @@
+import MuiCard from '@mui/material/Card';
+import Box from '@mui/material/Box';
 import { forwardRef, type HTMLAttributes } from 'react';
 import { cardVariants, type CardVariants } from '@design-system/variants/card';
 import { cn } from '@shared/utils/cn';
@@ -7,13 +9,13 @@ export interface CardProps extends HTMLAttributes<HTMLDivElement>, CardVariants 
 const Card = forwardRef<HTMLDivElement, CardProps>(
   ({ variant, radius, hover, padding, className, children, ...props }, ref) => {
     return (
-      <div
+      <MuiCard
         ref={ref}
         className={cn(cardVariants({ variant, radius, hover, padding }), className)}
         {...props}
       >
         {children}
-      </div>
+      </MuiCard>
     );
   }
 );
@@ -22,27 +24,27 @@ Card.displayName = 'Card';
 
 const CardHeader = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
   ({ className, children, ...props }, ref) => (
-    <div ref={ref} className={cn('mb-4 border-b border-border pb-4', className)} {...props}>
+    <Box ref={ref} className={cn('mb-4 border-b border-border pb-4', className)} {...props}>
       {children}
-    </div>
+    </Box>
   )
 );
 CardHeader.displayName = 'CardHeader';
 
 const CardBody = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
   ({ className, children, ...props }, ref) => (
-    <div ref={ref} className={cn('', className)} {...props}>
+    <Box ref={ref} className={cn('', className)} {...props}>
       {children}
-    </div>
+    </Box>
   )
 );
 CardBody.displayName = 'CardBody';
 
 const CardFooter = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
   ({ className, children, ...props }, ref) => (
-    <div ref={ref} className={cn('mt-4 border-t border-border pt-4', className)} {...props}>
+    <Box ref={ref} className={cn('mt-4 border-t border-border pt-4', className)} {...props}>
       {children}
-    </div>
+    </Box>
   )
 );
 CardFooter.displayName = 'CardFooter';

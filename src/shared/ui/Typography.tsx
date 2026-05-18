@@ -1,3 +1,4 @@
+import MuiTypography from '@mui/material/Typography';
 import { forwardRef, type ElementType, type HTMLAttributes } from 'react';
 import { typographyVariants, type TypographyVariants } from '@design-system/variants/typography';
 import { cn } from '@shared/utils/cn';
@@ -25,7 +26,8 @@ export interface TypographyProps extends HTMLAttributes<HTMLElement>, Typography
 }
 
 /**
- * Centralized Typography component.
+ * MUI-backed centralized Typography component.
+ *
  * Change any font/size/weight in design-system/tokens/typography.ts
  * and it automatically affects every instance.
  */
@@ -33,13 +35,14 @@ const Typography = forwardRef<HTMLElement, TypographyProps>(
   ({ as, level = 'body', tone, align, balance, className, children, ...props }, ref) => {
     const Tag = (as ?? (level ? levelTagMap[level] : 'p')) as ElementType;
     return (
-      <Tag
+      <MuiTypography
+        component={Tag}
         ref={ref}
         className={cn(typographyVariants({ level, tone, align, balance }), className)}
         {...props}
       >
         {children}
-      </Tag>
+      </MuiTypography>
     );
   }
 );

@@ -1,3 +1,4 @@
+import MuiContainer from '@mui/material/Container';
 import { forwardRef, type HTMLAttributes } from 'react';
 import { cn } from '@shared/utils/cn';
 
@@ -15,19 +16,21 @@ export interface ContainerProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 /**
- * Centered layout container with responsive horizontal padding.
+ * MUI-backed centered layout container with responsive horizontal padding.
  * Width is controlled via the design token system.
  */
 const Container = forwardRef<HTMLDivElement, ContainerProps>(
   ({ width = 'default', className, children, ...props }, ref) => {
     return (
-      <div
+      <MuiContainer
         ref={ref}
+        maxWidth={false}
+        disableGutters
         className={cn('mx-auto w-full px-4 sm:px-6 lg:px-8', widthClasses[width], className)}
         {...props}
       >
         {children}
-      </div>
+      </MuiContainer>
     );
   }
 );
