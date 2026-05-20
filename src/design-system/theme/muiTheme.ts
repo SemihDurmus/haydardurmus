@@ -56,18 +56,20 @@ export const muiTheme = createTheme({
   typography: {
     fontFamily: fontFamily.sans.join(', '),
     h1: {
-      fontFamily: fontFamily.serif.join(', '),
+      fontFamily: fontFamily.heading.join(', '),
       fontSize: '2.5rem',
       lineHeight: 1.15,
       letterSpacing: '-0.015em',
       fontWeight: 400,
+      color: colors.text.title,
     },
     h2: {
-      fontFamily: fontFamily.serif.join(', '),
+      fontFamily: fontFamily.heading.join(', '),
       fontSize: '2rem',
       lineHeight: 1.2,
       letterSpacing: '-0.01em',
       fontWeight: 400,
+      color: colors.text.title,
     },
     h3: {
       fontFamily: fontFamily.serif.join(', '),

@@ -31,6 +31,7 @@ export default {
       },
 
       fontFamily: {
+        heading: fontFamily.heading,
         serif: fontFamily.serif,
         sans: fontFamily.sans,
         mono: fontFamily.mono,

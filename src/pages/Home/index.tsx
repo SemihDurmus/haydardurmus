@@ -10,6 +10,7 @@ import { useFeaturedPaintings } from '@domains/paintings/hooks/usePaintings';
 import { ROUTES } from '@app/router/routes';
 import { artistBiography } from '@domains/biography/types';
 import { useTranslatedText } from '@shared/hooks/useTranslatedText';
+import { HomeCarousel } from '@domains/home/components/HomeCarousel';
 
 export default function HomePage() {
   const { t } = useTranslation('home');
@@ -18,15 +19,39 @@ export default function HomePage() {
 
   return (
     <>
+      <Section spacing="none" background="default" className="py-6 md:py-8">
+        <Container width="wide">
+          <Typography
+            level="h1"
+            align="center"
+            className="leading-tight"
+            style={{
+              color: '#2971A6',
+              fontFamily: 'Oswald, Inter, system-ui, sans-serif',
+              fontSize: 'clamp(32px, 5vw, 50px)',
+            }}
+          >
+            Haydar Durmuş
+          </Typography>
+        </Container>
+      </Section>
+
+      <HomeCarousel />
+
+      <Section spacing="none" background="default" className="py-10 md:py-14">
+        <Container width="narrow">
+          <Typography level="body-lg" tone="secondary" align="center" className="text-pretty">
+            {t('hero.intro')}
+          </Typography>
+        </Container>
+      </Section>
+
       {/* Hero */}
       <Section spacing="none" background="default" className="relative flex min-h-[90vh] flex-col justify-end pb-section-md pt-32">
         <Container width="wide">
           <div className="max-w-container-sm">
             <Typography level="overline" tone="tertiary" className="mb-6 block">
               {t('hero.tagline')}
-            </Typography>
-            <Typography level="display-lg" balance className="mb-8">
-              Haydar Durmuş
             </Typography>
             <div className="flex flex-wrap items-center gap-4">
               <Button as={Link} to={ROUTES.PAINTINGS} size="lg">

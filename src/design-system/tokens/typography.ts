@@ -4,6 +4,8 @@
  */
 
 export const fontFamily = {
+  // Title font — used by h1/h2 titles across the application
+  heading: ['Oswald', 'Inter', 'system-ui', 'sans-serif'],
   // Primary serif — for headings, artist name, display text
   serif: ['Cormorant Garamond', 'Georgia', 'Cambria', '"Times New Roman"', 'serif'],
   // Clean sans-serif — for body text, UI labels

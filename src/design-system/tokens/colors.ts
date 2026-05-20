@@ -37,6 +37,7 @@ export const colors = {
   // Text hierarchy
   text: {
     primary: '#1a1a1a',
+    title: '#2971A6',
     secondary: '#6b6b6b',
     tertiary: '#9a9a9a',
     inverted: '#ffffff',

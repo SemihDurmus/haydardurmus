@@ -7,6 +7,13 @@ import { LanguageSwitcher } from '@shared/components/LanguageSwitcher';
 import { ROUTES } from '@app/router/routes';
 import { cn } from '@shared/utils/cn';
 
+const headerImageModules = import.meta.glob<string>('/src/assets/header_image.png', {
+  eager: true,
+  import: 'default',
+  query: '?url',
+});
+const headerImage = Object.values(headerImageModules)[0];
+
 export function Header() {
   const { t } = useTranslation('common');
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -41,17 +48,26 @@ export function Header() {
       )}
     >
       <Container width="wide">
-        <div className="flex h-16 items-center justify-between md:h-20">
-          {/* Logo / Name */}
-          <Link
-            to={ROUTES.HOME}
-            className="font-serif text-h4 tracking-tight text-text-primary transition-opacity hover:opacity-70"
-          >
-            Haydar Durmuş
-          </Link>
+        <div className="relative flex h-16 items-center justify-end md:h-20">
+          {headerImage && (
+            <Link
+              to={ROUTES.HOME}
+              className="absolute left-0 flex items-center transition-opacity hover:opacity-80"
+              aria-label="Go to home page"
+            >
+              <img
+                src={headerImage}
+                alt="Haydar Durmuş"
+                className="h-10 w-auto rounded-lg object-contain sm:h-12 md:h-14 lg:h-16"
+              />
+            </Link>
+          )}
 
           {/* Desktop Nav */}
-          <nav className="hidden items-center gap-8 md:flex" aria-label="Main navigation">
+          <nav
+            className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-8 md:flex"
+            aria-label="Main navigation"
+          >
             {navItems.map(({ label, href }) => (
               <NavLink key={href} to={href} className={navLinkClass}>
                 {label}
