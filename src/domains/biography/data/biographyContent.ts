@@ -80,6 +80,7 @@ export const soloExhibitionsTr = [
   '2018 Yağlıboya, Akrilik ve Kolaj Resim Sergisi, Akçaabat Resim ve Fotoğraf Müzesi, Trabzon',
   '2019 Yağlıboya, Akrilik ve Kolaj Resim Sergisi, Grup Sanat Galerisi, Ankara',
   "2022 1958'den 2022'ye Yorgun Renkler Resim Sergisi, Trabzon",
+  '2022 Yağlıboya ve Akrilik Resim Sergisi, SANKO Sanat Galerisi, Gaziantep',
 ] as const;
 
 export const soloExhibitionsEn = [
@@ -122,6 +123,7 @@ export const soloExhibitionsEn = [
   '2018 Oil, Acrylic and Collage Painting Exhibition, Akçaabat Museum of Painting and Photography, Trabzon',
   '2019 Oil, Acrylic and Collage Painting Exhibition, Grup Art Gallery, Ankara',
   '2022 Tired Colors Painting Exhibition from 1958 to 2022, Trabzon',
+  '2022 Oil and Acrylic Painting Exhibition, SANKO Art Gallery, Gaziantep',
 ] as const;
 
 export const soloExhibitionsByLocale = {
