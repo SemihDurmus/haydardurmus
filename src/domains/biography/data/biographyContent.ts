@@ -1,4 +1,4 @@
-export const biographyIntroItems = [
+export const biographyIntroItemsTr = [
   "1942 yılında Trabzon'un Arsin ilçesine bağlı Elmaalan köyünde doğdu. İlkokulu kendi köyünde tamamladı.",
   '1955 Öğretim yılında Trabzon Lisesi orta kısmına başladı.',
   '1962 yılında Trabzon Lisesinden mezun oldu.',
@@ -16,7 +16,31 @@ export const biographyIntroItems = [
   "1966 yılında Nahide Hanım ile evlenen Haydar Durmuş'un Nevin, Faruk ve Semih isimlerinde üç çocuğu ile sekiz torunu bulunmaktadır.",
 ] as const;
 
-export const soloExhibitions = [
+export const biographyIntroItemsEn = [
+  'Born in 1942 in Elmaalan village of the Arsin district in Trabzon.',
+  'He completed primary school in his own village.',
+  'In the 1955 academic year, he started the middle school division of Trabzon High School.',
+  'He graduated from Trabzon High School in 1962.',
+  'He graduated from the Ankara Gazi Education Institute, Department of Art and Crafts in 1965.',
+  'Between the years 1965 and 1968, he worked at Kastamonu Gölköy Primary Teacher Training School.',
+  "Between the years 1969 and 1978, he served at Trabzon Men's Primary Teacher Training School.",
+  'Upon the closure of Teacher Training Schools in 1978, he was appointed to Trabzon Kanuni Secondary School.',
+  'He served at this institution until 1990.',
+  'In 1990, he was appointed to the Art Education Department of KTÜ Fatih Faculty of Education.',
+  'In 1995, he retired by his own request.',
+  'In 2007, he decided to transform his house in Elmaalan village of Arsin into a plastic arts museum. From that year onward, he began exchanging paintings with his artist friends and colleagues for this purpose.',
+  'As of 2017, he acquired around 130 paintings from nearly 100 artists.',
+  'Even though he could not convert his house into an official museum due to various reasons, he exhibits nearly 3,000 of his own works, as well as the other works he acquired, under the same roof under the name "Haydar Durmuş Art House."',
+  'He still continues his work in his studio at the Haydar Durmuş Art House.',
+  'Haydar Durmuş, who married Ms. Nahide in 1966, has three children named Nevin, Faruk, and Semih, and eight grandchildren.',
+] as const;
+
+export const biographyIntroItemsByLocale = {
+  en: biographyIntroItemsEn,
+  tr: biographyIntroItemsTr,
+} as const;
+
+export const soloExhibitionsTr = [
   '1969 Karikatür Sergisi Sağlık Müzesi, Trabzon',
   '1970 Ağaçbaskı-Yağlıboya Sergisi Sağlık Müzesi Trabzon',
   '1971 Yağlıboya Resim Sergisi Devlet Güzel Sanatlar Galerisi, Ankara',
@@ -55,9 +79,57 @@ export const soloExhibitions = [
   '2018 Yağlıboya ve Kolaj Resim Sergisi, Emin Antik Sanat Galerisi, Ankara',
   '2018 Yağlıboya, Akrilik ve Kolaj Resim Sergisi, Akçaabat Resim ve Fotoğraf Müzesi, Trabzon',
   '2019 Yağlıboya, Akrilik ve Kolaj Resim Sergisi, Grup Sanat Galerisi, Ankara',
+  "2022 1958'den 2022'ye Yorgun Renkler Resim Sergisi, Trabzon",
 ] as const;
 
-export const groupExhibitions = [
+export const soloExhibitionsEn = [
+  '1969 Caricature Exhibition, Health Museum, Trabzon',
+  '1970 Woodcut-Oil Painting Exhibition, Health Museum, Trabzon',
+  '1971 Oil Painting Exhibition, State Gallery of Fine Arts, Ankara',
+  '1973 Oil Painting Exhibition, State Gallery of Fine Arts, Ankara',
+  '1974 Oil Painting Exhibition, Health Museum, Trabzon',
+  '1975 Oil Painting Exhibition, Health Museum, Trabzon',
+  '1975 Woodcut Exhibition, KTÜ Faculty of Architecture Exhibition Hall, Trabzon',
+  '1976 Oil Painting Exhibition, State Gallery of Fine Arts, Trabzon',
+  '1977 Oil Painting Exhibition, State Gallery of Fine Arts, Trabzon',
+  '1977 Oil Painting Exhibition, Arhavi Festival, Arhavi',
+  '1977 Oil Painting Exhibition, State Gallery of Fine Arts, Trabzon',
+  '1978 Oil Painting Exhibition, Museum of Painting and Sculpture, İzmir',
+  '1978 Oil Painting Exhibition, Taksim Art Gallery, İstanbul',
+  '1978 Oil Painting Exhibition, Gallery of Fine Arts, Erzurum',
+  '1979 Oil Painting Exhibition, State Gallery of Fine Arts, Trabzon',
+  '1980 Oil Painting Exhibition, State Gallery of Fine Arts, Trabzon',
+  '1981 Oil Painting Exhibition, State Gallery of Fine Arts, Ankara',
+  '1982 Oil Painting Exhibition, Artisan Art Gallery, Ankara',
+  '1983 Oil Painting Exhibition, Hobi Art Gallery, İstanbul',
+  '1984 Oil Painting Exhibition, Sanat Yapım, Ankara',
+  '1984 Oil Painting Exhibition, İş Art Gallery, Trabzon',
+  '1984 Oil-Pastel Painting Exhibition, Parmakkapı İş Art Gallery, İstanbul',
+  '1986 Oil Painting Exhibition, Bedesten Art Gallery, Ankara',
+  '1986 Oil Painting Exhibition, Museum of Painting and Sculpture, İzmir',
+  '1987 Oil-Pastel Painting Exhibition, Parmakkapı İş Art Gallery, İstanbul',
+  '1988 Oil Painting Exhibition, State Gallery of Fine Arts, Trabzon',
+  '1991 Oil Painting Exhibition, Hüseyin Kazaz Culture Center, Trabzon',
+  '1992 Oil Painting Exhibition, Sanat Yapımı, Ankara',
+  '1994 Oil Painting Exhibition, Of and Vicinity Culture and Solidarity Association, Ankara',
+  '1995 Oil Painting Exhibition, METU Prof. Dr. M. Parlar Foundation Art Gallery, Ankara',
+  '1995 Oil Painting Exhibition, Fortuna Art Gallery, Ankara',
+  '1996 Oil Painting Exhibition, İlayda Art Gallery, Ankara',
+  '2004 Oil Painting Exhibition, Soyut Art Gallery, Ankara',
+  '2005 Oil Painting Exhibition, Milli Piyango Art Gallery, Ankara',
+  '2012 Oil Painting Exhibition, Akçaabat Fine Arts High School Gallery, Trabzon',
+  '2018 Oil and Collage Painting Exhibition, Emin Antik Art Gallery, Ankara',
+  '2018 Oil, Acrylic and Collage Painting Exhibition, Akçaabat Museum of Painting and Photography, Trabzon',
+  '2019 Oil, Acrylic and Collage Painting Exhibition, Grup Art Gallery, Ankara',
+  '2022 Tired Colors Painting Exhibition from 1958 to 2022, Trabzon',
+] as const;
+
+export const soloExhibitionsByLocale = {
+  en: soloExhibitionsEn,
+  tr: soloExhibitionsTr,
+} as const;
+
+export const groupExhibitionsTr = [
   '1964-1978 Devlet Resim ve Heykel Sergileri / Ankara - İstanbul - İzmir',
   '1971 TRT Resim Heykel Sergisi, Ankara',
   '1972-1983 Birleşmiş Ressamlar ve Heykeltraşlar Derneği Sergileri / Ankara - İstanbul - İzmir',
@@ -73,3 +145,25 @@ export const groupExhibitions = [
   '2013 Trabzon Etkinlikleri Sergileri AKM, Ankara',
   "Ayrıca Trabzon, Ankara ve İstanbul'da çok sayıda karma sergiye katıldı.",
 ] as const;
+
+export const groupExhibitionsEn = [
+  '1964-1978 State Painting and Sculpture Exhibitions / Ankara - İstanbul - İzmir',
+  '1971 TRT Painting and Sculpture Exhibition, Ankara',
+  '1972-1983 Association of United Painters and Sculptors Exhibitions / Ankara - İstanbul - İzmir',
+  '1972 Contemporary Turkish Engraving Art Exhibition / Domestic - International',
+  '1972-1978 DYO Painting Exhibitions / Ankara - İstanbul - İzmir',
+  '1974-1983 Trabzon Artists Association Exhibitions, Trabzon',
+  '1976 "Industry in Lines 76" Chamber of Mechanical Engineers Caricature Exhibition, Ankara',
+  '1977 4th International Akşehir Nasreddin Hodja Caricature Exhibition, Ankara',
+  '1977 International Caricature Exhibition "Good Morning Pollution" / Athens - Greece',
+  '1987 Trabzon High School 100th Anniversary Celebration Exhibition, İstanbul',
+  '1990 Contemporary Turkish Painting from the İlisulu Collection, Ankara',
+  '1992 DMO Competition Exhibition, İstanbul',
+  '2013 Trabzon Events Exhibitions AKM, Ankara',
+  'Additionally, he participated in numerous group exhibitions in Trabzon, Ankara, and İstanbul.',
+] as const;
+
+export const groupExhibitionsByLocale = {
+  en: groupExhibitionsEn,
+  tr: groupExhibitionsTr,
+} as const;

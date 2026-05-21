@@ -4,14 +4,18 @@ import { Container } from '@shared/ui/Container';
 import { Typography } from '@shared/ui/Typography';
 import { PageTitle } from '@shared/ui/PageTitle';
 import {
-  biographyIntroItems,
-  groupExhibitions,
-  soloExhibitions,
+  biographyIntroItemsByLocale,
+  groupExhibitionsByLocale,
+  soloExhibitionsByLocale,
 } from '@domains/biography/data/biographyContent';
 import biographyImage from '@assets/biography_img.avif';
 
 export default function BiographyPage() {
-  const { t } = useTranslation('biography');
+  const { t, i18n } = useTranslation('biography');
+  const locale = (i18n.language?.split('-')[0] ?? 'en') as 'en' | 'tr';
+  const biographyIntroItems = biographyIntroItemsByLocale[locale] ?? biographyIntroItemsByLocale.en;
+  const soloExhibitions = soloExhibitionsByLocale[locale] ?? soloExhibitionsByLocale.en;
+  const groupExhibitions = groupExhibitionsByLocale[locale] ?? groupExhibitionsByLocale.en;
 
   return (
     <>
@@ -54,8 +58,14 @@ export default function BiographyPage() {
       <Section spacing="none" background="muted" className="py-8 md:py-10">
         <Container width="wide">
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
-            <ExhibitionSection title="Kişisel Sergileri" items={soloExhibitions} />
-            <ExhibitionSection title="Karma Sergilerden Bazıları" items={groupExhibitions} />
+            <ExhibitionSection
+              title={locale === 'tr' ? 'Kişisel Sergileri' : 'Solo Exhibitions'}
+              items={soloExhibitions}
+            />
+            <ExhibitionSection
+              title={locale === 'tr' ? 'Karma Sergilerden Bazıları' : 'Selected Group Exhibitions'}
+              items={groupExhibitions}
+            />
           </div>
         </Container>
       </Section>
