@@ -4,6 +4,7 @@ import { ArrowRight } from 'lucide-react';
 import { Section } from '@shared/ui/Section';
 import { Container } from '@shared/ui/Container';
 import { Typography } from '@shared/ui/Typography';
+import { PageTitle } from '@shared/ui/PageTitle';
 import { Button } from '@shared/ui/Button';
 import { PaintingGrid } from '@domains/paintings/components/PaintingGrid';
 import { useFeaturedPaintings } from '@domains/paintings/hooks/usePaintings';
@@ -21,18 +22,7 @@ export default function HomePage() {
     <>
       <Section spacing="none" background="default" className="py-6 md:py-8">
         <Container width="wide">
-          <Typography
-            level="h1"
-            align="center"
-            className="leading-tight"
-            style={{
-              color: '#2971A6',
-              fontFamily: 'Oswald, Inter, system-ui, sans-serif',
-              fontSize: 'clamp(32px, 5vw, 50px)',
-            }}
-          >
-            Haydar Durmuş
-          </Typography>
+          <PageTitle align="center">Haydar Durmuş</PageTitle>
         </Container>
       </Section>
 

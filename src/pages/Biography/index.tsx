@@ -2,98 +2,106 @@ import { useTranslation } from 'react-i18next';
 import { Section } from '@shared/ui/Section';
 import { Container } from '@shared/ui/Container';
 import { Typography } from '@shared/ui/Typography';
-import { artistBiography } from '@domains/biography/types';
-import { useTranslatedText } from '@shared/hooks/useTranslatedText';
+import { PageTitle } from '@shared/ui/PageTitle';
+import {
+  biographyIntroItems,
+  groupExhibitions,
+  soloExhibitions,
+} from '@domains/biography/data/biographyContent';
+import biographyImage from '@assets/biography_img.avif';
 
 export default function BiographyPage() {
   const { t } = useTranslation('biography');
-  const fullBio = useTranslatedText(artistBiography.fullBio);
-  const nationality = useTranslatedText(artistBiography.nationality);
-  const livesAndWorks = useTranslatedText(artistBiography.livesAndWorks);
 
   return (
     <>
       {/* Hero */}
-      <Section spacing="lg" background="default">
-        <Container width="narrow">
-          <Typography level="overline" tone="tertiary" className="mb-4 block">
-            {t('page.subtitle')}
-          </Typography>
-          <Typography level="h1" className="mb-12">
-            {t('page.title')}
-          </Typography>
+      <Section spacing="none" background="default" className="py-8 md:py-section-lg">
+        <Container width="wide">
+          <div className="grid grid-cols-1 gap-8 md:gap-12 lg:grid-cols-[minmax(0,1fr)_380px] xl:grid-cols-[minmax(0,1fr)_440px]">
+            <div>
+              <PageTitle className="mb-4">{t('page.title')}</PageTitle>
+              <Typography
+                level="h2"
+                className="mb-8 leading-tight"
+                style={{
+                  color: '#b7b7b7',
+                  fontFamily: 'Oswald, Inter, system-ui, sans-serif',
+                  fontSize: 'clamp(22px, 3vw, 32px)',
+                }}
+              >
+                {t('page.subtitle')}
+              </Typography>
+              <div className="mb-12" aria-hidden="true" />
 
-          {/* Quick facts */}
-          <div className="mb-12 grid grid-cols-2 gap-6 border-y border-border py-8 sm:grid-cols-3">
-            <div>
-              <Typography level="overline" tone="tertiary" className="mb-1 block">
-                {t('born')}
-              </Typography>
-              <Typography level="body">{artistBiography.born}</Typography>
+              <BiographyList items={biographyIntroItems} />
             </div>
-            <div>
-              <Typography level="overline" tone="tertiary" className="mb-1 block">
-                {t('nationality')}
-              </Typography>
-              <Typography level="body">{nationality}</Typography>
-            </div>
-            <div>
-              <Typography level="overline" tone="tertiary" className="mb-1 block">
-                {t('lives')}
-              </Typography>
-              <Typography level="body">{livesAndWorks}</Typography>
-            </div>
-          </div>
 
-          {/* Full bio */}
-          <div className="prose-style">
-            {fullBio.split('\n\n').map((paragraph, i) => (
-              <Typography key={i} level="body-lg" tone="secondary" className="mb-6 text-pretty">
-                {paragraph}
-              </Typography>
-            ))}
+            <aside className="order-first lg:order-none">
+              <figure className="mx-auto max-w-[260px] overflow-hidden rounded-xl border border-border bg-muted sm:max-w-xs md:max-w-sm lg:sticky lg:top-28 lg:max-w-none">
+                <img
+                  src={biographyImage}
+                  alt="Haydar Durmuş"
+                  className="h-auto w-full object-cover"
+                  loading="eager"
+                />
+              </figure>
+            </aside>
           </div>
         </Container>
       </Section>
 
-      {/* Timeline */}
-      {artistBiography.timeline.length > 0 && (
-        <Section spacing="lg" background="muted">
-          <Container width="narrow">
-            <Typography level="h2" className="mb-10">
-              {t('sections.exhibitions')}
-            </Typography>
-            <div className="space-y-0">
-              {artistBiography.timeline.map((entry, idx) => (
-                <TimelineEntry key={idx} entry={entry} />
-              ))}
-            </div>
-          </Container>
-        </Section>
-      )}
+      <Section spacing="none" background="muted" className="py-8 md:py-10">
+        <Container width="wide">
+          <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
+            <ExhibitionSection title="Kişisel Sergileri" items={soloExhibitions} />
+            <ExhibitionSection title="Karma Sergilerden Bazıları" items={groupExhibitions} />
+          </div>
+        </Container>
+      </Section>
     </>
   );
 }
 
-function TimelineEntry({ entry }: { entry: (typeof artistBiography.timeline)[number] }) {
-  const { i18n } = useTranslation();
-  const locale = (i18n.language?.split('-')[0] ?? 'en') as 'en' | 'tr';
-  const title = entry.title[locale] ?? entry.title.en;
-  const description = entry.description[locale] ?? entry.description.en;
-
+function BiographyList({ items }: { items: readonly string[] }) {
   return (
-    <div className="flex gap-8 border-b border-border py-6 last:border-0">
-      <Typography level="h4" tone="tertiary" className="w-16 shrink-0">
-        {entry.year}
+    <ul className="space-y-4">
+      {items.map((item) => (
+        <li key={item} className="flex gap-4">
+          <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-accent" aria-hidden="true" />
+          <Typography level="body" tone="secondary" className="text-pretty">
+            {item}
+          </Typography>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function ExhibitionSection({ title, items }: { title: string; items: readonly string[] }) {
+  return (
+    <section>
+      <Typography
+        level="h3"
+        style={{
+          color: '#b7b7b7',
+          fontFamily: 'Oswald, Inter, system-ui, sans-serif',
+          fontSize: '26px',
+          marginBottom: '1rem',
+        }}
+      >
+        {title}
       </Typography>
-      <div>
-        <Typography level="body" className="mb-1">
-          {title}
-        </Typography>
-        <Typography level="body-sm" tone="secondary">
-          {description}
-        </Typography>
-      </div>
-    </div>
+      <ul className="space-y-3">
+        {items.map((item) => (
+          <li key={item} className="flex gap-3 border-b border-border/70 pb-3 last:border-0">
+            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" aria-hidden="true" />
+            <Typography level="body-sm" tone="secondary">
+              {item}
+            </Typography>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
