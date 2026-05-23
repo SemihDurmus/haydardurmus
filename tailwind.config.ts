@@ -23,6 +23,7 @@ export default {
         surface: colors.surface,
         muted: colors.muted,
         border: colors.border,
+        grey: colors.grey,
         text: colors.text,
         success: colors.success,
         warning: colors.warning,
