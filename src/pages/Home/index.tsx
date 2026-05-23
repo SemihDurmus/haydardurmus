@@ -6,15 +6,13 @@ import { Container } from '@shared/ui/Container';
 import { Typography } from '@shared/ui/Typography';
 import { PageTitle } from '@shared/ui/PageTitle';
 import { SectionTitle } from '@shared/ui/SectionTitle';
-import { PaintingGrid } from '@domains/paintings/components/PaintingGrid';
-import { useFeaturedPaintings } from '@domains/paintings/hooks/usePaintings';
 import { ROUTES } from '@app/router/routes';
 import { HomeCarousel } from '@domains/home/components/HomeCarousel';
+import { FeaturedPaintingImages } from '@domains/home/components/FeaturedPaintingImages';
 import { colors } from '@design-system/tokens';
 
 export default function HomePage() {
   const { t } = useTranslation('home');
-  const { data: featured, isLoading } = useFeaturedPaintings(6);
 
   return (
     <>
@@ -51,7 +49,7 @@ export default function HomePage() {
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
-          <PaintingGrid paintings={featured ?? []} isLoading={isLoading} columns={3} />
+          <FeaturedPaintingImages />
         </Container>
       </Section>
     </>
