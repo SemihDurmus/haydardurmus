@@ -34,6 +34,14 @@ export const colors = {
   muted: '#f4f3ef',
   border: '#e8e6e1',
 
+  // Neutral gray scale — use named tokens instead of hardcoded gray hex values
+  grey: {
+    20: '#d9d9d9',
+    40: '#b7b7b7',
+    60: '#808080',
+    80: '#4d4d4d',
+  },
+
   // Text hierarchy
   text: {
     primary: '#1a1a1a',

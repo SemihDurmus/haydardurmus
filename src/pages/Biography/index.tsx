@@ -3,6 +3,8 @@ import { Section } from '@shared/ui/Section';
 import { Container } from '@shared/ui/Container';
 import { Typography } from '@shared/ui/Typography';
 import { PageTitle } from '@shared/ui/PageTitle';
+import { SectionTitle } from '@shared/ui/SectionTitle';
+import { colors } from '@design-system/tokens';
 import {
   biographyIntroItemsByLocale,
   groupExhibitionsByLocale,
@@ -29,7 +31,7 @@ export default function BiographyPage() {
                 level="h2"
                 className="mb-8 leading-tight"
                 style={{
-                  color: '#b7b7b7',
+                  color: colors.grey[40],
                   fontFamily: 'Oswald, Inter, system-ui, sans-serif',
                   fontSize: 'clamp(22px, 3vw, 32px)',
                 }}
@@ -91,17 +93,7 @@ function BiographyList({ items }: { items: readonly string[] }) {
 function ExhibitionSection({ title, items }: { title: string; items: readonly string[] }) {
   return (
     <section>
-      <Typography
-        level="h3"
-        style={{
-          color: '#b7b7b7',
-          fontFamily: 'Oswald, Inter, system-ui, sans-serif',
-          fontSize: '26px',
-          marginBottom: '1rem',
-        }}
-      >
-        {title}
-      </Typography>
+      <SectionTitle>{title}</SectionTitle>
       <ul className="space-y-3">
         {items.map((item) => (
           <li key={item} className="flex gap-3 border-b border-border/70 pb-3 last:border-0">

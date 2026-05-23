@@ -5,18 +5,16 @@ import { Section } from '@shared/ui/Section';
 import { Container } from '@shared/ui/Container';
 import { Typography } from '@shared/ui/Typography';
 import { PageTitle } from '@shared/ui/PageTitle';
-import { Button } from '@shared/ui/Button';
+import { SectionTitle } from '@shared/ui/SectionTitle';
 import { PaintingGrid } from '@domains/paintings/components/PaintingGrid';
 import { useFeaturedPaintings } from '@domains/paintings/hooks/usePaintings';
 import { ROUTES } from '@app/router/routes';
-import { artistBiography } from '@domains/biography/types';
-import { useTranslatedText } from '@shared/hooks/useTranslatedText';
 import { HomeCarousel } from '@domains/home/components/HomeCarousel';
+import { colors } from '@design-system/tokens';
 
 export default function HomePage() {
   const { t } = useTranslation('home');
   const { data: featured, isLoading } = useFeaturedPaintings(6);
-  const shortBio = useTranslatedText(artistBiography.shortBio);
 
   return (
     <>
@@ -36,34 +34,14 @@ export default function HomePage() {
         </Container>
       </Section>
 
-      {/* Hero */}
-      <Section spacing="none" background="default" className="relative flex min-h-[90vh] flex-col justify-end pb-section-md pt-32">
-        <Container width="wide">
-          <div className="max-w-container-sm">
-            <Typography level="overline" tone="tertiary" className="mb-6 block">
-              {t('hero.tagline')}
-            </Typography>
-            <div className="flex flex-wrap items-center gap-4">
-              <Button as={Link} to={ROUTES.PAINTINGS} size="lg">
-                {t('latest.cta')}
-              </Button>
-              <Button as={Link} to={ROUTES.BIOGRAPHY} variant="ghost" size="lg">
-                {t('about.cta')}
-              </Button>
-            </div>
-          </div>
-        </Container>
-      </Section>
-
       {/* Featured Paintings */}
-      <Section spacing="lg" background="muted">
+      <Section spacing="none" background="muted" className="pb-section-md pt-8 md:pb-section-lg">
         <Container width="wide">
-          <div className="mb-10 flex items-end justify-between">
+          <div className="mb-6 flex items-center justify-between">
             <div>
-              <Typography level="overline" tone="tertiary" className="mb-2 block">
-                {t('featured.subtitle')}
-              </Typography>
-              <Typography level="h2">{t('featured.title')}</Typography>
+              <SectionTitle style={{ marginBottom: 0, color: colors.grey[60] }}>
+                {t('featured.title')}
+              </SectionTitle>
             </div>
             <Link
               to={ROUTES.PAINTINGS}
@@ -73,26 +51,7 @@ export default function HomePage() {
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
-
           <PaintingGrid paintings={featured ?? []} isLoading={isLoading} columns={3} />
-        </Container>
-      </Section>
-
-      {/* About snippet */}
-      <Section spacing="lg" background="default">
-        <Container width="narrow">
-          <Typography level="overline" tone="tertiary" className="mb-4 block">
-            {t('about.label')}
-          </Typography>
-          <Typography level="h2" className="mb-8">
-            {artistBiography.name}
-          </Typography>
-          <Typography level="body-lg" tone="secondary" className="mb-8 text-pretty">
-            {shortBio}
-          </Typography>
-          <Button as={Link} to={ROUTES.BIOGRAPHY} variant="secondary">
-            {t('about.cta')}
-          </Button>
         </Container>
       </Section>
     </>

@@ -14,6 +14,13 @@ const headerImageModules = import.meta.glob<string>('/src/assets/header_image.pn
 });
 const headerImage = Object.values(headerImageModules)[0];
 
+const signatureImageModules = import.meta.glob<string>('/src/assets/signature_wobg.png', {
+  eager: true,
+  import: 'default',
+  query: '?url',
+});
+const signatureImage = Object.values(signatureImageModules)[0];
+
 export function Header() {
   const { t } = useTranslation('common');
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -44,22 +51,31 @@ export function Header() {
     <header
       className={cn(
         'fixed top-0 z-40 w-full transition-all duration-300',
-        scrolled ? 'bg-background/95 backdrop-blur-sm border-b border-border' : 'bg-transparent'
+        scrolled ? 'border-b border-border bg-background/95 backdrop-blur-sm' : 'bg-transparent'
       )}
     >
       <Container width="wide">
         <div className="relative flex h-16 items-center justify-end md:h-20">
-          {headerImage && (
+          {(headerImage || signatureImage) && (
             <Link
               to={ROUTES.HOME}
-              className="absolute left-0 flex items-center transition-opacity hover:opacity-80"
+              className="absolute left-0 flex items-center gap-2 transition-opacity hover:opacity-80 sm:gap-3"
               aria-label="Go to home page"
             >
-              <img
-                src={headerImage}
-                alt="Haydar Durmuş"
-                className="h-10 w-auto rounded-lg object-contain sm:h-12 md:h-14 lg:h-16"
-              />
+              {headerImage && (
+                <img
+                  src={headerImage}
+                  alt="Haydar Durmuş"
+                  className="h-10 w-auto rounded-lg object-contain sm:h-12 md:h-14 lg:h-16"
+                />
+              )}
+              {signatureImage && (
+                <img
+                  src={signatureImage}
+                  alt="Haydar Durmuş signature"
+                  className="h-7 w-auto object-contain sm:h-8 md:h-10 lg:h-12"
+                />
+              )}
             </Link>
           )}
 
