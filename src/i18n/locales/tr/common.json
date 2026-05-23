@@ -2,13 +2,14 @@
   "nav": {
     "home": "Ana Sayfa",
     "biography": "Biyografi",
-    "paintings": "Tablolar",
-    "collections": "Koleksiyonlar",
+    "paintings": "Eserler",
+    "collections": "Koleksiyon",
     "media": "Medya",
     "book": "Kitap",
     "contact": "İletişim"
   },
   "footer": {
+    "navigation": "Sayfalar",
     "rights": "Tüm hakları saklıdır",
     "designed": "Özenle tasarlandı"
   },
@@ -35,9 +36,5 @@
     "error": "Bir şeyler yanlış gitti",
     "empty": "Henüz içerik yok",
     "notFound": "Sayfa bulunamadı"
-  },
-  "meta": {
-    "artist": "Çağdaş Sanatçı",
-    "nationality": "Türk"
   }
 }

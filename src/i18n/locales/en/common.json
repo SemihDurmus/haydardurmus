@@ -9,6 +9,7 @@
     "contact": "Contact"
   },
   "footer": {
+    "navigation": "Navigation",
     "rights": "All rights reserved",
     "designed": "Designed with care"
   },
@@ -35,9 +36,5 @@
     "error": "Something went wrong",
     "empty": "Nothing here yet",
     "notFound": "Page not found"
-  },
-  "meta": {
-    "artist": "Contemporary Artist",
-    "nationality": "Turkish"
   }
 }

@@ -4,6 +4,13 @@ import { Container } from '@shared/ui/Container';
 import { Typography } from '@shared/ui/Typography';
 import { ROUTES } from '@app/router/routes';
 
+const signatureImageModules = import.meta.glob<string>('/src/assets/signature_wobg.png', {
+  eager: true,
+  import: 'default',
+  query: '?url',
+});
+const signatureImage = Object.values(signatureImageModules)[0];
+
 export function Footer() {
   const { t } = useTranslation('common');
   const currentYear = new Date().getFullYear();
@@ -25,19 +32,24 @@ export function Footer() {
             {/* Name + tagline */}
             <div>
               <Link to={ROUTES.HOME}>
-                <Typography level="h3" className="mb-2">
-                  Haydar Durmuş
-                </Typography>
+                {signatureImage ? (
+                  <img
+                    src={signatureImage}
+                    alt="Haydar Durmuş signature"
+                    className="mb-3 h-12 w-auto object-contain"
+                  />
+                ) : (
+                  <Typography level="h3" className="mb-2">
+                    Haydar Durmuş
+                  </Typography>
+                )}
               </Link>
-              <Typography level="body-sm" tone="secondary">
-                {t('meta.artist')}
-              </Typography>
             </div>
 
             {/* Navigation */}
             <div>
               <Typography level="overline" tone="tertiary" className="mb-4 block">
-                Navigation
+                {t('footer.navigation')}
               </Typography>
               <nav className="flex flex-col gap-2">
                 {links.map(({ label, href }) => (
