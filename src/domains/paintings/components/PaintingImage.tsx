@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useState, type ImgHTMLAttributes, type ReactNode } from 'react';
 import { Image } from '@imagekit/react';
 import { cn } from '@shared/utils/cn';
 
@@ -12,6 +12,7 @@ interface PaintingImageProps {
   fit?: 'cover' | 'contain';
   height?: number;
   loading?: 'eager' | 'lazy';
+  onLoad?: ImgHTMLAttributes<HTMLImageElement>['onLoad'];
   title?: string;
   width?: number;
 }
@@ -24,6 +25,7 @@ export function PaintingImage({
   fit = 'cover',
   height = 667,
   loading = 'lazy',
+  onLoad,
   title,
   width = 500,
 }: PaintingImageProps) {
@@ -41,6 +43,7 @@ export function PaintingImage({
       title={title}
       className={cn(fit === 'contain' ? 'object-contain' : 'object-cover', className)}
       loading={loading}
+      onLoad={onLoad}
       onError={() => setHasError(true)}
     />
   );

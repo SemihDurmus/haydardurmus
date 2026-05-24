@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Expand, X } from 'lucide-react';
+import { ArrowLeft, Expand } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import Dialog from '@mui/material/Dialog';
-import IconButton from '@mui/material/IconButton';
 import { Section } from '@shared/ui/Section';
 import { Container } from '@shared/ui/Container';
 import { Typography } from '@shared/ui/Typography';
 import { usePainting } from '@domains/paintings/hooks/usePaintings';
-import { PaintingImage } from '@domains/paintings/components/PaintingImage';
+import { PaintingImageFrame } from '@domains/paintings/components/PaintingImageFrame';
+import { PaintingLightbox } from '@domains/paintings/components/PaintingLightbox';
 import { getLookupLabel, techniques, materials } from '@domains/paintings/data/lookups';
 import { formatDimensions, formatYear, getPaintingDisplayName } from '@shared/utils/format';
 import { ROUTES } from '@app/router/routes';
@@ -72,35 +71,30 @@ export default function PaintingDetailPage() {
         <Container width="wide">
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
             {/* Image */}
-            <div className="flex aspect-[3/4] items-center justify-center overflow-hidden bg-muted">
-              <div className="inline-grid max-h-full max-w-full">
-                <PaintingImage
-                  paintingNo={painting.paintingNo}
-                  alt={displayName}
-                  title={displayName}
-                  width={900}
-                  height={1200}
-                  fit="contain"
-                  className="col-start-1 row-start-1 block max-h-full max-w-full"
-                  loading="eager"
-                  fallback={
-                    <div className="col-start-1 row-start-1 flex h-full w-full items-center justify-center">
-                      <Typography level="h3" tone="tertiary">
-                        {painting.paintingNo}
-                      </Typography>
-                    </div>
-                  }
-                />
+            <PaintingImageFrame
+              className="aspect-[3/4] bg-muted"
+              paintingNo={painting.paintingNo}
+              alt={displayName}
+              title={displayName}
+              loading="eager"
+              fallback={
+                <div className="flex h-full w-full items-center justify-center">
+                  <Typography level="h3" tone="tertiary">
+                    {painting.paintingNo}
+                  </Typography>
+                </div>
+              }
+              overlay={
                 <button
                   type="button"
                   onClick={() => setIsLightboxOpen(true)}
                   aria-label={t('detail.viewFullSize')}
-                  className="col-start-1 row-start-1 z-10 m-2 flex h-9 w-9 items-center justify-center justify-self-end self-end rounded-full bg-primary-950/60 text-white transition-colors hover:bg-primary-950/80"
+                  className="absolute bottom-2 right-2 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-primary-950/60 text-white transition-colors hover:bg-primary-950/80"
                 >
                   <Expand className="h-4 w-4" aria-hidden />
                 </button>
-              </div>
-            </div>
+              }
+            />
 
             {/* Details */}
             <div className="flex flex-col justify-center">
@@ -126,40 +120,15 @@ export default function PaintingDetailPage() {
         </Container>
       </Section>
 
-      <Dialog
-        open={isLightboxOpen}
-        onClose={() => setIsLightboxOpen(false)}
-        maxWidth={false}
-        slotProps={{
-          backdrop: { className: 'bg-black/90' },
-          paper: {
-            className: 'max-w-none overflow-visible bg-transparent shadow-none',
-          },
-        }}
-      >
-        <div className="flex items-center justify-center p-4">
-          <div className="inline-grid max-h-[90vh] max-w-[95vw]">
-            <PaintingImage
-              paintingNo={painting.paintingNo}
-              alt={displayName}
-              title={displayName}
-              width={2400}
-              height={3200}
-              fit="contain"
-              className="col-start-1 row-start-1 block max-h-[90vh] max-w-[95vw]"
-              loading="eager"
-            />
-            <IconButton
-              onClick={() => setIsLightboxOpen(false)}
-              aria-label={t('actions.close', { ns: 'common' })}
-              className="col-start-1 row-start-1 z-10 m-2 justify-self-end self-start bg-black/50 text-white hover:bg-black/70"
-              size="small"
-            >
-              <X className="h-5 w-5" />
-            </IconButton>
-          </div>
-        </div>
-      </Dialog>
+      {isLightboxOpen && (
+        <PaintingLightbox
+          paintingNo={painting.paintingNo}
+          alt={displayName}
+          title={displayName}
+          closeLabel={t('actions.close', { ns: 'common' })}
+          onClose={() => setIsLightboxOpen(false)}
+        />
+      )}
     </>
   );
 }
