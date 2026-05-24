@@ -5,6 +5,7 @@ import { formatDimensions, formatYear, getPaintingDisplayName } from '@shared/ut
 import { getLookupLabel, techniques, materials } from '../data/lookups';
 import { buildRoute } from '@app/router/routes';
 import { cn } from '@shared/utils/cn';
+import { PaintingImage } from './PaintingImage';
 
 interface PaintingCardProps {
   painting: Painting;
@@ -35,26 +36,24 @@ export function PaintingCard({ painting, variant = 'default', className }: Paint
           variant === 'compact' ? 'aspect-square' : 'aspect-[3/4]'
         )}
       >
-        {painting.images?.[0] ? (
-          <img
-            src={painting.images[0].src}
-            alt={painting.images[0].alt}
-            loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-700 ease-out will-change-transform group-hover:scale-105"
-          />
-        ) : (
-          // Placeholder when no image is available
-          <div className="flex h-full w-full flex-col items-center justify-center gap-3 p-6">
-            <span className="font-sans text-label uppercase tracking-widest text-text-tertiary">
-              {painting.paintingNo}
-            </span>
-            {painting.paintingName && (
-              <span className="text-center font-serif text-body-sm text-text-secondary">
-                {painting.paintingName}
+        <PaintingImage
+          paintingNo={painting.paintingNo}
+          alt={displayName}
+          title={displayName}
+          className="h-full w-full object-cover transition-transform duration-700 ease-out will-change-transform group-hover:scale-105"
+          fallback={
+            <div className="flex h-full w-full flex-col items-center justify-center gap-3 p-6">
+              <span className="font-sans text-label uppercase tracking-widest text-text-tertiary">
+                {painting.paintingNo}
               </span>
-            )}
-          </div>
-        )}
+              {painting.paintingName && (
+                <span className="text-center font-serif text-body-sm text-text-secondary">
+                  {painting.paintingName}
+                </span>
+              )}
+            </div>
+          }
+        />
 
         {/* Year badge — top left */}
         {painting.year && (

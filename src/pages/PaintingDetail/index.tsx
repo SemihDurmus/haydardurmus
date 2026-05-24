@@ -5,6 +5,7 @@ import { Section } from '@shared/ui/Section';
 import { Container } from '@shared/ui/Container';
 import { Typography } from '@shared/ui/Typography';
 import { usePainting } from '@domains/paintings/hooks/usePaintings';
+import { PaintingImage } from '@domains/paintings/components/PaintingImage';
 import { getLookupLabel, techniques, materials, cities } from '@domains/paintings/data/lookups';
 import { formatDimensions, formatYear, getPaintingDisplayName } from '@shared/utils/format';
 import { ROUTES } from '@app/router/routes';
@@ -71,19 +72,22 @@ export default function PaintingDetailPage() {
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
             {/* Image */}
             <div className="aspect-[3/4] overflow-hidden bg-muted">
-              {painting.images?.[0] ? (
-                <img
-                  src={painting.images[0].src}
-                  alt={painting.images[0].alt}
-                  className="h-full w-full object-contain"
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center">
-                  <Typography level="h3" tone="tertiary">
-                    {painting.paintingNo}
-                  </Typography>
-                </div>
-              )}
+              <PaintingImage
+                paintingNo={painting.paintingNo}
+                alt={displayName}
+                title={displayName}
+                width={900}
+                height={1200}
+                className="h-full w-full object-contain"
+                loading="eager"
+                fallback={
+                  <div className="flex h-full w-full items-center justify-center">
+                    <Typography level="h3" tone="tertiary">
+                      {painting.paintingNo}
+                    </Typography>
+                  </div>
+                }
+              />
             </div>
 
             {/* Details */}
