@@ -4,6 +4,7 @@ import type { Painting } from '../types';
 import { formatDimensions, getPaintingDisplayName } from '@shared/utils/format';
 import { getLookupLabel, techniques, materials } from '../data/lookups';
 import { formatTechniqueMaterial } from '../utils/formatTechniqueMaterial';
+import { isRadiusOnlyPainting } from '../utils/isRadiusOnlyPainting';
 import { buildRoute } from '@app/router/routes';
 import { cn } from '@shared/utils/cn';
 import { PaintingImage } from './PaintingImage';
@@ -24,6 +25,7 @@ export function PaintingCard({ painting, variant = 'default', className }: Paint
   const material = getLookupLabel(materials, painting.materialId, locale);
   const techniqueMaterial = formatTechniqueMaterial(technique, material, locale);
   const dimensions = formatDimensions(painting.width, painting.height, painting.radius);
+  const showFullImage = isRadiusOnlyPainting(painting);
 
   return (
     <Link
@@ -42,7 +44,8 @@ export function PaintingCard({ painting, variant = 'default', className }: Paint
           paintingNo={painting.paintingNo}
           alt={displayName}
           title={displayName}
-          className="h-full w-full object-cover transition-transform duration-700 ease-out will-change-transform group-hover:scale-105"
+          fit={showFullImage ? 'contain' : 'cover'}
+          className="h-full w-full transition-transform duration-700 ease-out will-change-transform group-hover:scale-105"
           fallback={
             <div className="flex h-full w-full flex-col items-center justify-center gap-3 p-6">
               <span className="font-sans text-label uppercase tracking-widest text-text-tertiary">

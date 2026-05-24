@@ -1,5 +1,6 @@
 import { mockPaintings } from '@domains/paintings/data/mockPaintings';
 import { PaintingImage } from '@domains/paintings/components/PaintingImage';
+import { isRadiusOnlyPainting } from '@domains/paintings/utils/isRadiusOnlyPainting';
 
 const featuredPaintings = mockPaintings
   .filter((painting) => painting.isFeatured === true)
@@ -15,7 +16,8 @@ export function FeaturedPaintingImages() {
             paintingNo={painting.paintingNo}
             alt={painting.paintingNo || 'Painting'}
             title={painting.paintingNo || 'Painting'}
-            className="h-full w-full object-cover"
+            fit={isRadiusOnlyPainting(painting) ? 'contain' : 'cover'}
+            className="h-full w-full"
             loading="lazy"
           />
           <div className="absolute inset-0 flex items-center justify-center bg-primary-950/70 opacity-0 transition-opacity duration-300 group-hover:opacity-100">

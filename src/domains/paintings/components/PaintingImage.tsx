@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import { Image } from '@imagekit/react';
+import { cn } from '@shared/utils/cn';
 
 const IMAGEKIT_URL_ENDPOINT = 'https://ik.imagekit.io/haydardurmus';
 
@@ -8,6 +9,7 @@ interface PaintingImageProps {
   alt: string;
   className?: string;
   fallback?: ReactNode;
+  fit?: 'cover' | 'contain';
   height?: number;
   loading?: 'eager' | 'lazy';
   title?: string;
@@ -19,6 +21,7 @@ export function PaintingImage({
   alt,
   className,
   fallback,
+  fit = 'cover',
   height = 667,
   loading = 'lazy',
   title,
@@ -36,7 +39,7 @@ export function PaintingImage({
       height={height}
       alt={alt}
       title={title}
-      className={className}
+      className={cn(fit === 'contain' ? 'object-contain' : 'object-cover', className)}
       loading={loading}
       onError={() => setHasError(true)}
     />
