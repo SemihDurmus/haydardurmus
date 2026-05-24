@@ -52,8 +52,7 @@ export function truncate(str: string, maxLength: number): string {
 /** Safely get the display name of a painting. */
 export function getPaintingDisplayName(
   paintingName: string | null,
-  paintingNo: string,
   fallback = 'Untitled'
 ): string {
-  return paintingName ?? `${fallback} (${paintingNo})`;
+  return paintingName ?? fallback;
 }

@@ -77,14 +77,14 @@ describe('truncate', () => {
 
 describe('getPaintingDisplayName', () => {
   it('returns painting name when available', () => {
-    expect(getPaintingDisplayName('Morning Light', 'HD-001')).toBe('Morning Light');
+    expect(getPaintingDisplayName('Morning Light')).toBe('Morning Light');
   });
 
-  it('returns fallback with painting number when name is null', () => {
-    expect(getPaintingDisplayName(null, 'HD-001')).toBe('Untitled (HD-001)');
+  it('returns fallback when name is null', () => {
+    expect(getPaintingDisplayName(null)).toBe('Untitled');
   });
 
   it('uses custom fallback', () => {
-    expect(getPaintingDisplayName(null, 'HD-001', 'İsimsiz')).toBe('İsimsiz (HD-001)');
+    expect(getPaintingDisplayName(null, 'İsimsiz')).toBe('İsimsiz');
   });
 });

@@ -41,6 +41,7 @@
     "viewDetail": "View Details"
   },
   "detail": {
+    "paintingNumber": "Painting nr: {{number}}",
     "catalogueNumber": "Catalogue No.",
     "technique": "Technique",
     "material": "Material",

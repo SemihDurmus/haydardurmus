@@ -41,6 +41,7 @@
     "viewDetail": "Detayları Gör"
   },
   "detail": {
+    "paintingNumber": "Eser no: {{number}}",
     "catalogueNumber": "Katalog No.",
     "technique": "Teknik",
     "material": "Malzeme",

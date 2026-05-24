@@ -6,7 +6,7 @@ import { Container } from '@shared/ui/Container';
 import { Typography } from '@shared/ui/Typography';
 import { usePainting } from '@domains/paintings/hooks/usePaintings';
 import { PaintingImage } from '@domains/paintings/components/PaintingImage';
-import { getLookupLabel, techniques, materials, cities } from '@domains/paintings/data/lookups';
+import { getLookupLabel, techniques, materials } from '@domains/paintings/data/lookups';
 import { formatDimensions, formatYear, getPaintingDisplayName } from '@shared/utils/format';
 import { ROUTES } from '@app/router/routes';
 
@@ -37,20 +37,17 @@ export default function PaintingDetailPage() {
     );
   }
 
-  const displayName = getPaintingDisplayName(painting.paintingName, painting.paintingNo, t('card.untitled'));
+  const displayName = getPaintingDisplayName(painting.paintingName, t('card.untitled'));
   const technique = getLookupLabel(techniques, painting.techniqueId, locale);
   const material = getLookupLabel(materials, painting.materialId, locale);
-  const city = getLookupLabel(cities, painting.locationCityId, locale);
   const dimensions = formatDimensions(painting.width, painting.height, painting.radius);
   const year = formatYear(painting.year, '—');
 
   const metaItems = [
-    { label: t('detail.catalogueNumber'), value: painting.paintingNo },
     { label: t('detail.year'), value: year },
     { label: t('detail.technique'), value: technique },
     { label: t('detail.material'), value: material },
     { label: t('detail.dimensions'), value: dimensions },
-    { label: t('detail.location'), value: city },
   ].filter((item) => item.value);
 
   return (
@@ -92,8 +89,8 @@ export default function PaintingDetailPage() {
 
             {/* Details */}
             <div className="flex flex-col justify-center">
-              <Typography level="overline" tone="tertiary" className="mb-2 block">
-                {painting.paintingNo}
+              <Typography level="overline" tone="tertiary" className="mb-2 block normal-case">
+                {t('detail.paintingNumber', { number: painting.paintingNo })}
               </Typography>
               <Typography level="h1" className="mb-8">
                 {displayName}

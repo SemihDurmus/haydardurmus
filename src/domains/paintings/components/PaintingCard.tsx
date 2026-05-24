@@ -19,7 +19,7 @@ export function PaintingCard({ painting, variant = 'default', className }: Paint
   const { t, i18n } = useTranslation('paintings');
   const locale = (i18n.language?.split('-')[0] ?? 'en') as 'en' | 'tr';
 
-  const displayName = getPaintingDisplayName(painting.paintingName, painting.paintingNo, t('card.untitled'));
+  const displayName = getPaintingDisplayName(painting.paintingName, t('card.untitled'));
   const metadataTitle = `${painting.paintingNo}${painting.paintingName ? ` - ${painting.paintingName}` : ''}`;
   const technique = getLookupLabel(techniques, painting.techniqueId, locale);
   const material = getLookupLabel(materials, painting.materialId, locale);
@@ -59,7 +59,6 @@ export function PaintingCard({ painting, variant = 'default', className }: Paint
             </div>
           }
         />
-
       </div>
 
       {/* Metadata */}
@@ -72,9 +71,7 @@ export function PaintingCard({ painting, variant = 'default', className }: Paint
           )}
 
           {techniqueMaterial && (
-            <p className="font-sans text-body-sm text-text-secondary">
-              {techniqueMaterial}
-            </p>
+            <p className="font-sans text-body-sm text-text-secondary">{techniqueMaterial}</p>
           )}
 
           <p className="font-sans text-body-sm text-text-tertiary">{dimensions}</p>
