@@ -30,11 +30,6 @@ export function applyFilters(paintings: Painting[], filters: PaintingFilters): P
       if (!p.materialId || !filters.materialIds.includes(p.materialId)) return false;
     }
 
-    // Location city filter
-    if (filters.locationCityIds.length > 0) {
-      if (!p.locationCityId || !filters.locationCityIds.includes(p.locationCityId)) return false;
-    }
-
     // Owner filter
     if (filters.ownerIds.length > 0) {
       if (!p.ownerId || !filters.ownerIds.includes(p.ownerId)) return false;
@@ -59,7 +54,6 @@ export function countActiveFilters(filters: PaintingFilters): number {
   if (filters.years.length) count++;
   if (filters.techniqueIds.length) count++;
   if (filters.materialIds.length) count++;
-  if (filters.locationCityIds.length) count++;
   if (filters.ownerIds.length) count++;
   if (filters.widthMin !== null || filters.widthMax !== null) count++;
   if (filters.heightMin !== null || filters.heightMax !== null) count++;
@@ -103,7 +97,6 @@ export function parseFiltersFromParams(params: URLSearchParams): PaintingFilters
     years: parseNumbers('year'),
     techniqueIds: parseIds('technique'),
     materialIds: parseIds('material'),
-    locationCityIds: parseIds('city'),
     ownerIds: parseIds('owner'),
     widthMin: parseNumber('w_min'),
     widthMax: parseNumber('w_max'),
@@ -123,7 +116,6 @@ export function serializeFiltersToParams(filters: PaintingFilters): URLSearchPar
   if (filters.years.length) params.set('year', filters.years.join(','));
   if (filters.techniqueIds.length) params.set('technique', filters.techniqueIds.join(','));
   if (filters.materialIds.length) params.set('material', filters.materialIds.join(','));
-  if (filters.locationCityIds.length) params.set('city', filters.locationCityIds.join(','));
   if (filters.ownerIds.length) params.set('owner', filters.ownerIds.join(','));
   if (filters.widthMin !== null) params.set('w_min', String(filters.widthMin));
   if (filters.widthMax !== null) params.set('w_max', String(filters.widthMax));

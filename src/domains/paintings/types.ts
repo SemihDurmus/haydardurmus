@@ -49,7 +49,6 @@ export interface PaintingFilters {
   years: number[];
   techniqueIds: string[];
   materialIds: string[];
-  locationCityIds: string[];
   ownerIds: string[];
   widthMin: number | null;
   widthMax: number | null;
@@ -75,7 +74,6 @@ export const EMPTY_FILTERS: PaintingFilters = {
   years: [],
   techniqueIds: [],
   materialIds: [],
-  locationCityIds: [],
   ownerIds: [],
   widthMin: null,
   widthMax: null,
@@ -89,7 +87,6 @@ export const FILTER_PARAMS = {
   years: 'year',
   techniqueIds: 'technique',
   materialIds: 'material',
-  locationCityIds: 'city',
   ownerIds: 'owner',
   widthMin: 'w_min',
   widthMax: 'w_max',

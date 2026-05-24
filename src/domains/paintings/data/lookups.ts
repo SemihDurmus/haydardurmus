@@ -1,28 +1,23 @@
-import type {
-  PaintingTechnique,
-  PaintingMaterial,
-  PaintingCity,
-  PaintingOwner,
-} from '../types';
+import type { PaintingTechnique, PaintingMaterial, PaintingCity, PaintingOwner } from '../types';
 
 export const techniques: PaintingTechnique[] = [
-  { id: 'oil', label: 'Oil on Canvas', labelTr: 'Tuval Üzerine Yağlıboya' },
-  { id: 'acrylic', label: 'Acrylic on Canvas', labelTr: 'Tuval Üzerine Akrilik' },
+  { id: 'oil', label: 'Oil', labelTr: 'Yağlıboya' },
+  { id: 'acrylic', label: 'Acrylic', labelTr: 'Akrilik' },
   { id: 'watercolor', label: 'Watercolor', labelTr: 'Suluboya' },
   { id: 'mixed', label: 'Mixed Media', labelTr: 'Karma Teknik' },
   { id: 'pastel', label: 'Pastel', labelTr: 'Pastel' },
   { id: 'charcoal', label: 'Charcoal', labelTr: 'Karakalem' },
-  { id: 'ink', label: 'Ink', labelTr: 'Mürekkep' },
-  { id: 'tempera', label: 'Tempera', labelTr: 'Tempera' },
+  { id: 'collage', label: 'Collage', labelTr: 'Kolaj' },
 ];
 
 export const materials: PaintingMaterial[] = [
   { id: 'canvas', label: 'Canvas', labelTr: 'Tuval' },
-  { id: 'linen', label: 'Linen', labelTr: 'Keten' },
+  { id: 'canvasPanel', label: 'Canvas Panel', labelTr: 'Pres Tuval' },
   { id: 'paper', label: 'Paper', labelTr: 'Kağıt' },
-  { id: 'board', label: 'Board', labelTr: 'Sert Zemin' },
   { id: 'wood', label: 'Wood Panel', labelTr: 'Ahşap Panel' },
+  { id: 'plywood', label: 'Plywood', labelTr: 'Kontrplak' },
   { id: 'cardboard', label: 'Cardboard', labelTr: 'Karton' },
+  { id: 'pvcFoamBoard', label: 'PVC Foam Board', labelTr: 'Duralit' },
 ];
 
 export const cities: PaintingCity[] = [

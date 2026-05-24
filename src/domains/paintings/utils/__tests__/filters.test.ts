@@ -87,17 +87,11 @@ describe('applyFilters', () => {
     expect(result[0].id).toBe('p002');
   });
 
-  it('filters by location city', () => {
-    const filters: PaintingFilters = { ...EMPTY_FILTERS, locationCityIds: ['istanbul'] };
-    const result = applyFilters(mockPaintings, filters);
-    expect(result).toHaveLength(2);
-  });
-
   it('filters by multiple dimensions simultaneously', () => {
     const filters: PaintingFilters = {
       ...EMPTY_FILTERS,
       techniqueIds: ['oil'],
-      locationCityIds: ['istanbul'],
+      materialIds: ['canvas'],
     };
     const result = applyFilters(mockPaintings, filters);
     expect(result).toHaveLength(1);

@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import type { Painting } from '../types';
-import { formatDimensions, formatYear, getPaintingDisplayName } from '@shared/utils/format';
+import { formatDimensions, getPaintingDisplayName } from '@shared/utils/format';
 import { getLookupLabel, techniques, materials } from '../data/lookups';
+import { formatTechniqueMaterial } from '../utils/formatTechniqueMaterial';
 import { buildRoute } from '@app/router/routes';
 import { cn } from '@shared/utils/cn';
 import { PaintingImage } from './PaintingImage';
@@ -18,10 +19,11 @@ export function PaintingCard({ painting, variant = 'default', className }: Paint
   const locale = (i18n.language?.split('-')[0] ?? 'en') as 'en' | 'tr';
 
   const displayName = getPaintingDisplayName(painting.paintingName, painting.paintingNo, t('card.untitled'));
+  const metadataTitle = `${painting.paintingNo}${painting.paintingName ? ` - ${painting.paintingName}` : ''}`;
   const technique = getLookupLabel(techniques, painting.techniqueId, locale);
   const material = getLookupLabel(materials, painting.materialId, locale);
+  const techniqueMaterial = formatTechniqueMaterial(technique, material, locale);
   const dimensions = formatDimensions(painting.width, painting.height, painting.radius);
-  const year = formatYear(painting.year, '—');
 
   return (
     <Link
@@ -55,27 +57,20 @@ export function PaintingCard({ painting, variant = 'default', className }: Paint
           }
         />
 
-        {/* Year badge — top left */}
-        {painting.year && (
-          <span className="absolute left-3 top-3 bg-background/90 px-2 py-1 font-sans text-caption text-text-secondary backdrop-blur-sm">
-            {year}
-          </span>
-        )}
       </div>
 
       {/* Metadata */}
       {variant === 'default' && (
         <div className="mt-4 space-y-1">
-          <div className="flex items-baseline justify-between gap-2">
-            <p className="truncate font-serif text-h4 leading-tight">{displayName}</p>
-            <span className="shrink-0 font-sans text-caption text-text-tertiary">
-              {painting.paintingNo}
-            </span>
-          </div>
+          <p className="truncate font-serif text-h4 leading-tight">{metadataTitle}</p>
 
-          {(technique || material) && (
+          {painting.year && (
+            <p className="font-sans text-body-sm text-text-tertiary">{painting.year}</p>
+          )}
+
+          {techniqueMaterial && (
             <p className="font-sans text-body-sm text-text-secondary">
-              {[technique, material].filter(Boolean).join(', ')}
+              {techniqueMaterial}
             </p>
           )}
 

@@ -3,7 +3,7 @@ import { X, SlidersHorizontal } from 'lucide-react';
 import { Typography } from '@shared/ui/Typography';
 import { cn } from '@shared/utils/cn';
 import type { usePaintingFilters } from '../hooks/usePaintingFilters';
-import { techniques, materials, cities } from '../data/lookups';
+import { techniques, materials } from '../data/lookups';
 import { extractYears } from '../utils/filters';
 import type { Painting } from '../types';
 
@@ -138,18 +138,6 @@ export function PaintingFilterPanel({
             label={locale === 'tr' && mat.labelTr ? mat.labelTr : mat.label}
             active={filters.materialIds.includes(mat.id)}
             onClick={() => toggleMultiFilter('materialIds', mat.id)}
-          />
-        ))}
-      </FilterSection>
-
-      {/* Location */}
-      <FilterSection title={t('filters.location')}>
-        {cities.map((city) => (
-          <FilterChip
-            key={city.id}
-            label={locale === 'tr' && city.labelTr ? city.labelTr : city.label}
-            active={filters.locationCityIds.includes(city.id)}
-            onClick={() => toggleMultiFilter('locationCityIds', city.id)}
           />
         ))}
       </FilterSection>
