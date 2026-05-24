@@ -42,6 +42,7 @@
   },
   "detail": {
     "paintingNumber": "Eser no: {{number}}",
+    "viewFullSize": "Tam boy görüntüle",
     "catalogueNumber": "Katalog No.",
     "technique": "Teknik",
     "material": "Malzeme",
