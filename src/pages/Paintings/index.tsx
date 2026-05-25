@@ -32,17 +32,12 @@ export default function PaintingsPage() {
   return (
     <>
       {/* Page header */}
-      <Section spacing="sm" background="default" className="pb-4">
+      <Section spacing="none" background="default" className="pb-4 pt-6 md:pt-section-sm">
         <Container width="wide">
           <div>
             <PageTitle className="mb-4">{t('page.title')}</PageTitle>
             <div className="flex flex-row items-center justify-between gap-4">
               <SectionTitle style={{ marginBottom: 0 }}>{t('page.subtitle')}</SectionTitle>
-              {paintings && (
-                <Typography level="body-sm" tone="tertiary">
-                  {paintings.length} / {t('page.count', { count: paintings.length })}
-                </Typography>
-              )}
             </div>
           </div>
         </Container>
@@ -53,11 +48,7 @@ export default function PaintingsPage() {
           <div className="flex items-center justify-between border-b border-border pb-6">
             {/* Mobile filter toggle — hidden from lg breakpoint up */}
             <div className="lg:hidden">
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => setFilterPanelOpen((v) => !v)}
-              >
+              <Button variant="secondary" size="sm" onClick={() => setFilterPanelOpen((v) => !v)}>
                 <SlidersHorizontal className="h-3.5 w-3.5" />
                 {t('filters.title')}
                 {filterHook.activeFilterCount > 0 && (

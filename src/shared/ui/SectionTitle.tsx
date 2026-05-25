@@ -17,12 +17,14 @@ export function SectionTitle({
 }: SectionTitleProps) {
   return (
     <Typography
-      level="h3"
-      className={cn(className)}
+      as="h3"
+      className={cn(
+        'font-heading !text-[18px] !leading-tight md:!text-[26px]',
+        className
+      )}
       style={{
         color,
         fontFamily: 'Oswald, Inter, system-ui, sans-serif',
-        fontSize: '26px',
         marginBottom: '1rem',
         ...style,
       }}

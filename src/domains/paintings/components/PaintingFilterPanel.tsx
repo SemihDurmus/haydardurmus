@@ -69,8 +69,8 @@ export function PaintingFilterPanel({
   return (
     <aside className={cn('', className)}>
       {/* Panel header */}
-      <div className="flex items-center justify-between pb-4">
-        <div className="flex items-center gap-2">
+      <div className="flex items-center justify-start pb-4 lg:justify-between">
+        <div className="hidden items-center gap-2 lg:flex">
           <SlidersHorizontal className="h-4 w-4 text-text-tertiary" />
           <Typography level="label">{t('filters.title')}</Typography>
           {activeFilterCount > 0 && (
