@@ -21,8 +21,8 @@ export default function PaintingDetailPage() {
 
   if (isLoading) {
     return (
-      <Section spacing="lg">
-        <Container>
+      <Section spacing="none" className="pb-8 pt-4 md:pt-6">
+        <Container width="wide">
           <div className="h-96 animate-pulse rounded bg-muted" />
         </Container>
       </Section>
@@ -31,10 +31,16 @@ export default function PaintingDetailPage() {
 
   if (!painting) {
     return (
-      <Section spacing="lg">
-        <Container>
+      <Section spacing="none" className="pb-8 pt-4 md:pt-6">
+        <Container width="wide">
+          <Link
+            to={ROUTES.PAINTINGS}
+            className="mb-4 flex items-center gap-2 font-sans text-body-sm text-text-tertiary transition-colors hover:text-text-primary"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            {t('page.title')}
+          </Link>
           <Typography level="h2">Painting not found.</Typography>
-          <Link to={ROUTES.PAINTINGS}>← {t('detail.relatedWorks')}</Link>
         </Container>
       </Section>
     );
@@ -55,21 +61,17 @@ export default function PaintingDetailPage() {
 
   return (
     <>
-      <Section spacing="md" background="default" className="border-b border-border">
+      <Section spacing="none" background="default" className="pb-8 pt-4 md:pb-section-sm md:pt-6">
         <Container width="wide">
           <Link
             to={ROUTES.PAINTINGS}
-            className="mb-8 flex items-center gap-2 font-sans text-body-sm text-text-tertiary transition-colors hover:text-text-primary"
+            className="mb-4 flex items-center gap-2 font-sans text-body-sm text-text-tertiary transition-colors hover:text-text-primary"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             {t('page.title')}
           </Link>
-        </Container>
-      </Section>
 
-      <Section spacing="lg" background="default">
-        <Container width="wide">
-          <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
             {/* Image */}
             <PaintingImageFrame
               className="aspect-[3/4] bg-muted"
