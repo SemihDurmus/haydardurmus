@@ -20,15 +20,15 @@ function FilterChip({ label, active, onClick }: FilterChipProps) {
     <button
       onClick={onClick}
       className={cn(
-        'inline-flex items-center gap-1 rounded-full border px-3 py-1',
-        'font-sans text-label uppercase tracking-wider transition-all duration-150',
+        'inline-flex items-center gap-1 rounded-full border px-2.5 py-1',
+        'font-sans text-label uppercase tracking-wide transition-all duration-150',
         active
           ? 'border-primary-900 bg-primary-900 text-text-inverted'
           : 'border-border bg-transparent text-text-secondary hover:border-primary-400 hover:text-text-primary'
       )}
     >
       {label}
-      {active && <X className="h-2.5 w-2.5" />}
+      {active && <X className="h-2.5 w-2.5 shrink-0" />}
     </button>
   );
 }
@@ -44,7 +44,7 @@ function FilterSection({ title, children }: FilterSectionProps) {
       <Typography level="overline" tone="tertiary" className="mb-3 block">
         {title}
       </Typography>
-      <div className="flex flex-wrap gap-2">{children}</div>
+      <div className="flex flex-wrap gap-1.5">{children}</div>
     </div>
   );
 }

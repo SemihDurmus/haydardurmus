@@ -26,6 +26,22 @@ export const defaultNS = 'common';
 export const supportedLocales = ['en', 'tr'] as const;
 export type SupportedLocale = (typeof supportedLocales)[number];
 
+/** Sync <html lang> so CSS text-transform: uppercase uses locale-aware rules (e.g. tr: i → İ). */
+export function syncDocumentLang(language: string | undefined) {
+  const base = language?.split('-')[0] ?? 'en';
+  document.documentElement.lang = supportedLocales.includes(base as SupportedLocale)
+    ? base
+    : 'en';
+}
+
+i18n.on('initialized', () => {
+  syncDocumentLang(i18n.resolvedLanguage ?? i18n.language);
+});
+
+i18n.on('languageChanged', (lng) => {
+  syncDocumentLang(lng);
+});
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
@@ -65,5 +81,9 @@ i18n
       lookupLocalStorage: 'haydardurmus_lang',
     },
   });
+
+if (i18n.isInitialized) {
+  syncDocumentLang(i18n.resolvedLanguage ?? i18n.language);
+}
 
 export default i18n;
