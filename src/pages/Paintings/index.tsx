@@ -28,6 +28,12 @@ export default function PaintingsPage() {
   const [filterPanelOpen, setFilterPanelOpen] = useState(false);
   const filterHook = usePaintingFilters();
   const { data: paintings, isLoading } = usePaintings(filterHook.filters, filterHook.sort);
+  const totalCount = mockPaintings.length;
+  const hasActiveFilters = filterHook.activeFilterCount > 0;
+  const countLabel =
+    hasActiveFilters && paintings !== undefined
+      ? t('page.countFiltered', { filtered: paintings.length, total: totalCount })
+      : t('page.count', { count: totalCount });
 
   return (
     <>
@@ -36,8 +42,13 @@ export default function PaintingsPage() {
         <Container width="wide">
           <div>
             <PageTitle className="mb-4">{t('page.title')}</PageTitle>
-            <div className="flex flex-row items-center justify-between gap-4">
+            <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between md:gap-4">
               <SectionTitle style={{ marginBottom: 0 }}>{t('page.subtitle')}</SectionTitle>
+              {!isLoading && (
+                <Typography level="body-sm" tone="tertiary" className="shrink-0 md:text-right">
+                  {countLabel}
+                </Typography>
+              )}
             </div>
           </div>
         </Container>
@@ -80,9 +91,11 @@ export default function PaintingsPage() {
             </div>
           </div>
 
-          <div className="mt-8 flex gap-10">
-            {/* Filter panel — desktop always visible, mobile drawer */}
-            <aside className={`w-56 shrink-0 ${filterPanelOpen ? 'block' : 'hidden lg:block'}`}>
+          <div className="mt-8 flex flex-col gap-6 lg:flex-row lg:gap-10">
+            {/* Filter panel — stacked above grid on mobile, sidebar on lg+ */}
+            <aside
+              className={`w-full shrink-0 lg:w-56 ${filterPanelOpen ? 'block' : 'hidden lg:block'}`}
+            >
               <PaintingFilterPanel filterHook={filterHook} allPaintings={mockPaintings} />
             </aside>
 

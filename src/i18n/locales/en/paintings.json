@@ -3,13 +3,15 @@
     "title": "Paintings",
     "subtitle": "A catalogue of works spanning decades of artistic exploration",
     "count": "{{count}} work",
-    "count_plural": "{{count}} works"
+    "count_plural": "{{count}} works",
+    "countFiltered": "{{filtered}} / {{total}} works"
   },
   "filters": {
     "title": "Filter",
     "clear": "Clear All",
     "clearFilter": "Clear",
     "apply": "Apply Filters",
+    "all": "All",
     "year": "Year",
     "technique": "Technique",
     "material": "Material",

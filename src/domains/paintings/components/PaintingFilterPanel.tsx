@@ -13,9 +13,10 @@ interface FilterChipProps {
   label: string;
   active: boolean;
   onClick: () => void;
+  showRemoveIcon?: boolean;
 }
 
-function FilterChip({ label, active, onClick }: FilterChipProps) {
+function FilterChip({ label, active, onClick, showRemoveIcon = true }: FilterChipProps) {
   return (
     <button
       onClick={onClick}
@@ -28,7 +29,7 @@ function FilterChip({ label, active, onClick }: FilterChipProps) {
       )}
     >
       {label}
-      {active && <X className="h-2.5 w-2.5 shrink-0" />}
+      {active && showRemoveIcon && <X className="h-2.5 w-2.5 shrink-0" />}
     </button>
   );
 }
@@ -62,7 +63,7 @@ export function PaintingFilterPanel({
 }: PaintingFilterPanelProps) {
   const { t, i18n } = useTranslation('paintings');
   const locale = (i18n.language?.split('-')[0] ?? 'en') as 'en' | 'tr';
-  const { filters, toggleMultiFilter, clearFilters, activeFilterCount } = filterHook;
+  const { filters, toggleMultiFilter, clearFilters, activeFilterCount, setFilter } = filterHook;
 
   const availableYears = extractYears(allPaintings);
 
@@ -107,6 +108,12 @@ export function PaintingFilterPanel({
       {/* Year */}
       {availableYears.length > 0 && (
         <FilterSection title={t('filters.year')}>
+          <FilterChip
+            label={t('filters.all')}
+            active={filters.years.length === 0}
+            showRemoveIcon={false}
+            onClick={() => setFilter('years', [])}
+          />
           {availableYears.map((year) => (
             <FilterChip
               key={year}
@@ -120,6 +127,12 @@ export function PaintingFilterPanel({
 
       {/* Technique */}
       <FilterSection title={t('filters.technique')}>
+        <FilterChip
+          label={t('filters.all')}
+          active={filters.techniqueIds.length === 0}
+          showRemoveIcon={false}
+          onClick={() => setFilter('techniqueIds', [])}
+        />
         {techniques.map((tech) => (
           <FilterChip
             key={tech.id}
@@ -132,6 +145,12 @@ export function PaintingFilterPanel({
 
       {/* Material */}
       <FilterSection title={t('filters.material')}>
+        <FilterChip
+          label={t('filters.all')}
+          active={filters.materialIds.length === 0}
+          showRemoveIcon={false}
+          onClick={() => setFilter('materialIds', [])}
+        />
         {materials.map((mat) => (
           <FilterChip
             key={mat.id}

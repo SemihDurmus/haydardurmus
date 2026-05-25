@@ -3,13 +3,15 @@
     "title": "Eserler",
     "subtitle": "Onlarca yıllık sanatsal keşfi kapsayan bir eser kataloğu",
     "count": "{{count}} eser",
-    "count_plural": "{{count}} eser"
+    "count_plural": "{{count}} eser",
+    "countFiltered": "{{filtered}} / {{total}} eser"
   },
   "filters": {
     "title": "Filtrele",
     "clear": "Tümünü Temizle",
     "clearFilter": "Temizle",
     "apply": "Filtreleri Uygula",
+    "all": "Tümü",
     "year": "Yıl",
     "technique": "Teknik",
     "material": "Malzeme",
