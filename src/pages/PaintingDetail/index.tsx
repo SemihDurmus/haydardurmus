@@ -6,8 +6,10 @@ import { Section } from '@shared/ui/Section';
 import { Container } from '@shared/ui/Container';
 import { Typography } from '@shared/ui/Typography';
 import { usePainting } from '@domains/paintings/hooks/usePaintings';
+import { usePaintingGalleryNavigation } from '@domains/paintings/hooks/usePaintingGalleryNavigation';
 import { PaintingImageFrame } from '@domains/paintings/components/PaintingImageFrame';
 import { PaintingLightbox } from '@domains/paintings/components/PaintingLightbox';
+import { PaintingDetailNavigation } from '@domains/paintings/components/PaintingDetailNavigation';
 import { getLookupLabel, techniques, materials } from '@domains/paintings/data/lookups';
 import { formatDimensions, formatYear, getPaintingDisplayName } from '@shared/utils/format';
 import { ROUTES } from '@app/router/routes';
@@ -17,6 +19,7 @@ export default function PaintingDetailPage() {
   const { t, i18n } = useTranslation(['paintings', 'common']);
   const locale = (i18n.language?.split('-')[0] ?? 'en') as 'en' | 'tr';
   const { data: painting, isLoading } = usePainting(id);
+  const galleryNav = usePaintingGalleryNavigation(id);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   if (isLoading) {
@@ -73,30 +76,41 @@ export default function PaintingDetailPage() {
 
           <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-2 lg:gap-12 lg:pt-4">
             {/* Image — frame matches painting aspect ratio (no letterbox bars) */}
-            <PaintingImageFrame
-              className="max-h-[70dvh]"
-              paintingNo={painting.paintingNo}
-              alt={displayName}
-              title={displayName}
-              loading="eager"
-              fallback={
-                <div className="flex h-full w-full items-center justify-center">
-                  <Typography level="h3" tone="tertiary">
-                    {painting.paintingNo}
-                  </Typography>
-                </div>
-              }
-              overlay={
-                <button
-                  type="button"
-                  onClick={() => setIsLightboxOpen(true)}
-                  aria-label={t('detail.viewFullSize')}
-                  className="absolute bottom-2 right-2 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-primary-950/60 text-white transition-colors hover:bg-primary-950/80"
-                >
-                  <Expand className="h-4 w-4" aria-hidden />
-                </button>
-              }
-            />
+            <div className="relative w-full">
+              <PaintingImageFrame
+                className="max-h-[70dvh]"
+                paintingNo={painting.paintingNo}
+                alt={displayName}
+                title={displayName}
+                loading="eager"
+                fallback={
+                  <div className="flex h-full w-full items-center justify-center">
+                    <Typography level="h3" tone="tertiary">
+                      {painting.paintingNo}
+                    </Typography>
+                  </div>
+                }
+                overlay={
+                  <button
+                    type="button"
+                    onClick={() => setIsLightboxOpen(true)}
+                    aria-label={t('detail.viewFullSize')}
+                    className="absolute bottom-2 right-2 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-primary-950/60 text-white transition-colors hover:bg-primary-950/80"
+                  >
+                    <Expand className="h-4 w-4" aria-hidden />
+                  </button>
+                }
+              />
+              {galleryNav.showNavigation && (
+                <PaintingDetailNavigation
+                  variant="belowImage"
+                  prev={galleryNav.prev}
+                  next={galleryNav.next}
+                  prevLabel={t('detail.previousPainting')}
+                  nextLabel={t('detail.nextPainting')}
+                />
+              )}
+            </div>
 
             {/* Details */}
             <div className="flex flex-col justify-center">
@@ -119,6 +133,16 @@ export default function PaintingDetailPage() {
               </dl>
             </div>
           </div>
+
+          {galleryNav.showNavigation && (
+            <PaintingDetailNavigation
+              variant="bar"
+              prev={galleryNav.prev}
+              next={galleryNav.next}
+              prevLabel={t('detail.previousPainting')}
+              nextLabel={t('detail.nextPainting')}
+            />
+          )}
         </Container>
       </Section>
 

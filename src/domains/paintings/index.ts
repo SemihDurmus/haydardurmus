@@ -8,4 +8,6 @@ export * from './components/PaintingGrid';
 export * from './components/PaintingFilterPanel';
 export * from './hooks/usePaintings';
 export * from './hooks/usePaintingFilters';
+export * from './hooks/usePaintingGalleryNavigation';
+export * from './components/PaintingDetailNavigation';
 export * from './utils';

@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import type { Painting } from '../types';
 import { formatDimensions, getPaintingDisplayName } from '@shared/utils/format';
@@ -17,6 +17,7 @@ interface PaintingCardProps {
 
 export function PaintingCard({ painting, variant = 'default', className }: PaintingCardProps) {
   const { t, i18n } = useTranslation('paintings');
+  const location = useLocation();
   const locale = (i18n.language?.split('-')[0] ?? 'en') as 'en' | 'tr';
 
   const displayName = getPaintingDisplayName(painting.paintingName, t('card.untitled'));
@@ -29,7 +30,7 @@ export function PaintingCard({ painting, variant = 'default', className }: Paint
 
   return (
     <Link
-      to={buildRoute.paintingDetail(painting.id)}
+      to={{ pathname: buildRoute.paintingDetail(painting.id), search: location.search }}
       className={cn('group block', className)}
       aria-label={`View ${displayName}`}
     >

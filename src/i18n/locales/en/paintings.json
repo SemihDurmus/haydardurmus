@@ -52,6 +52,8 @@
     "year": "Year",
     "location": "Location",
     "collection": "Collection",
-    "relatedWorks": "Related Works"
+    "relatedWorks": "Related Works",
+    "previousPainting": "Previous painting",
+    "nextPainting": "Next painting"
   }
 }
