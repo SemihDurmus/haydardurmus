@@ -42,36 +42,25 @@ export default function PaintingsPage() {
         <Container width="wide">
           <div>
             <PageTitle className="mb-4">{t('page.title')}</PageTitle>
-            <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between md:gap-4">
-              <SectionTitle style={{ marginBottom: 0 }}>{t('page.subtitle')}</SectionTitle>
-              {!isLoading && (
-                <Typography level="body-sm" tone="tertiary" className="shrink-0 md:text-right">
-                  {countLabel}
-                </Typography>
-              )}
-            </div>
+            <SectionTitle style={{ marginBottom: 0 }}>{t('page.subtitle')}</SectionTitle>
           </div>
         </Container>
       </Section>
       {/* Content */}
       <Section spacing="md" background="default" className="pt-8">
         <Container width="wide">
-          <div className="flex items-center justify-between border-b border-border pb-6">
-            {/* Mobile filter toggle — hidden from lg breakpoint up */}
-            <div className="lg:hidden">
-              <Button variant="secondary" size="sm" onClick={() => setFilterPanelOpen((v) => !v)}>
-                <SlidersHorizontal className="h-3.5 w-3.5" />
-                {t('filters.title')}
-                {filterHook.activeFilterCount > 0 && (
-                  <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary-900 text-caption text-text-inverted">
-                    {filterHook.activeFilterCount}
-                  </span>
-                )}
-              </Button>
-            </div>
-
-            {/* Sort */}
-            <div className="ml-auto flex items-center gap-2">
+          {/* Mobile: filter + sort */}
+          <div className="flex items-center justify-between border-b border-border pb-4 lg:hidden">
+            <Button variant="secondary" size="sm" onClick={() => setFilterPanelOpen((v) => !v)}>
+              <SlidersHorizontal className="h-3.5 w-3.5" />
+              {t('filters.title')}
+              {filterHook.activeFilterCount > 0 && (
+                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary-900 text-caption text-text-inverted">
+                  {filterHook.activeFilterCount}
+                </span>
+              )}
+            </Button>
+            <div className="flex items-center gap-2">
               <Typography level="label" tone="tertiary">
                 {t('sort.label')}
               </Typography>
@@ -91,12 +80,43 @@ export default function PaintingsPage() {
             </div>
           </div>
 
-          <div className="mt-8 flex flex-col gap-6 lg:flex-row lg:gap-10">
+          {/* Desktop: count + sort on one row, vertically centered */}
+          <div className="hidden items-center justify-between border-b border-border pb-6 lg:flex">
+            {!isLoading && (
+              <Typography level="body-sm" tone="tertiary" className="leading-none">
+                {countLabel}
+              </Typography>
+            )}
+            <div className="flex items-center gap-2">
+              <Typography level="label" tone="tertiary" className="leading-none">
+                {t('sort.label')}
+              </Typography>
+              <select
+                value={filterHook.sort}
+                onChange={(e) =>
+                  filterHook.setSort(e.target.value as Parameters<typeof filterHook.setSort>[0])
+                }
+                className="border-0 bg-transparent font-sans text-body-sm leading-none text-text-primary focus:outline-none"
+              >
+                {SORT_OPTIONS.map(({ value, labelKey }) => (
+                  <option key={value} value={value}>
+                    {t(labelKey)}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="mt-4 flex flex-col gap-6 lg:mt-8 lg:flex-row lg:gap-10">
             {/* Filter panel — stacked above grid on mobile, sidebar on lg+ */}
             <aside
               className={`w-full shrink-0 lg:w-56 ${filterPanelOpen ? 'block' : 'hidden lg:block'}`}
             >
-              <PaintingFilterPanel filterHook={filterHook} allPaintings={mockPaintings} />
+              <PaintingFilterPanel
+                filterHook={filterHook}
+                allPaintings={mockPaintings}
+                countLabel={!isLoading ? countLabel : undefined}
+              />
             </aside>
 
             {/* Grid */}

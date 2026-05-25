@@ -53,12 +53,14 @@ function FilterSection({ title, children }: FilterSectionProps) {
 interface PaintingFilterPanelProps {
   filterHook: FilterHook;
   allPaintings: Painting[];
+  countLabel?: string;
   className?: string;
 }
 
 export function PaintingFilterPanel({
   filterHook,
   allPaintings,
+  countLabel,
   className,
 }: PaintingFilterPanelProps) {
   const { t, i18n } = useTranslation('paintings');
@@ -69,9 +71,28 @@ export function PaintingFilterPanel({
 
   return (
     <aside className={cn('', className)}>
-      {/* Panel header */}
-      <div className="flex items-center justify-start pb-4 lg:justify-between">
-        <div className="hidden items-center gap-2 lg:flex">
+      {/* Panel header — mobile: count + clear; desktop: filter title + clear */}
+      <div className="flex items-center justify-between pb-4 lg:hidden">
+        {activeFilterCount > 0 ? (
+          <button
+            onClick={clearFilters}
+            className="shrink-0 font-sans text-body-sm text-text-tertiary transition-colors hover:text-text-primary"
+          >
+            {t('filters.clear')}
+          </button>
+        ) : (
+          <span />
+        )}
+        {countLabel ? (
+          <Typography level="body-sm" tone="tertiary">
+            {countLabel}
+          </Typography>
+        ) : (
+          <span />
+        )}
+      </div>
+      <div className="hidden items-center justify-between pb-4 lg:flex">
+        <div className="flex items-center gap-2">
           <SlidersHorizontal className="h-4 w-4 text-text-tertiary" />
           <Typography level="label">{t('filters.title')}</Typography>
           {activeFilterCount > 0 && (
