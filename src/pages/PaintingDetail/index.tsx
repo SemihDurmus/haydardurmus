@@ -71,10 +71,10 @@ export default function PaintingDetailPage() {
             {t('page.title')}
           </Link>
 
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
-            {/* Image */}
+          <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-2 lg:gap-12 lg:pt-4">
+            {/* Image — frame matches painting aspect ratio (no letterbox bars) */}
             <PaintingImageFrame
-              className="aspect-[3/4] bg-muted"
+              className="max-h-[70dvh]"
               paintingNo={painting.paintingNo}
               alt={displayName}
               title={displayName}

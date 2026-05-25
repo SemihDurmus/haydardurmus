@@ -14,6 +14,39 @@ interface PaintingImageFrameProps {
   overlay?: ReactNode;
 }
 
+function parseCssLengthToPx(value: string, container: HTMLElement): number {
+  const numeric = parseFloat(value);
+  if (Number.isNaN(numeric)) return 0;
+
+  if (value.endsWith('px')) return numeric;
+  if (value.endsWith('dvh')) return (numeric / 100) * window.innerHeight;
+  if (value.endsWith('vh')) return (numeric / 100) * document.documentElement.clientHeight;
+  if (value.endsWith('vw')) return (numeric / 100) * document.documentElement.clientWidth;
+  if (value.endsWith('%')) return (numeric / 100) * container.clientHeight;
+
+  return numeric;
+}
+
+function getContainerBounds(container: HTMLElement) {
+  const style = getComputedStyle(container);
+  let maxWidth = container.clientWidth;
+  let maxHeight = container.clientHeight;
+
+  if (style.maxWidth && style.maxWidth !== 'none') {
+    maxWidth = Math.min(maxWidth, parseCssLengthToPx(style.maxWidth, container));
+  }
+
+  if (maxHeight < 1 && style.maxHeight && style.maxHeight !== 'none') {
+    maxHeight = parseCssLengthToPx(style.maxHeight, container);
+  }
+
+  if (maxHeight < 1) {
+    maxHeight = Number.POSITIVE_INFINITY;
+  }
+
+  return { maxWidth, maxHeight };
+}
+
 export function PaintingImageFrame({
   paintingNo,
   alt,
@@ -34,8 +67,7 @@ export function PaintingImageFrame({
     const naturalSize = naturalSizeRef.current;
     if (!container || !naturalSize) return;
 
-    const maxWidth = container.clientWidth;
-    const maxHeight = container.clientHeight;
+    const { maxWidth, maxHeight } = getContainerBounds(container);
     const scale = Math.min(
       maxWidth / naturalSize.width,
       maxHeight / naturalSize.height,
@@ -76,13 +108,20 @@ export function PaintingImageFrame({
   );
 
   return (
-    <div ref={containerRef} className={cn('flex items-center justify-center', className)}>
+    <div
+      ref={containerRef}
+      className={cn(
+        'flex w-full items-center justify-center',
+        !frameSize && 'bg-muted',
+        className
+      )}
+    >
       <div
         className="relative shrink-0"
         style={
           frameSize
             ? { width: frameSize.width, height: frameSize.height }
-            : { maxHeight: '100%', maxWidth: '100%' }
+            : { width: '100%', maxHeight: 'inherit' }
         }
       >
         <PaintingImage
