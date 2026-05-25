@@ -10,6 +10,7 @@ import { PaintingFilterPanel } from '@domains/paintings/components/PaintingFilte
 import { usePaintings } from '@domains/paintings/hooks/usePaintings';
 import { usePaintingFilters } from '@domains/paintings/hooks/usePaintingFilters';
 import { mockPaintings } from '@domains/paintings/data/mockPaintings';
+import { PageTitle, SectionTitle } from '@/shared/ui';
 
 const SORT_OPTIONS = [
   { value: 'year_desc', labelKey: 'sort.newest' },
@@ -31,43 +32,41 @@ export default function PaintingsPage() {
   return (
     <>
       {/* Page header */}
-      <Section spacing="sm" background="default" className="border-b border-border">
+      <Section spacing="sm" background="default" className="pb-4">
         <Container width="wide">
-          <div className="py-8">
-            <Typography level="overline" tone="tertiary" className="mb-2 block">
-              {t('page.subtitle')}
-            </Typography>
-            <div className="flex items-end justify-between gap-4">
-              <Typography level="h1">{t('page.title')}</Typography>
+          <div>
+            <PageTitle className="mb-4">{t('page.title')}</PageTitle>
+            <div className="flex flex-row items-center justify-between gap-4">
+              <SectionTitle style={{ marginBottom: 0 }}>{t('page.subtitle')}</SectionTitle>
               {paintings && (
                 <Typography level="body-sm" tone="tertiary">
-                  {paintings.length} {t('page.count', { count: paintings.length })}
+                  {paintings.length} / {t('page.count', { count: paintings.length })}
                 </Typography>
               )}
             </div>
           </div>
         </Container>
       </Section>
-
       {/* Content */}
-      <Section spacing="md" background="default">
+      <Section spacing="md" background="default" className="pt-8">
         <Container width="wide">
           <div className="flex items-center justify-between border-b border-border pb-6">
-            {/* Mobile filter toggle */}
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => setFilterPanelOpen((v) => !v)}
-              className="lg:hidden"
-            >
-              <SlidersHorizontal className="h-3.5 w-3.5" />
-              {t('filters.title')}
-              {filterHook.activeFilterCount > 0 && (
-                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary-900 text-caption text-text-inverted">
-                  {filterHook.activeFilterCount}
-                </span>
-              )}
-            </Button>
+            {/* Mobile filter toggle — hidden from lg breakpoint up */}
+            <div className="lg:hidden">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => setFilterPanelOpen((v) => !v)}
+              >
+                <SlidersHorizontal className="h-3.5 w-3.5" />
+                {t('filters.title')}
+                {filterHook.activeFilterCount > 0 && (
+                  <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary-900 text-caption text-text-inverted">
+                    {filterHook.activeFilterCount}
+                  </span>
+                )}
+              </Button>
+            </div>
 
             {/* Sort */}
             <div className="ml-auto flex items-center gap-2">
@@ -76,7 +75,9 @@ export default function PaintingsPage() {
               </Typography>
               <select
                 value={filterHook.sort}
-                onChange={(e) => filterHook.setSort(e.target.value as Parameters<typeof filterHook.setSort>[0])}
+                onChange={(e) =>
+                  filterHook.setSort(e.target.value as Parameters<typeof filterHook.setSort>[0])
+                }
                 className="border-0 bg-transparent font-sans text-body-sm text-text-primary focus:outline-none"
               >
                 {SORT_OPTIONS.map(({ value, labelKey }) => (
@@ -91,19 +92,12 @@ export default function PaintingsPage() {
           <div className="mt-8 flex gap-10">
             {/* Filter panel — desktop always visible, mobile drawer */}
             <aside className={`w-56 shrink-0 ${filterPanelOpen ? 'block' : 'hidden lg:block'}`}>
-              <PaintingFilterPanel
-                filterHook={filterHook}
-                allPaintings={mockPaintings}
-              />
+              <PaintingFilterPanel filterHook={filterHook} allPaintings={mockPaintings} />
             </aside>
 
             {/* Grid */}
             <div className="min-w-0 flex-1">
-              <PaintingGrid
-                paintings={paintings ?? []}
-                isLoading={isLoading}
-                columns={3}
-              />
+              <PaintingGrid paintings={paintings ?? []} isLoading={isLoading} columns={3} />
             </div>
           </div>
         </Container>
