@@ -22,7 +22,7 @@ export default function BiographyPage() {
   return (
     <>
       {/* Hero */}
-      <Section spacing="none" background="default" className="py-8 md:py-section-lg">
+      <Section spacing="none" background="default" className="pb-8 pt-6 md:pb-section-lg md:pt-section-sm">
         <Container width="wide">
           <div className="grid grid-cols-1 gap-8 md:gap-12 lg:grid-cols-[minmax(0,1fr)_380px] xl:grid-cols-[minmax(0,1fr)_440px]">
             <div>

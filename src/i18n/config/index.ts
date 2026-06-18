@@ -10,7 +10,7 @@ import enHome from '../locales/en/home.json';
 import enMedia from '../locales/en/media.json';
 import enBook from '../locales/en/book.json';
 import enContact from '../locales/en/contact.json';
-import enCollections from '../locales/en/collections.json';
+import enCollection from '../locales/en/collection.json';
 
 // Turkish
 import trCommon from '../locales/tr/common.json';
@@ -20,7 +20,7 @@ import trHome from '../locales/tr/home.json';
 import trMedia from '../locales/tr/media.json';
 import trBook from '../locales/tr/book.json';
 import trContact from '../locales/tr/contact.json';
-import trCollections from '../locales/tr/collections.json';
+import trCollection from '../locales/tr/collection.json';
 
 export const defaultNS = 'common';
 export const supportedLocales = ['en', 'tr'] as const;
@@ -55,7 +55,7 @@ i18n
         media: enMedia,
         book: enBook,
         contact: enContact,
-        collections: enCollections,
+        collection: enCollection,
       },
       tr: {
         common: trCommon,
@@ -65,7 +65,7 @@ i18n
         media: trMedia,
         book: trBook,
         contact: trContact,
-        collections: trCollections,
+        collection: trCollection,
       },
     },
 

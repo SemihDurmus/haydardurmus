@@ -12,7 +12,7 @@ import { useTranslatedText } from '@shared/hooks/useTranslatedText';
 
 export default function CollectionDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { t } = useTranslation('collections');
+  const { t } = useTranslation('collection');
   const collection = mockCollections.find((c) => c.id === id);
   const title = useTranslatedText(collection?.title ?? { en: '', tr: '' });
   const description = useTranslatedText(collection?.description ?? { en: '', tr: '' });
