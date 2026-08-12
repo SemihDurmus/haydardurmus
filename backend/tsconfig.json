@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2022"],
+    "outDir": "dist",
+    "rootDir": ".",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true, // esModuleInterop` turns this on implicitly, but it's listed explicitly for clarity.
+    "forceConsistentCasingInFileNames": true, // import './User'` vs `./user` is an error. Saves you from "works on my Mac, breaks in Linux CI.
+    "resolveJsonModule": true, // //  allows `import x from './foo.json'` with types.
+    "strict": true, // the umbrella flag: `strictNullChecks`, `noImplicitAny`, etc. The single most valuable setting.
+    "noUncheckedIndexedAccess": true, // makes `arr[i]` typed as `T | undefined`, forcing you to handle the "index might be empty" case. Prevents a whole class of runtime `undefined` bugs.
+    "noImplicitOverride": true, // you must write the `override` keyword when overriding a base method, so renames in a base class can't silently orphan a subclass method.
+    "skipLibCheck": true, // it stops verifying that the libraries' declaration files are self-consistent. It does **not** skip checking *your* code against those types; when your code calls `express(...)`, that call is still checked against express's types as written.
+    "sourceMap": true, // when `true` generates `.map` files that let debuggers map compiled JavaScript back to your original TypeScript, so you can set breakpoints in your actual source.
+    "declaration": false, //  when `true` generates `.d.ts` type-definition files alongside your JavaScript. You want this if you're publishing a library so consumers get type information.
+    "types": ["node"], // This one's about **ambient global types** — types that exist *everywhere* in your code without you importing anything. By default, TypeScript automatically pulls in **every** `@types/*` package it finds in `node_modules/@types` and makes their globals available project-wide. "types": ["node"]` says: *"for the auto-loaded globals, include **only** `@types/node`."* That gives you Node's globals — `process`, `Buffer`, `__dirname`, `setTimeout`, etc. — and nothing else by default.
+  },
+  "include": ["src/**/*", "scripts/**/*", "prisma.config.ts"],
+  "exclude": ["node_modules", "dist"],
+}

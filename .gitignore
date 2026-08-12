@@ -1,36 +1,36 @@
 # Dependencies
-node_modules
+node_modules/
 .pnp
 .pnp.js
 
 # Build outputs
-dist
-dist-ssr
-build
+dist/
+dist-ssr/
+build/
 
-# Environment files
+# Environment files (each app keeps a tracked .env.example instead)
 .env
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*.local
 
 # Logs
+*.log
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log*
 pnpm-debug.log*
-lerna-debug.log*
 
-# Editor
+# Uploaded painting images (binaries) — keep the folder, ignore its contents
+backend/public/paintings/*
+!backend/public/paintings/.gitkeep
+
+# Local agent/editor settings
+.claude/settings.local.json
+
+# Editor / OS
 .vscode/*
 !.vscode/extensions.json
 .idea
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
 *.sw?
 
 # Testing
@@ -39,3 +39,10 @@ coverage
 
 # TypeScript
 *.tsbuildinfo
+
+*.txt
+*.md
+package-lock.json
+docs/
+.claude/
+.sql

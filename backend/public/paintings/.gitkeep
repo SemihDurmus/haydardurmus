@@ -1,0 +1,3 @@
+# Painting images are uploaded into per-painting subfolders here
+# (public/paintings/<painting-id>/<file>). The image files themselves are
+# gitignored; this file just keeps the folder in version control.

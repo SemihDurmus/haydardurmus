@@ -1,0 +1,120 @@
+import { Router } from "express";
+import { z, registry } from "../openapi/registry";
+import {
+  IdParam,
+  PaginationQuery,
+  NameSearchQuery,
+  ErrorResponse,
+  ValidationErrorResponse,
+  paginated,
+  jsonBody,
+  jsonResponse,
+  emptyResponse,
+} from "../openapi/common";
+import * as controller from "../controllers/currency";
+import { validate } from "../middleware/validate";
+
+const router = Router();
+
+// The one variation in this phase: currency carries a required `symbol`
+// (e.g. "₺", "$") alongside `name`. Capped at 10 to match VARCHAR(10).
+const Currency = z
+  .object({
+    id: z.number().int(),
+    name: z.string().max(100),
+    symbol: z.string().max(10),
+  })
+  .openapi("Currency");
+
+const CurrencyCreate = z
+  .object({
+    name: z.string().trim().min(1).max(100).openapi({ example: "TRY" }),
+    symbol: z.string().trim().min(1).max(10).openapi({ example: "₺" }),
+  })
+  .openapi("CurrencyCreate");
+
+const CurrencyList = paginated(Currency, "CurrencyList");
+
+// List query: name lookup (?name=/?search=) plus pagination.
+const CurrencyListQuery = z.object({
+  name: NameSearchQuery.shape.name,
+  search: NameSearchQuery.shape.search,
+  page: PaginationQuery.shape.page,
+  limit: PaginationQuery.shape.limit,
+});
+
+const tag = "Currencies";
+const basePath = "/api/currencies";
+
+registry.registerPath({
+  method: "get",
+  path: basePath,
+  tags: [tag],
+  summary: "List currencies",
+  request: { query: CurrencyListQuery },
+  responses: { 200: jsonResponse("Paginated list", CurrencyList) },
+});
+
+registry.registerPath({
+  method: "get",
+  path: `${basePath}/{id}`,
+  tags: [tag],
+  summary: "Get a currency by id",
+  request: { params: IdParam },
+  responses: {
+    200: jsonResponse("The currency", Currency),
+    404: jsonResponse("Not found", ErrorResponse),
+  },
+});
+
+registry.registerPath({
+  method: "post",
+  path: basePath,
+  tags: [tag],
+  summary: "Create a currency",
+  request: { body: jsonBody(CurrencyCreate) },
+  responses: {
+    201: jsonResponse("Created", Currency),
+    400: jsonResponse("Validation failed", ValidationErrorResponse),
+    409: jsonResponse("Unique constraint violation", ErrorResponse),
+  },
+});
+
+registry.registerPath({
+  method: "put",
+  path: `${basePath}/{id}`,
+  tags: [tag],
+  summary: "Update a currency",
+  request: { params: IdParam, body: jsonBody(CurrencyCreate) },
+  responses: {
+    200: jsonResponse("Updated", Currency),
+    400: jsonResponse("Validation failed", ValidationErrorResponse),
+    404: jsonResponse("Not found", ErrorResponse),
+    409: jsonResponse("Unique constraint violation", ErrorResponse),
+  },
+});
+
+registry.registerPath({
+  method: "delete",
+  path: `${basePath}/{id}`,
+  tags: [tag],
+  summary: "Delete a currency",
+  request: { params: IdParam },
+  responses: {
+    204: emptyResponse("Deleted"),
+    400: jsonResponse("Foreign key constraint failed", ErrorResponse),
+    404: jsonResponse("Not found", ErrorResponse),
+  },
+});
+
+router.get("/", validate({ query: CurrencyListQuery }), controller.list);
+router.get("/:id", validate({ params: IdParam }), controller.get);
+router.post("/", validate({ body: CurrencyCreate }), controller.create);
+router.put(
+  "/:id",
+  validate({ params: IdParam, body: CurrencyCreate }),
+  controller.update,
+);
+router.delete("/:id", validate({ params: IdParam }), controller.remove);
+
+export default router;

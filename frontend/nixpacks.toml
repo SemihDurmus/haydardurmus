@@ -1,0 +1,20 @@
+# Build plan for the Railway web service.
+#
+# Deliberately minimal: no [phases.setup]. Nixpacks detects this as a static
+# site and puts Caddy in the image itself, so declaring `caddy` in nixPkgs here
+# installs a SECOND copy from a different nixpkgs pin, and the build dies with
+#   error: Unable to build profile. There is a conflict for the following files:
+#          …/caddy-2.10.2/lib/systemd/system/caddy-api.service
+#          …/<our-pin>-env/lib/systemd/system/caddy-api.service
+# Node comes from the `engines` field in package.json — no need to pin it here.
+#
+# What's left is the part Nixpacks can't infer: this app has no `start` script
+# (it's a bundle, not a server), so the container is told to run Caddy against
+# the Caddyfile next to this file.
+[phases.build]
+# Vite inlines VITE_API_URL here, at build time — it must already be set as a
+# variable on this service before `railway up`, and changing it needs a redeploy.
+cmds = ["npm run build"]
+
+[start]
+cmd = "caddy run --config Caddyfile --adapter caddyfile"

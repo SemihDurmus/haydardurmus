@@ -1,0 +1,165 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Artist {
+  id            Int         @id @default(autoincrement())
+  nationalityId Int         @map("nationality_id")
+  firstName     String      @map("first_name") @db.VarChar(100)
+  lastName      String      @map("last_name") @db.VarChar(100)
+  birthdate     DateTime?   @db.Date
+  description   String?
+  createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime    @default(now()) @map("updated_at") @db.Timestamptz(6)
+  nationality   Nationality @relation(fields: [nationalityId], references: [id], onUpdate: NoAction)
+  paintings     Painting[]
+
+  @@map("artist")
+}
+
+model City {
+  id        Int        @id @default(autoincrement())
+  name      String     @db.VarChar(100)
+  countryId Int        @map("country_id")
+  country   Country    @relation(fields: [countryId], references: [id], onUpdate: NoAction)
+  owners    Owner[]
+  paintings Painting[]
+
+  @@unique([name, countryId])
+  @@map("city")
+}
+
+model ContactMessage {
+  id         Int       @id @default(autoincrement())
+  firstName  String    @map("first_name") @db.VarChar(100)
+  lastName   String    @map("last_name") @db.VarChar(100)
+  email      String    @db.VarChar(255)
+  message    String
+  paintingId Int?      @map("painting_id")
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  isRead     Boolean   @default(false) @map("is_read")
+  painting   Painting? @relation(fields: [paintingId], references: [id], onUpdate: NoAction)
+
+  @@map("contact_message")
+}
+
+model Country {
+  id     Int    @id @default(autoincrement())
+  name   String @unique @db.VarChar(100)
+  cities City[]
+
+  @@map("country")
+}
+
+model Currency {
+  id     Int     @id @default(autoincrement())
+  name   String  @unique @db.VarChar(100)
+  symbol String  @db.VarChar(10)
+  prices Price[]
+
+  @@map("currency")
+}
+
+model Material {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique @db.VarChar(100)
+  paintings Painting[]
+
+  @@map("material")
+}
+
+model Nationality {
+  id      Int      @id @default(autoincrement())
+  name    String   @unique @db.VarChar(100)
+  artists Artist[]
+  owners  Owner[]
+
+  @@map("nationality")
+}
+
+model Owner {
+  id            Int          @id @default(autoincrement())
+  firstName     String       @map("first_name") @db.VarChar(100)
+  lastName      String       @map("last_name") @db.VarChar(100)
+  cityId        Int?         @map("city_id")
+  nationalityId Int?         @map("nationality_id")
+  description   String?
+  createdAt     DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime     @default(now()) @map("updated_at") @db.Timestamptz(6)
+  city          City?        @relation(fields: [cityId], references: [id], onUpdate: NoAction)
+  nationality   Nationality? @relation(fields: [nationalityId], references: [id], onUpdate: NoAction)
+  paintings     Painting[]
+
+  @@map("owner")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model Painting {
+  id                  Int              @id @default(autoincrement())
+  paintingNo          String           @unique @map("painting_no") @db.VarChar(50)
+  paintingName        String           @map("painting_name") @db.VarChar(255)
+  widthCm             Decimal?         @map("width_cm") @db.Decimal(7, 2)
+  heightCm            Decimal?         @map("height_cm") @db.Decimal(7, 2)
+  radiusCm            Decimal?         @map("radius_cm") @db.Decimal(7, 2)
+  paintingDescription String?          @map("painting_description")
+  artistId            Int              @map("artist_id")
+  year                Int?             @db.SmallInt
+  techniqueId         Int?             @map("technique_id")
+  materialId          Int?             @map("material_id")
+  locationCityId      Int?             @map("location_city_id")
+  ownerId             Int?             @map("owner_id")
+  createdAt           DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime         @default(now()) @map("updated_at") @db.Timestamptz(6)
+  isAvailable         Boolean          @map("is_available")
+  contactMessages     ContactMessage[]
+  artist              Artist           @relation(fields: [artistId], references: [id], onUpdate: NoAction)
+  city                City?            @relation(fields: [locationCityId], references: [id], onUpdate: NoAction)
+  material            Material?        @relation(fields: [materialId], references: [id], onUpdate: NoAction)
+  owner               Owner?           @relation(fields: [ownerId], references: [id], onUpdate: NoAction)
+  technique           Technique?       @relation(fields: [techniqueId], references: [id], onUpdate: NoAction)
+  paintingImages      PaintingImage[]
+  prices              Price[]
+
+  @@map("painting")
+}
+
+model PaintingImage {
+  id         Int      @id @default(autoincrement())
+  paintingId Int      @map("painting_id")
+  filePath   String   @map("file_path") @db.VarChar(500)
+  isPrimary  Boolean  @default(false) @map("is_primary")
+  uploadedAt DateTime @default(now()) @map("uploaded_at") @db.Timestamptz(6)
+  paintingNo String   @default("") @map("painting_no") @db.VarChar(50)
+  painting   Painting @relation(fields: [paintingId], references: [id], onUpdate: NoAction)
+
+  @@index([paintingNo], map: "idx_painting_image_painting_no")
+  @@map("painting_image")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model Price {
+  id            Int      @id @default(autoincrement())
+  paintingId    Int      @map("painting_id")
+  currencyId    Int      @map("currency_id")
+  amount        Decimal  @db.Decimal(14, 2)
+  effectiveDate DateTime @default(dbgenerated("CURRENT_DATE")) @map("effective_date") @db.Date
+  isCurrent     Boolean  @default(true) @map("is_current")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  currency      Currency @relation(fields: [currencyId], references: [id], onUpdate: NoAction)
+  painting      Painting @relation(fields: [paintingId], references: [id], onUpdate: NoAction)
+
+  @@map("price")
+}
+
+model Technique {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique @db.VarChar(100)
+  paintings Painting[]
+
+  @@map("technique")
+}

@@ -1,0 +1,30 @@
+# Caddy serves the built SPA on Railway. Railway's Node builders have no way to
+# serve a static `dist/` on their own, and `vite preview` is a dev tool, so the
+# web service runs Caddy as its start command (see nixpacks.toml).
+{
+	admin off
+	persist_config off
+	# Railway terminates TLS at the edge; Caddy must not try to get its own cert.
+	auto_https off
+	log {
+		format json
+	}
+	servers {
+		trusted_proxies static private_ranges 100.0.0.0/8
+	}
+}
+
+# Railway injects PORT; 3000 is only a local fallback.
+:{$PORT:3000} {
+	log {
+		format json
+	}
+
+	root * dist
+	encode gzip
+	file_server
+
+	# Client-side routing: anything that isn't a real file falls back to
+	# index.html. Without this, reloading /paintings/12 or /admin/messages 404s.
+	try_files {path} /index.html
+}
