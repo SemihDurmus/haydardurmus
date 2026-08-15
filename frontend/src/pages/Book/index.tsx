@@ -110,7 +110,7 @@ export default function BookPage() {
                   <div className="flex flex-wrap gap-3">
                     {mockBook.purchaseLinks.map((link) => (
                       <Button
-                        key={link.type}
+                        key={link.url}
                         as="a"
                         href={link.url}
                         target="_blank"
@@ -118,7 +118,7 @@ export default function BookPage() {
                         variant="secondary"
                         size="md"
                       >
-                        {link.label[locale] ?? link.label.en}
+                        {link.label}
                         <ExternalLink className="h-3.5 w-3.5" />
                       </Button>
                     ))}

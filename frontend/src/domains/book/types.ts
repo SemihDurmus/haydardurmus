@@ -4,7 +4,7 @@ import bookCover from '@assets/bookCover.png';
 export type PurchaseLinkType = 'amazon' | 'official' | 'publisher' | 'other';
 
 export interface PurchaseLink {
-  label: TranslatedText;
+  label: string;
   url: string;
   type: PurchaseLinkType;
 }
@@ -38,8 +38,18 @@ export const mockBook: Book = {
   pageCount: 220,
   purchaseLinks: [
     {
-      label: { en: 'Buy on Kitapyurdu', tr: 'Kitapyurdu' },
+      label: 'Kitapyurdu',
       url: 'https://www.kitapyurdu.com/kitap/ressam-haydar-durmus/755384.html',
+      type: 'other',
+    },
+    {
+      label: 'e-kitap',
+      url: 'https://www.e-kitapmedia.de/urun/ressam-haydar-durmus-kolektif-9786259019062',
+      type: 'other',
+    },
+    {
+      label: '1000 Kitap',
+      url: 'https://1000kitap.com/kitap/ressam-haydar-durmus--539510',
       type: 'other',
     },
   ],
