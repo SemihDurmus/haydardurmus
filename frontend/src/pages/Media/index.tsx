@@ -108,7 +108,7 @@ export default function MediaPage() {
     <>
       {/* Page header */}
       <Section spacing="none" background="default" className="pb-4 pt-6 md:pt-section-sm">
-        <Container width="default">
+        <Container width="wide">
           <div>
             <PageTitle className="mb-4">{t('page.title')}</PageTitle>
             <SectionTitle style={{ marginBottom: 0 }}>{t('page.subtitle')}</SectionTitle>
@@ -117,7 +117,7 @@ export default function MediaPage() {
       </Section>
       {/* Content */}
       <Section spacing="lg" background="default" className="pt-8">
-        <Container width="default">
+        <Container width="wide">
           {/* Tabs */}
           <div className="mb-8 flex flex-wrap gap-1 border-b border-border pb-0">
             {TABS.map(({ value, labelKey }) => (

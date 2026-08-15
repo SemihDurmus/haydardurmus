@@ -68,7 +68,15 @@ export default function BookPage() {
 
             {/* Details */}
             <div className="flex flex-col justify-center">
-              <Typography level="h1" className="mb-2">
+              <Typography
+                level="h1"
+                className="mb-2"
+                style={{
+                  color: '#2971A6',
+                  fontFamily: 'Oswald, Inter, system-ui, sans-serif',
+                  fontSize: 'clamp(24px, 2.5vw, 34px)',
+                }}
+              >
                 {title}
               </Typography>
               {subtitle && (
@@ -110,7 +118,7 @@ export default function BookPage() {
                         variant="secondary"
                         size="md"
                       >
-                        {link.label}
+                        {link.label[locale] ?? link.label.en}
                         <ExternalLink className="h-3.5 w-3.5" />
                       </Button>
                     ))}

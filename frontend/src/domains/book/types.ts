@@ -1,9 +1,10 @@
 import type { ImageAsset, TranslatedText } from '@shared/types';
+import bookCover from '@assets/bookCover.png';
 
 export type PurchaseLinkType = 'amazon' | 'official' | 'publisher' | 'other';
 
 export interface PurchaseLink {
-  label: string;
+  label: TranslatedText;
   url: string;
   type: PurchaseLinkType;
 }
@@ -24,30 +25,22 @@ export interface Book {
 
 export const mockBook: Book = {
   id: 'b001',
-  title: { en: 'Haydar Durmuş: Works 2012–2023', tr: 'Haydar Durmuş: 2012–2023 Çalışmaları' },
-  subtitle: {
-    en: 'A Monograph',
-    tr: 'Bir Monografi',
-  },
+  title: { en: 'Ressam Haydar Durmuş', tr: 'Ressam Haydar Durmuş' },
+  subtitle: null,
   description: {
-    en: 'A comprehensive monograph documenting over a decade of painting practice. With essays by leading art critics and full-page reproductions of over 80 works.',
-    tr: 'On yılı aşkın bir resim pratiğini belgeleyen kapsamlı bir monografi. Önde gelen sanat eleştirmenlerinin denemeleri ve 80\'den fazla eserin tam sayfa yeniden üretimleriyle.',
+    en: "Compiled by Doç. Dr. Özge Adıgüzel Ömür, this book brings together Haydar Durmuş's life story along with accounts from his students, colleagues, and fellow artists who knew him closely.",
+    tr: 'Doç. Dr. Özge Adıgüzel Ömür tarafından derlenen bu kitap, Haydar Durmuş\'un yaşam öyküsünü; öğrencilerinin, meslektaşlarının ve onu yakından tanıyan sanatçı dostlarının anlatımlarıyla bir araya getiriyor.',
   },
-  coverImage: { src: '', alt: 'Book cover — Haydar Durmuş: Works 2012–2023' },
-  publishYear: 2024,
-  publisher: 'YKY / Yapı Kredi Yayınları',
-  isbn: '978-975-08-5XXX-X',
-  pageCount: 240,
+  coverImage: { src: bookCover, alt: 'Book cover — Ressam Haydar Durmuş' },
+  publishYear: 2026,
+  publisher: 'Eflatun Kitaplar',
+  isbn: '9786259019062',
+  pageCount: 220,
   purchaseLinks: [
     {
-      label: 'Order on Amazon',
-      url: 'https://amazon.com',
-      type: 'amazon',
-    },
-    {
-      label: 'YKY Official Store',
-      url: 'https://ykykultur.com.tr',
-      type: 'publisher',
+      label: { en: 'Buy on Kitapyurdu', tr: 'Kitapyurdu' },
+      url: 'https://www.kitapyurdu.com/kitap/ressam-haydar-durmus/755384.html',
+      type: 'other',
     },
   ],
   previewImages: [],
