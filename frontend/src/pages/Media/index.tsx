@@ -4,6 +4,8 @@ import { ExternalLink, Play } from 'lucide-react';
 import { Section } from '@shared/ui/Section';
 import { Container } from '@shared/ui/Container';
 import { Typography } from '@shared/ui/Typography';
+import { PageTitle } from '@shared/ui/PageTitle';
+import { SectionTitle } from '@shared/ui/SectionTitle';
 import { mockMedia, type MediaItem, type MediaType } from '@domains/media/types';
 import { cn } from '@shared/utils/cn';
 import type { SupportedLocale } from '@shared/types';
@@ -33,8 +35,8 @@ function MediaCard({ item, locale }: { item: MediaItem; locale: SupportedLocale 
     item.type === 'video'
       ? t('card.watchVideo')
       : item.type === 'exhibition'
-      ? t('card.viewExhibition')
-      : t('card.readMore');
+        ? t('card.viewExhibition')
+        : t('card.readMore');
 
   return (
     <article className="group border-b border-border py-7 last:border-0">
@@ -44,9 +46,13 @@ function MediaCard({ item, locale }: { item: MediaItem; locale: SupportedLocale 
             <span className="font-sans text-label uppercase tracking-widest text-accent">
               {item.type}
             </span>
-            <span className="text-text-tertiary" aria-hidden>·</span>
+            <span className="text-text-tertiary" aria-hidden>
+              ·
+            </span>
             <span className="font-sans text-body-sm text-text-tertiary">{item.source}</span>
-            <span className="text-text-tertiary" aria-hidden>·</span>
+            <span className="text-text-tertiary" aria-hidden>
+              ·
+            </span>
             <time className="font-sans text-body-sm text-text-tertiary" dateTime={item.date}>
               {date}
             </time>
@@ -64,7 +70,8 @@ function MediaCard({ item, locale }: { item: MediaItem; locale: SupportedLocale 
 
           {item.venue && (
             <Typography level="body-sm" tone="tertiary" className="mt-1">
-              {item.venue}{item.city ? `, ${item.city}` : ''}
+              {item.venue}
+              {item.city ? `, ${item.city}` : ''}
             </Typography>
           )}
         </div>
@@ -95,50 +102,54 @@ export default function MediaPage() {
   const locale = (i18n.language?.split('-')[0] ?? 'en') as SupportedLocale;
   const [activeTab, setActiveTab] = useState<TabFilter>('all');
 
-  const filtered =
-    activeTab === 'all' ? mockMedia : mockMedia.filter((m) => m.type === activeTab);
+  const filtered = activeTab === 'all' ? mockMedia : mockMedia.filter((m) => m.type === activeTab);
 
   return (
-    <Section spacing="lg" background="default">
-      <Container width="default">
-        <div className="mb-10">
-          <Typography level="overline" tone="tertiary" className="mb-2 block">
-            {t('page.subtitle')}
-          </Typography>
-          <Typography level="h1">{t('page.title')}</Typography>
-        </div>
-
-        {/* Tabs */}
-        <div className="mb-8 flex flex-wrap gap-1 border-b border-border pb-0">
-          {TABS.map(({ value, labelKey }) => (
-            <button
-              key={value}
-              onClick={() => setActiveTab(value)}
-              className={cn(
-                'border-b-2 px-4 pb-3 pt-1 font-sans text-body-sm transition-colors',
-                activeTab === value
-                  ? 'border-primary-900 text-text-primary'
-                  : 'border-transparent text-text-tertiary hover:text-text-secondary'
-              )}
-            >
-              {t(labelKey)}
-            </button>
-          ))}
-        </div>
-
-        {/* Media items */}
-        {filtered.length === 0 ? (
-          <Typography level="body" tone="tertiary">
-            No items in this category.
-          </Typography>
-        ) : (
+    <>
+      {/* Page header */}
+      <Section spacing="none" background="default" className="pb-4 pt-6 md:pt-section-sm">
+        <Container width="default">
           <div>
-            {filtered.map((item) => (
-              <MediaCard key={item.id} item={item} locale={locale} />
+            <PageTitle className="mb-4">{t('page.title')}</PageTitle>
+            <SectionTitle style={{ marginBottom: 0 }}>{t('page.subtitle')}</SectionTitle>
+          </div>
+        </Container>
+      </Section>
+      {/* Content */}
+      <Section spacing="lg" background="default" className="pt-8">
+        <Container width="default">
+          {/* Tabs */}
+          <div className="mb-8 flex flex-wrap gap-1 border-b border-border pb-0">
+            {TABS.map(({ value, labelKey }) => (
+              <button
+                key={value}
+                onClick={() => setActiveTab(value)}
+                className={cn(
+                  'border-b-2 px-4 pb-3 pt-1 font-sans text-body-sm transition-colors',
+                  activeTab === value
+                    ? 'border-primary-900 text-text-primary'
+                    : 'border-transparent text-text-tertiary hover:text-text-secondary'
+                )}
+              >
+                {t(labelKey)}
+              </button>
             ))}
           </div>
-        )}
-      </Container>
-    </Section>
+
+          {/* Media items */}
+          {filtered.length === 0 ? (
+            <Typography level="body" tone="tertiary">
+              No items in this category.
+            </Typography>
+          ) : (
+            <div>
+              {filtered.map((item) => (
+                <MediaCard key={item.id} item={item} locale={locale} />
+              ))}
+            </div>
+          )}
+        </Container>
+      </Section>
+    </>
   );
 }

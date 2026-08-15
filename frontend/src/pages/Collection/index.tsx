@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { Section } from '@shared/ui/Section';
 import { Container } from '@shared/ui/Container';
 import { Typography } from '@shared/ui/Typography';
+import { PageTitle } from '@shared/ui/PageTitle';
+import { SectionTitle } from '@shared/ui/SectionTitle';
 import { mockCollections } from '@domains/collection/types';
 import { buildRoute } from '@app/router/routes';
 import { useTranslatedText } from '@shared/hooks/useTranslatedText';
@@ -48,25 +50,30 @@ function CollectionCard({ collection }: { collection: Collection }) {
   );
 }
 
-export default function CollectionsPage() {
+export default function CollectionPage() {
   const { t } = useTranslation('collections');
 
   return (
-    <Section spacing="lg" background="default">
-      <Container width="wide">
-        <div className="mb-12">
-          <Typography level="overline" tone="tertiary" className="mb-2 block">
-            {t('page.subtitle')}
-          </Typography>
-          <Typography level="h1">{t('page.title')}</Typography>
-        </div>
-
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3">
-          {mockCollections.map((collection) => (
-            <CollectionCard key={collection.id} collection={collection} />
-          ))}
-        </div>
-      </Container>
-    </Section>
+    <>
+      {/* Page header */}
+      <Section spacing="none" background="default" className="pb-4 pt-6 md:pt-section-sm">
+        <Container width="wide">
+          <div>
+            <PageTitle className="mb-4">{t('page.title')}</PageTitle>
+            <SectionTitle style={{ marginBottom: 0 }}>{t('page.subtitle')}</SectionTitle>
+          </div>
+        </Container>
+      </Section>
+      {/* Content */}
+      <Section spacing="lg" background="default" className="pt-8">
+        <Container width="wide">
+          <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3">
+            {mockCollections.map((collection) => (
+              <CollectionCard key={collection.id} collection={collection} />
+            ))}
+          </div>
+        </Container>
+      </Section>
+    </>
   );
 }

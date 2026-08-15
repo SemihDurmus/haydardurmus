@@ -1,7 +1,7 @@
 {
   "page": {
-    "title": "Collections",
-    "subtitle": "Works organized by series, period, and theme"
+    "title": "Collection",
+    "subtitle": "Haydar Durmuş's art collection from various artists"
   },
   "card": {
     "works": "{{count}} work",

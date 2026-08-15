@@ -11,7 +11,7 @@ const HomePage = lazy(() => import('@pages/Home'));
 const BiographyPage = lazy(() => import('@pages/Biography'));
 const PaintingsPage = lazy(() => import('@pages/Paintings'));
 const PaintingDetailPage = lazy(() => import('@pages/PaintingDetail'));
-const CollectionsPage = lazy(() => import('@pages/Collections'));
+const CollectionPage = lazy(() => import('@pages/Collection'));
 const CollectionDetailPage = lazy(() => import('@pages/CollectionDetail'));
 const MediaPage = lazy(() => import('@pages/Media'));
 const BookPage = lazy(() => import('@pages/Book'));
@@ -75,7 +75,7 @@ const router = createBrowserRouter([
         path: ROUTES.COLLECTIONS,
         element: (
           <Suspense fallback={<PageLoader />}>
-            <CollectionsPage />
+            <CollectionPage />
           </Suspense>
         ),
       },

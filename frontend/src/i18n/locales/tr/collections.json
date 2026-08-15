@@ -1,7 +1,7 @@
 {
   "page": {
-    "title": "Koleksiyonlar",
-    "subtitle": "Seri, dönem ve temaya göre düzenlenmiş eserler"
+    "title": "Koleksiyon",
+    "subtitle": "Haydar Durmuş'un birçok sanatçının eserinden oluşan seçkin koleksiyonu"
   },
   "card": {
     "works": "{{count}} eser",
