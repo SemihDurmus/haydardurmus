@@ -9,6 +9,8 @@ import { Button } from '@shared/ui/Button';
 import { PageTitle } from '@shared/ui/PageTitle';
 import { SectionTitle } from '@shared/ui/SectionTitle';
 import { contactFormSchema, contactSubjects, type ContactFormData } from '@domains/contact/types';
+import { contactService } from '@domains/contact/api/contactService';
+import { ApiError } from '@shared/api/client';
 import { cn } from '@shared/utils/cn';
 
 const fieldClass = cn(
@@ -21,6 +23,7 @@ const fieldClass = cn(
 export default function ContactPage() {
   const { t } = useTranslation('contact');
   const [submitState, setSubmitState] = useState<'idle' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const {
     register,
@@ -31,13 +34,16 @@ export default function ContactPage() {
     resolver: zodResolver(contactFormSchema),
   });
 
-  const onSubmit = async (_data: ContactFormData) => {
+  const onSubmit = async (data: ContactFormData) => {
+    setErrorMessage(null);
     try {
-      // Simulate submission — replace with real API call
-      await new Promise((r) => setTimeout(r, 1000));
+      await contactService.send(data);
       setSubmitState('success');
       reset();
-    } catch {
+    } catch (err) {
+      // Show what the server said when it said anything useful — most often
+      // the rate limiter refusing a burst of submissions from one address.
+      setErrorMessage(err instanceof ApiError ? err.message : null);
       setSubmitState('error');
     }
   };
@@ -95,24 +101,48 @@ export default function ContactPage() {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
-                  {/* Name */}
-                  <div>
-                    <label className="mb-1.5 block font-sans text-body-sm" htmlFor="name">
-                      {t('form.name')}
-                    </label>
-                    <input
-                      id="name"
-                      type="text"
-                      placeholder={t('form.namePlaceholder')}
-                      aria-invalid={!!errors.name}
-                      {...register('name')}
-                      className={fieldClass}
-                    />
-                    {errors.name && (
-                      <p className="mt-1 font-sans text-body-sm text-error">
-                        {t(`validation.${errors.name.message}`)}
-                      </p>
-                    )}
+                  {/* Name — two fields, matching how the message is stored.
+                      Side by side on wider screens, stacked on mobile. */}
+                  <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                    <div>
+                      <label className="mb-1.5 block font-sans text-body-sm" htmlFor="firstName">
+                        {t('form.firstName')}
+                      </label>
+                      <input
+                        id="firstName"
+                        type="text"
+                        autoComplete="given-name"
+                        placeholder={t('form.firstNamePlaceholder')}
+                        aria-invalid={!!errors.firstName}
+                        {...register('firstName')}
+                        className={fieldClass}
+                      />
+                      {errors.firstName && (
+                        <p className="mt-1 font-sans text-body-sm text-error">
+                          {t(`validation.${errors.firstName.message}`)}
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="mb-1.5 block font-sans text-body-sm" htmlFor="lastName">
+                        {t('form.lastName')}
+                      </label>
+                      <input
+                        id="lastName"
+                        type="text"
+                        autoComplete="family-name"
+                        placeholder={t('form.lastNamePlaceholder')}
+                        aria-invalid={!!errors.lastName}
+                        {...register('lastName')}
+                        className={fieldClass}
+                      />
+                      {errors.lastName && (
+                        <p className="mt-1 font-sans text-body-sm text-error">
+                          {t(`validation.${errors.lastName.message}`)}
+                        </p>
+                      )}
+                    </div>
                   </div>
 
                   {/* Email */}
@@ -181,7 +211,9 @@ export default function ContactPage() {
                   </div>
 
                   {submitState === 'error' && (
-                    <p className="font-sans text-body-sm text-error">{t('form.error')}</p>
+                    <p className="font-sans text-body-sm text-error">
+                      {errorMessage ?? t('form.error')}
+                    </p>
                   )}
 
                   <Button

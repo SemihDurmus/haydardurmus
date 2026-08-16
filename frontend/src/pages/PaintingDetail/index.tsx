@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router';
 import { ArrowLeft, Expand } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -7,10 +7,10 @@ import { Container } from '@shared/ui/Container';
 import { Typography } from '@shared/ui/Typography';
 import { usePainting } from '@domains/paintings/hooks/usePaintings';
 import { usePaintingGalleryNavigation } from '@domains/paintings/hooks/usePaintingGalleryNavigation';
-import { PaintingImageFrame } from '@domains/paintings/components/PaintingImageFrame';
+import { PaintingImageGallery } from '@domains/paintings/components/PaintingImageGallery';
 import { PaintingLightbox } from '@domains/paintings/components/PaintingLightbox';
 import { PaintingDetailNavigation } from '@domains/paintings/components/PaintingDetailNavigation';
-import { getLookupLabel, techniques, materials } from '@domains/paintings/data/lookups';
+import { pickTranslated } from '@shared/hooks/useTranslatedText';
 import { formatDimensions, formatYear, getPaintingDisplayName } from '@shared/utils/format';
 import { ROUTES } from '@app/router/routes';
 
@@ -21,6 +21,17 @@ export default function PaintingDetailPage() {
   const { data: painting, isLoading } = usePainting(id);
   const galleryNav = usePaintingGalleryNavigation(id);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+
+  // Which of the painting's images is on show. The API returns them primary
+  // first, so 0 is the card image.
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const images = painting?.images ?? [];
+
+  // Moving to another painting (the prev/next painting links keep this page
+  // mounted) must start again at its primary image.
+  useEffect(() => {
+    setActiveImageIndex(0);
+  }, [id]);
 
   if (isLoading) {
     return (
@@ -50,8 +61,8 @@ export default function PaintingDetailPage() {
   }
 
   const displayName = getPaintingDisplayName(painting.paintingName, t('card.untitled'));
-  const technique = getLookupLabel(techniques, painting.techniqueId, locale);
-  const material = getLookupLabel(materials, painting.materialId, locale);
+  const technique = pickTranslated(painting.technique, locale);
+  const material = pickTranslated(painting.material, locale);
   const dimensions = formatDimensions(painting.width, painting.height, painting.radius);
   const year = formatYear(painting.year, '—');
 
@@ -75,14 +86,18 @@ export default function PaintingDetailPage() {
           </Link>
 
           <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-2 lg:gap-12 lg:pt-4">
-            {/* Image — frame matches painting aspect ratio (no letterbox bars) */}
+            {/* Images — frame matches painting aspect ratio (no letterbox bars).
+                Arrows and thumbnails appear only when there's more than one. */}
             <div className="relative w-full">
-              <PaintingImageFrame
-                className="max-h-[70dvh]"
-                src={painting.images?.[0]?.src}
+              <PaintingImageGallery
+                images={images}
+                activeIndex={activeImageIndex}
+                onActiveIndexChange={setActiveImageIndex}
                 alt={displayName}
                 title={displayName}
-                loading="eager"
+                previousLabel={t('detail.previousImage')}
+                nextLabel={t('detail.nextImage')}
+                thumbnailLabel={(position) => t('detail.showImage', { number: position })}
                 fallback={
                   <div className="flex h-full w-full items-center justify-center">
                     <Typography level="h3" tone="tertiary">
@@ -148,7 +163,7 @@ export default function PaintingDetailPage() {
 
       {isLightboxOpen && (
         <PaintingLightbox
-          src={painting.images?.[0]?.src}
+          src={images[activeImageIndex]?.src ?? images[0]?.src}
           alt={displayName}
           title={displayName}
           closeLabel={t('actions.close', { ns: 'common' })}

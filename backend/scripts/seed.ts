@@ -18,17 +18,19 @@ const UNTITLED = "Untitled";
 // Lookup label maps mirror the frontend's curated bilingual lookups
 // (src/domains/paintings/data/lookups.ts). The frontend keeps the EN/TR labels;
 // here we only need the English name the DB stores, keyed by the frontend's id.
-const TECHNIQUE_NAME: Record<string, string> = {
-  oil: "Oil",
-  acrylic: "Acrylic",
-  collage: "Collage",
+// Both languages: name_tr is NOT NULL, since the site renders lookups in
+// Turkish straight from the database.
+const TECHNIQUE_NAME: Record<string, { name: string; nameTr: string }> = {
+  oil: { name: "Oil", nameTr: "Yağlıboya" },
+  acrylic: { name: "Acrylic", nameTr: "Akrilik" },
+  collage: { name: "Collage", nameTr: "Kolaj" },
 };
-const MATERIAL_NAME: Record<string, string> = {
-  canvas: "Canvas",
-  canvasPanel: "Canvas Panel",
-  cardboard: "Cardboard",
-  plywood: "Plywood",
-  pvcFoamBoard: "PVC Foam Board",
+const MATERIAL_NAME: Record<string, { name: string; nameTr: string }> = {
+  canvas: { name: "Canvas", nameTr: "Tuval" },
+  canvasPanel: { name: "Canvas Panel", nameTr: "Pres Tuval" },
+  cardboard: { name: "Cardboard", nameTr: "Karton" },
+  plywood: { name: "Plywood", nameTr: "Kontrplak" },
+  pvcFoamBoard: { name: "PVC Foam Board", nameTr: "Duralit" },
 };
 
 // The mock paintings, verbatim from the frontend (string ids resolve to rows below).
@@ -53,13 +55,13 @@ async function main() {
   // `update: {}` is empty on purpose: we only want existence, not overwrites.
   const nationality = await prisma.nationality.upsert({
     where: { name: "Turkish" },
-    create: { name: "Turkish" },
+    create: { name: "Turkish", nameTr: "Türk" },
     update: {},
   });
 
   const country = await prisma.country.upsert({
     where: { name: "Türkiye" },
-    create: { name: "Türkiye" },
+    create: { name: "Türkiye", nameTr: "Türkiye" },
     update: {},
   });
 
@@ -70,24 +72,24 @@ async function main() {
       where: { name: "Trabzon", countryId: country.id },
     })) ??
     (await prisma.city.create({
-      data: { name: "Trabzon", countryId: country.id },
+      data: { name: "Trabzon", nameTr: "Trabzon", countryId: country.id },
     }));
 
   const techniqueId: Record<string, number> = {};
-  for (const [key, name] of Object.entries(TECHNIQUE_NAME)) {
+  for (const [key, { name, nameTr }] of Object.entries(TECHNIQUE_NAME)) {
     const row = await prisma.technique.upsert({
       where: { name },
-      create: { name },
+      create: { name, nameTr },
       update: {},
     });
     techniqueId[key] = row.id;
   }
 
   const materialId: Record<string, number> = {};
-  for (const [key, name] of Object.entries(MATERIAL_NAME)) {
+  for (const [key, { name, nameTr }] of Object.entries(MATERIAL_NAME)) {
     const row = await prisma.material.upsert({
       where: { name },
-      create: { name },
+      create: { name, nameTr },
       update: {},
     });
     materialId[key] = row.id;

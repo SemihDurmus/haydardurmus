@@ -66,9 +66,9 @@
     "locationCity": "Location city",
     "owner": "Owner",
     "none": "None",
-    "image": "Image",
-    "imageHint": "The painting is saved first, then the image is uploaded to its folder; the first image becomes the primary.",
-    "addImageOptional": "Add an image (optional)",
+    "image": "Images",
+    "imageHint": "The painting is saved first, then the images are uploaded to its folder; the first one becomes the primary.",
+    "addImagesOptional": "Add images (optional)",
     "remove": "Remove",
     "rectangular": "Rectangular",
     "circular": "Circular",
@@ -151,7 +151,8 @@
       "birthdate": "Birthdate",
       "city": "City",
       "country": "Country",
-      "name": "Name",
+      "name": "Name (English)",
+      "nameTr": "Name (Turkish)",
       "code": "Code",
       "symbol": "Symbol"
     }

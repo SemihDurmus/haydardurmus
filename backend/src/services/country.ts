@@ -12,8 +12,13 @@ export interface ListArgs {
 export async function list({ skip, take, name, search }: ListArgs) {
   // ?name= exact / ?search= partial, both case-insensitive (exact wins if both).
   const where: Prisma.CountryWhereInput = {
+    // ?search= matches EITHER language, so a Turkish visitor searching
+    // "Yağlıboya" finds the row whose English name is "Oil".
     ...(search !== undefined && {
-      name: { contains: search, mode: "insensitive" },
+      OR: [
+        { name: { contains: search, mode: "insensitive" } },
+        { nameTr: { contains: search, mode: "insensitive" } },
+      ],
     }),
     ...(name !== undefined && { name: { equals: name, mode: "insensitive" } }),
   };

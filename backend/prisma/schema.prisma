@@ -13,6 +13,7 @@ model Artist {
   lastName      String      @map("last_name") @db.VarChar(100)
   birthdate     DateTime?   @db.Date
   description   String?
+  descriptionTr String?     @map("description_tr")
   createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt     DateTime    @default(now()) @map("updated_at") @db.Timestamptz(6)
   nationality   Nationality @relation(fields: [nationalityId], references: [id], onUpdate: NoAction)
@@ -24,12 +25,14 @@ model Artist {
 model City {
   id        Int        @id @default(autoincrement())
   name      String     @db.VarChar(100)
+  nameTr    String     @map("name_tr") @db.VarChar(100)
   countryId Int        @map("country_id")
   country   Country    @relation(fields: [countryId], references: [id], onUpdate: NoAction)
   owners    Owner[]
   paintings Painting[]
 
   @@unique([name, countryId])
+  @@unique([nameTr, countryId])
   @@map("city")
 }
 
@@ -51,6 +54,7 @@ model ContactMessage {
 model Country {
   id     Int    @id @default(autoincrement())
   name   String @unique @db.VarChar(100)
+  nameTr String @unique @map("name_tr") @db.VarChar(100)
   cities City[]
 
   @@map("country")
@@ -68,6 +72,7 @@ model Currency {
 model Material {
   id        Int        @id @default(autoincrement())
   name      String     @unique @db.VarChar(100)
+  nameTr    String     @unique @map("name_tr") @db.VarChar(100)
   paintings Painting[]
 
   @@map("material")
@@ -76,6 +81,7 @@ model Material {
 model Nationality {
   id      Int      @id @default(autoincrement())
   name    String   @unique @db.VarChar(100)
+  nameTr  String   @unique @map("name_tr") @db.VarChar(100)
   artists Artist[]
   owners  Owner[]
 
@@ -89,6 +95,7 @@ model Owner {
   cityId        Int?         @map("city_id")
   nationalityId Int?         @map("nationality_id")
   description   String?
+  descriptionTr String?      @map("description_tr")
   createdAt     DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt     DateTime     @default(now()) @map("updated_at") @db.Timestamptz(6)
   city          City?        @relation(fields: [cityId], references: [id], onUpdate: NoAction)
@@ -106,7 +113,8 @@ model Painting {
   widthCm             Decimal?         @map("width_cm") @db.Decimal(7, 2)
   heightCm            Decimal?         @map("height_cm") @db.Decimal(7, 2)
   radiusCm            Decimal?         @map("radius_cm") @db.Decimal(7, 2)
-  paintingDescription String?          @map("painting_description")
+  paintingDescription   String?        @map("painting_description")
+  paintingDescriptionTr String?        @map("painting_description_tr")
   artistId            Int              @map("artist_id")
   year                Int?             @db.SmallInt
   techniqueId         Int?             @map("technique_id")
@@ -159,6 +167,7 @@ model Price {
 model Technique {
   id        Int        @id @default(autoincrement())
   name      String     @unique @db.VarChar(100)
+  nameTr    String     @unique @map("name_tr") @db.VarChar(100)
   paintings Painting[]
 
   @@map("technique")

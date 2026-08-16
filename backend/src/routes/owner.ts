@@ -34,6 +34,7 @@ const Owner = z
     cityId: z.number().int().nullable(),
     nationalityId: z.number().int().nullable(),
     description: z.string().nullable(),
+    descriptionTr: z.string().nullable(),
     createdAt: z.string().datetime(),
     updatedAt: z.string().datetime(),
     city: CityWithCountry.nullable().optional(),
@@ -50,7 +51,10 @@ const OwnerCreate = z
     lastName: z.string().trim().min(1).max(100).openapi({ example: "Yılmaz" }),
     cityId: z.coerce.number().int().positive().optional().nullable(),
     nationalityId: z.coerce.number().int().positive().optional().nullable(),
+    // Optional, but both-or-neither: the database CHECK rejects a description
+    // written in only one language. Leave both empty for no description.
     description: z.string().trim().max(10000).optional().nullable(),
+    descriptionTr: z.string().trim().max(10000).optional().nullable(),
   })
   .openapi("OwnerCreate");
 

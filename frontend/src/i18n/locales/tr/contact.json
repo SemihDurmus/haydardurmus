@@ -4,8 +4,10 @@
     "subtitle": "Sergi, eser edinimi ve komisyon talepleri için"
   },
   "form": {
-    "name": "Ad Soyad",
-    "namePlaceholder": "Adınız",
+    "firstName": "Ad",
+    "firstNamePlaceholder": "Adınız",
+    "lastName": "Soyad",
+    "lastNamePlaceholder": "Soyadınız",
     "email": "E-posta Adresi",
     "emailPlaceholder": "sizin@email.com",
     "subject": "Konu",
@@ -32,7 +34,8 @@
     "social": "Takip Et"
   },
   "validation": {
-    "nameRequired": "Ad alanı zorunludur",
+    "firstNameRequired": "Ad alanı zorunludur",
+    "lastNameRequired": "Soyad alanı zorunludur",
     "emailRequired": "E-posta alanı zorunludur",
     "emailInvalid": "Geçerli bir e-posta adresi girin",
     "subjectRequired": "Konu alanı zorunludur",

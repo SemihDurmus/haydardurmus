@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
@@ -191,18 +191,42 @@ function PaintingForm({ id, existing }: { id?: string; existing: RawPainting | n
   // useWatch (not watch()) — subscription-based, safe under the React compiler.
   const shape = useWatch({ control, name: 'shape' });
 
-  // Selected image (create mode) + its object-URL preview. The effect below
-  // revokes the URL when the selection changes or the form unmounts.
-  const [selected, setSelected] = useState<{ file: File; url: string } | null>(null);
+  // Images staged for a NEW painting, each with an object-URL preview. They
+  // can't be uploaded yet: the backend files them under the painting's id, so
+  // the record has to exist first. onSubmit saves, then uploads these in order.
+  // (Editing an existing painting uses ImagesPanel, which uploads immediately.)
+  const [selectedImages, setSelectedImages] = useState<{ file: File; url: string }[]>([]);
   const [imageError, setImageError] = useState<string | null>(null);
   const [serverError, setServerError] = useState<string | null>(null);
 
+  // Object URLs are revoked by hand: on removal below, and for whatever is
+  // still staged when the form unmounts. The ref keeps the unmount cleanup off
+  // the state dependency, so adding a file doesn't revoke the previews of the
+  // files already staged.
+  const stagedRef = useRef<{ file: File; url: string }[]>([]);
   useEffect(() => {
-    const url = selected?.url;
-    return () => {
-      if (url) URL.revokeObjectURL(url);
-    };
-  }, [selected]);
+    stagedRef.current = selectedImages;
+  }, [selectedImages]);
+  useEffect(
+    () => () => {
+      for (const img of stagedRef.current) URL.revokeObjectURL(img.url);
+    },
+    [],
+  );
+
+  function addImages(files: File[]) {
+    setImageError(null);
+    // createObjectURL outside the updater: React may invoke an updater twice,
+    // which would leak a URL every time.
+    const staged = files.map((file) => ({ file, url: URL.createObjectURL(file) }));
+    setSelectedImages((prev) => [...prev, ...staged]);
+  }
+
+  function removeImage(index: number) {
+    const target = selectedImages[index];
+    if (target) URL.revokeObjectURL(target.url);
+    setSelectedImages((prev) => prev.filter((_, i) => i !== index));
+  }
 
   async function onSubmit(values: FormValues) {
     setServerError(null);
@@ -228,7 +252,13 @@ function PaintingForm({ id, existing }: { id?: string; existing: RawPainting | n
       const saved = isEdit
         ? await updateMut.mutateAsync(input)
         : await createMut.mutateAsync(input);
-      if (selected) await adminPaintingsService.uploadImage(saved.id, selected.file);
+      // Sequential, not Promise.all: the backend marks an image primary when
+      // it's the first one on the painting (isPrimary: total === 0), so racing
+      // the uploads would make the primary whichever request happened to land
+      // first. In order, the admin's first file is the card image.
+      for (const img of selectedImages) {
+        await adminPaintingsService.uploadImage(saved.id, img.file);
+      }
       showToast(t('common.savedToast'));
       navigate('/admin');
     } catch (err) {
@@ -321,37 +351,44 @@ function PaintingForm({ id, existing }: { id?: string; existing: RawPainting | n
             <span className="mb-1 block text-label uppercase tracking-wide text-text-tertiary">
               {t('form.image')}
             </span>
-            {selected ? (
-              <div className="flex items-center gap-4">
-                <img
-                  src={selected.url}
-                  alt=""
-                  className="h-24 w-18 border border-border object-cover"
-                />
-                <div className="text-body-sm">
-                  <p className="text-text-secondary">{selected.file.name}</p>
-                  <p className="text-caption text-text-tertiary">
-                    {(selected.file.size / (1024 * 1024)).toFixed(1)} MB
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => setSelected(null)}
-                    className="mt-1 text-red-600 hover:underline"
-                  >
-                    {t('form.remove')}
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <ImageDropInput
-                label={t('form.addImageOptional')}
-                onFiles={(files) => {
-                  setImageError(null);
-                  setSelected({ file: files[0], url: URL.createObjectURL(files[0]) });
-                }}
-                onError={setImageError}
-              />
+            {selectedImages.length > 0 && (
+              <ul className="mb-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
+                {selectedImages.map((img, index) => (
+                  <li key={img.url} className="border border-border">
+                    <div className="relative aspect-[3/4] bg-muted">
+                      <img src={img.url} alt="" className="h-full w-full object-cover" />
+                      {index === 0 && (
+                        <span className="absolute left-2 top-2 bg-primary-700 px-2 py-0.5 text-caption uppercase tracking-wide text-white">
+                          {t('images.primary')}
+                        </span>
+                      )}
+                    </div>
+                    <div className="px-2 py-1.5 text-body-sm">
+                      <p className="truncate text-text-secondary" title={img.file.name}>
+                        {img.file.name}
+                      </p>
+                      <p className="text-caption text-text-tertiary">
+                        {(img.file.size / (1024 * 1024)).toFixed(1)} MB
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => removeImage(index)}
+                        className="mt-1 text-red-600 hover:underline"
+                      >
+                        {t('form.remove')}
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
             )}
+            {/* Always rendered, so more files can be added to the selection. */}
+            <ImageDropInput
+              label={t('form.addImagesOptional')}
+              multiple
+              onFiles={addImages}
+              onError={setImageError}
+            />
             {imageError && (
               <p className="mt-1 text-caption text-red-600">{imageError}</p>
             )}

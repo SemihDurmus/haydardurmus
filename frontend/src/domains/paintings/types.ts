@@ -14,10 +14,24 @@ export interface Painting {
   radius: number | null;
   artistId: string;
   year: number | null;
+
+  // Lookup ids, used for filtering and for URL query params. Slugs derived
+  // from the API's English name ('Oil' -> 'oil'), not values this codebase
+  // knows in advance.
   techniqueId: string | null;
   materialId: string | null;
   locationCityId: string | null;
   ownerId: string | null;
+
+  // The display labels for those lookups, in both languages, exactly as the
+  // database holds them. The frontend keeps no translation table of its own:
+  // if a technique is renamed or its Turkish corrected in the admin panel,
+  // the site follows without a deploy.
+  technique: TranslatedText | null;
+  material: TranslatedText | null;
+  locationCity: TranslatedText | null;
+  /** A person's name — not translated, so a plain string. */
+  owner: string | null;
 
   // Phase 2 extensions — optional for backward compatibility
   images?: ImageAsset[];
@@ -31,17 +45,15 @@ export interface Painting {
   availability?: AvailabilityStatus;
 }
 
-/** Lookup table entries — techniques, materials, cities, owners */
-export interface PaintingLookup {
+/**
+ * A selectable filter option, derived at runtime from the paintings the API
+ * returned. There is deliberately no hardcoded list of techniques or
+ * materials in this codebase — see utils/filters.ts#extractLookupOptions.
+ */
+export interface PaintingLookupOption {
   id: string;
   label: string;
-  labelTr?: string;
 }
-
-export type PaintingTechnique = PaintingLookup;
-export type PaintingMaterial = PaintingLookup;
-export type PaintingCity = PaintingLookup;
-export type PaintingOwner = PaintingLookup;
 
 /** All available filter dimensions */
 export interface PaintingFilters {

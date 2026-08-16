@@ -20,6 +20,7 @@ const Country = z
   .object({
     id: z.number().int(),
     name: z.string().max(100),
+    nameTr: z.string().max(100),
     _count: z
       .object({ cities: z.number().int() })
       .optional()
@@ -40,6 +41,7 @@ const Country = z
 const CountryCreate = z
   .object({
     name: z.string().trim().min(1).max(100).openapi({ example: "Türkiye" }),
+    nameTr: z.string().trim().min(1).max(100).openapi({ example: "Türkiye" }),
   })
   .openapi("CountryCreate");
 

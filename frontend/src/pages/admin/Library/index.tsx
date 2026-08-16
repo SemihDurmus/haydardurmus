@@ -60,21 +60,30 @@ export default function AdminLibraryPage() {
           title={t('library.techniques')}
           resource="techniques"
           toLabel={name}
-          fields={[{ name: 'name', label: t('library.fields.name'), required: true }]}
+          fields={[
+            { name: 'name', label: t('library.fields.name'), required: true },
+            { name: 'nameTr', label: t('library.fields.nameTr'), required: true },
+          ]}
         />
 
         <ResourceManager
           title={t('library.materials')}
           resource="materials"
           toLabel={name}
-          fields={[{ name: 'name', label: t('library.fields.name'), required: true }]}
+          fields={[
+            { name: 'name', label: t('library.fields.name'), required: true },
+            { name: 'nameTr', label: t('library.fields.nameTr'), required: true },
+          ]}
         />
 
         <ResourceManager
           title={t('library.countries')}
           resource="countries"
           toLabel={name}
-          fields={[{ name: 'name', label: t('library.fields.name'), required: true }]}
+          fields={[
+            { name: 'name', label: t('library.fields.name'), required: true },
+            { name: 'nameTr', label: t('library.fields.nameTr'), required: true },
+          ]}
         />
 
         <ResourceManager
@@ -83,6 +92,7 @@ export default function AdminLibraryPage() {
           toLabel={(c) => `${name(c)}`}
           fields={[
             { name: 'name', label: t('library.fields.name'), required: true },
+            { name: 'nameTr', label: t('library.fields.nameTr'), required: true },
             { name: 'countryId', label: t('library.fields.country'), type: 'select', options: countryOpts, required: true },
           ]}
         />
@@ -91,7 +101,10 @@ export default function AdminLibraryPage() {
           title={t('library.nationalities')}
           resource="nationalities"
           toLabel={name}
-          fields={[{ name: 'name', label: t('library.fields.name'), required: true }]}
+          fields={[
+            { name: 'name', label: t('library.fields.name'), required: true },
+            { name: 'nameTr', label: t('library.fields.nameTr'), required: true },
+          ]}
         />
 
         <ResourceManager

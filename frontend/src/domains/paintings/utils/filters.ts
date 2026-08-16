@@ -1,4 +1,6 @@
-import type { Painting, PaintingFilters } from '../types';
+import type { SupportedLocale } from '@shared/types';
+import { pickTranslated } from '@shared/hooks/useTranslatedText';
+import type { Painting, PaintingFilters, PaintingLookupOption } from '../types';
 
 /**
  * Apply all active filters to a paintings array.
@@ -128,6 +130,34 @@ export function serializeFiltersToParams(filters: PaintingFilters): URLSearchPar
 /**
  * Extract unique years from a paintings array, sorted descending.
  */
+/**
+ * Build the filter options for a lookup out of the paintings themselves.
+ *
+ * The frontend holds no list of techniques or materials — the options are
+ * whatever the loaded paintings actually use, labelled in the current locale
+ * straight from the database. Adding a technique in the admin panel makes it
+ * appear here as soon as a painting uses it; nothing to redeploy.
+ *
+ * Sorted with localeCompare under the active locale, so Turkish letters order
+ * correctly (ç, ğ, ı, ö, ş, ü) instead of being pushed to the end.
+ */
+export function extractLookupOptions(
+  paintings: Painting[],
+  idKey: 'techniqueId' | 'materialId',
+  labelKey: 'technique' | 'material',
+  locale: SupportedLocale,
+): PaintingLookupOption[] {
+  const options = new Map<string, string>();
+  for (const p of paintings) {
+    const id = p[idKey];
+    const label = pickTranslated(p[labelKey], locale);
+    if (id && label && !options.has(id)) options.set(id, label);
+  }
+  return Array.from(options, ([id, label]) => ({ id, label })).sort((a, b) =>
+    a.label.localeCompare(b.label, locale),
+  );
+}
+
 export function extractYears(paintings: Painting[]): number[] {
   const years = new Set<number>();
   for (const p of paintings) {

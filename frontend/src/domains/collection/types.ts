@@ -6,7 +6,12 @@ export interface Collection {
   title: TranslatedText;
   description: TranslatedText;
   coverImage: ImageAsset;
-  paintingIds: string[];
+  /**
+   * Painting numbers (painting_no) of the works in this collection.
+   * Identifiers only — the painting records themselves come from the API.
+   * No painting data is stored in the frontend.
+   */
+  paintingNos: string[];
   year: number | null;
   isPublished: boolean;
 }
@@ -21,7 +26,7 @@ export const mockCollections: Collection[] = [
       tr: 'Formayı, ışığı ve tuvalin sınırlarını araştıran dairesel eserler serisi.',
     },
     coverImage: { src: '', alt: 'Forma Series' },
-    paintingIds: ['p005', 'p006'],
+    paintingNos: ['2638', '2647'],
     year: 2021,
     isPublished: true,
   },
@@ -34,7 +39,7 @@ export const mockCollections: Collection[] = [
       tr: 'Varlık ve yokluk arasındaki eşiği araştıran büyük ölçekli eserler.',
     },
     coverImage: { src: '', alt: 'Threshold Collection' },
-    paintingIds: ['p004', 'p008', 'p009'],
+    paintingNos: ['2418', '2399', '1911'],
     year: 2020,
     isPublished: true,
   },
@@ -47,7 +52,7 @@ export const mockCollections: Collection[] = [
       tr: 'Görsel bir dilin gelişimini belgeleyen, oluşum yıllarından eserler.',
     },
     coverImage: { src: '', alt: 'Early Works Collection' },
-    paintingIds: ['p015', 'p016', 'p018', 'p019', 'p020'],
+    paintingNos: ['p015', 'p016', 'p018', 'p019', 'p020'],
     year: 2014,
     isPublished: true,
   },

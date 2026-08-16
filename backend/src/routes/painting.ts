@@ -14,7 +14,11 @@ import {
 } from "../openapi/common";
 import * as controller from "../controllers/painting";
 import { validate } from "../middleware/validate";
-import { uploadPaintingImage } from "../middleware/upload";
+import {
+  uploadPaintingImage,
+  resolvePaintingFolder,
+} from "../middleware/upload";
+import { PAINTING_NO_PATTERN } from "../utils/paintingFiles";
 
 const router = Router();
 
@@ -76,6 +80,7 @@ const Painting = z
     heightCm: decimalString.nullable(),
     radiusCm: decimalString.nullable(),
     paintingDescription: z.string().nullable(),
+    paintingDescriptionTr: z.string().nullable(),
     artistId: z.number().int(),
     year: z.number().int().nullable(),
     techniqueId: z.number().int().nullable(),
@@ -113,7 +118,15 @@ Enforced by both the API (zod refine) and the database (CHECK constraint).
 // (with .refine()) actually enforces it. Both build from the same field shapes.
 const PaintingCreate = z
   .object({
-    paintingNo: z.string().trim().min(1).max(50).openapi({ example: "X-001" }),
+    // Restricted charset because painting_no names the folder its images are
+    // stored in (public/paintings/<painting_no>/) — see utils/paintingFiles.ts.
+    paintingNo: z
+      .string()
+      .trim()
+      .min(1)
+      .max(50)
+      .regex(PAINTING_NO_PATTERN)
+      .openapi({ example: "X-001" }),
     paintingName: z
       .string()
       .trim()
@@ -124,6 +137,7 @@ const PaintingCreate = z
     heightCm: positiveDecimal.optional().nullable().openapi({ example: 222 }),
     radiusCm: positiveDecimal.optional().nullable(),
     paintingDescription: z.string().trim().max(20000).optional().nullable(),
+  paintingDescriptionTr: z.string().trim().max(20000).optional().nullable(),
     artistId: z.coerce.number().int().positive().openapi({ example: 1 }),
     year: z.coerce
       .number()
@@ -173,12 +187,13 @@ const PaintingListQuery = z.object({
 // enforces on POST/PUT. (Kept separate from the doc twins above because a schema
 // carrying a .refine() can't be rendered into clean JSON Schema.)
 const baseShape = {
-  paintingNo: z.string().trim().min(1).max(50),
+  paintingNo: z.string().trim().min(1).max(50).regex(PAINTING_NO_PATTERN),
   paintingName: z.string().trim().min(1).max(255),
   widthCm: positiveDecimal.optional().nullable(),
   heightCm: positiveDecimal.optional().nullable(),
   radiusCm: positiveDecimal.optional().nullable(),
   paintingDescription: z.string().trim().max(20000).optional().nullable(),
+  paintingDescriptionTr: z.string().trim().max(20000).optional().nullable(),
   artistId: z.coerce.number().int().positive(),
   year: z.coerce.number().int().min(1000).max(2100).optional().nullable(),
   techniqueId: z.coerce.number().int().positive().optional().nullable(),
@@ -342,12 +357,14 @@ router.get(
 );
 router.get("/:id", validate({ params: IdParam }), controller.get);
 router.post("/", validate({ body: PaintingCreateRuntime }), controller.create);
-// Multipart image upload: validate the :id, let multer write the file to
-// public/paintings/<id>/, then record it. (The /api write guard already
-// requires an admin token for this POST.)
+// Multipart image upload: validate the :id, resolve the painting's number
+// (404 if it doesn't exist — before any file is written), let multer write to
+// public/paintings/<painting_no>/, then record it. (The /api write guard
+// already requires an admin token for this POST.)
 router.post(
   "/:id/images",
   validate({ params: IdParam }),
+  resolvePaintingFolder,
   uploadPaintingImage,
   controller.uploadImage,
 );

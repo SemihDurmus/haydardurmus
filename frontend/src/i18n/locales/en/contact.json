@@ -4,8 +4,10 @@
     "subtitle": "For inquiries about exhibitions, acquisitions, and commissions"
   },
   "form": {
-    "name": "Full Name",
-    "namePlaceholder": "Your name",
+    "firstName": "First Name",
+    "firstNamePlaceholder": "Your first name",
+    "lastName": "Last Name",
+    "lastNamePlaceholder": "Your last name",
     "email": "Email Address",
     "emailPlaceholder": "your@email.com",
     "subject": "Subject",
@@ -32,7 +34,8 @@
     "social": "Follow"
   },
   "validation": {
-    "nameRequired": "Name is required",
+    "firstNameRequired": "First name is required",
+    "lastNameRequired": "Last name is required",
     "emailRequired": "Email is required",
     "emailInvalid": "Please enter a valid email address",
     "subjectRequired": "Subject is required",

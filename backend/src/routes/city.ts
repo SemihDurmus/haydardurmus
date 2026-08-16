@@ -22,6 +22,7 @@ const City = z
   .object({
     id: z.number().int(),
     name: z.string().max(100),
+    nameTr: z.string().max(100),
     countryId: z.number().int(),
     country: CountryRef.optional(),
   })
@@ -31,7 +32,8 @@ const City = z
 // but also tolerates a numeric string, mirroring how params/query coerce.
 const CityCreate = z
   .object({
-    name: z.string().trim().min(1).max(100).openapi({ example: "İstanbul" }),
+    name: z.string().trim().min(1).max(100).openapi({ example: "Istanbul" }),
+    nameTr: z.string().trim().min(1).max(100).openapi({ example: "İstanbul" }),
     countryId: z.coerce.number().int().positive().openapi({ example: 1 }),
   })
   .openapi("CityCreate");

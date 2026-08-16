@@ -1,6 +1,6 @@
 import { API_ORIGIN } from '@shared/api/client';
+import type { TranslatedText } from '@shared/types';
 import type { Painting } from '../types';
-import { techniques, materials } from '../data/lookups';
 
 /**
  * Translate a backend painting record into the frontend `Painting` model.
@@ -11,12 +11,19 @@ import { techniques, materials } from '../data/lookups';
  *   - backend dimensions are NUMERIC, serialized as JSON strings ("31.5")
  *   - untitled works carry a sentinel name the backend requires (NOT NULL);
  *     we map it back to `null` so the UI renders exactly as before
+ *
+ * Names and their Turkish come from the API and are passed straight through.
+ * This file used to translate them against a curated table checked into the
+ * frontend, which meant a technique added through the admin panel could never
+ * be shown in Turkish. That table is gone.
  */
 const UNTITLED = 'Untitled';
 
+/** A lookup row as the API returns it: English name plus its Turkish. */
 interface NamedRef {
   id: number;
   name: string;
+  nameTr: string;
 }
 interface PersonRef {
   id: number;
@@ -62,21 +69,22 @@ function slugify(value: string): string {
 }
 
 /**
- * Recover the frontend's short lookup id from the backend's English name.
- * The frontend keeps a curated bilingual lookup table (lookups.ts); we match the
- * backend name to a label there so existing filters keep working. If there's no
- * curated entry, fall back to a slug of the name.
+ * Filter id for a lookup, derived from its English name ('Oil' -> 'oil').
+ * Deriving it keeps query strings readable (?technique=oil) without the
+ * frontend having to know the set of techniques in advance.
  */
-function lookupId(
-  items: ReadonlyArray<{ id: string; label: string }>,
-  name: string | undefined,
-): string | null {
-  if (!name) return null;
-  return items.find((i) => i.label === name)?.id ?? slugify(name);
-}
+const lookupId = (ref?: NamedRef | null): string | null =>
+  ref ? slugify(ref.name) : null;
+
+/** Both languages of a lookup's name, for display. */
+const lookupLabel = (ref?: NamedRef | null): TranslatedText | null =>
+  ref ? { en: ref.name, tr: ref.nameTr } : null;
 
 const personSlug = (p?: PersonRef | null): string | null =>
   p ? slugify(`${p.firstName} ${p.lastName}`) : null;
+
+const personName = (p?: PersonRef | null): string | null =>
+  p ? `${p.firstName} ${p.lastName}` : null;
 
 export function mapPainting(dto: PaintingDto): Painting {
   return {
@@ -88,10 +96,14 @@ export function mapPainting(dto: PaintingDto): Painting {
     radius: toNumber(dto.radiusCm),
     artistId: personSlug(dto.artist) ?? String(dto.artistId),
     year: dto.year,
-    techniqueId: lookupId(techniques, dto.technique?.name),
-    materialId: lookupId(materials, dto.material?.name),
-    locationCityId: dto.city ? slugify(dto.city.name) : null,
+    techniqueId: lookupId(dto.technique),
+    materialId: lookupId(dto.material),
+    locationCityId: lookupId(dto.city),
     ownerId: personSlug(dto.owner),
+    technique: lookupLabel(dto.technique),
+    material: lookupLabel(dto.material),
+    locationCity: lookupLabel(dto.city),
+    owner: personName(dto.owner),
     slug: dto.slug,
     // The backend only knows available/not — map onto the richer status enum.
     availability: dto.isAvailable ? 'for_sale' : 'sold',

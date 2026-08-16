@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import type { Painting } from '../types';
 import { formatDimensions, getPaintingDisplayName } from '@shared/utils/format';
-import { getLookupLabel, techniques, materials } from '../data/lookups';
+import { pickTranslated } from '@shared/hooks/useTranslatedText';
 import { formatTechniqueMaterial } from '../utils/formatTechniqueMaterial';
 import { isRadiusOnlyPainting } from '../utils/isRadiusOnlyPainting';
 import { buildRoute } from '@app/router/routes';
@@ -22,8 +22,8 @@ export function PaintingCard({ painting, variant = 'default', className }: Paint
 
   const displayName = getPaintingDisplayName(painting.paintingName, t('card.untitled'));
   const metadataTitle = `${painting.paintingNo}${painting.paintingName ? ` - ${painting.paintingName}` : ''}`;
-  const technique = getLookupLabel(techniques, painting.techniqueId, locale);
-  const material = getLookupLabel(materials, painting.materialId, locale);
+  const technique = pickTranslated(painting.technique, locale);
+  const material = pickTranslated(painting.material, locale);
   const techniqueMaterial = formatTechniqueMaterial(technique, material, locale);
   const dimensions = formatDimensions(painting.width, painting.height, painting.radius);
   const showFullImage = isRadiusOnlyPainting(painting);

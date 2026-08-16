@@ -20,6 +20,10 @@ declare global {
         username: string;
         role: "admin";
       };
+      // Set by resolvePaintingFolder (middleware/upload.ts) before multer runs.
+      // Images are filed under the painting's number, not its id, so the
+      // destination callback needs it resolved ahead of the first byte written.
+      paintingNo?: string;
     }
   }
 }

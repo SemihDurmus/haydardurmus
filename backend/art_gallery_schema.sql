@@ -24,21 +24,44 @@ BEGIN;
 -- 1. Lookup / reference tables
 --    id + UNIQUE name. The UNIQUE is what turns a duplicate
 --    name into a 409 (Prisma P2002) at the API layer.
+--
+--    BILINGUAL COLUMNS
+--    The site is served in English and Turkish, so every column holding
+--    text *we* author carries a `_tr` sibling. The rules, applied
+--    consistently across this file:
+--
+--    - Nullability mirrors the English column. Where English is
+--      NOT NULL the Turkish sibling is NOT NULL too, so a record can
+--      never exist in only one language. Where English is optional
+--      (the description columns) a CHECK enforces both-or-neither
+--      instead -- a bare NOT NULL there would demand Turkish prose for
+--      records that have no English prose either.
+--    - UNIQUE mirrors the English column. Two techniques both named
+--      'Yagliboya' is the same data-entry mistake as two named 'Oil'
+--      and should fail identically.
+--    - Proper nouns are deliberately NOT duplicated: artist/owner
+--      first_name + last_name, painting_no, and currency name + symbol
+--      (ISO codes). There is no Turkish spelling of a person's name or
+--      of 'TRY'. contact_message is excluded for a different reason:
+--      that text is written by a visitor, not by us.
 -- ============================================================
 
 CREATE TABLE nationality (
     id          INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name        VARCHAR(100) NOT NULL UNIQUE
+    name        VARCHAR(100) NOT NULL UNIQUE,
+    name_tr     VARCHAR(100) NOT NULL UNIQUE
 );
 
 CREATE TABLE technique (
     id          INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name        VARCHAR(100) NOT NULL UNIQUE
+    name        VARCHAR(100) NOT NULL UNIQUE,
+    name_tr     VARCHAR(100) NOT NULL UNIQUE
 );
 
 CREATE TABLE material (
     id          INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name        VARCHAR(100) NOT NULL UNIQUE
+    name        VARCHAR(100) NOT NULL UNIQUE,
+    name_tr     VARCHAR(100) NOT NULL UNIQUE
 );
 
 -- currency is the one lookup with a variation: an extra symbol column.
@@ -54,17 +77,23 @@ CREATE TABLE currency (
 
 CREATE TABLE country (
     id          INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name        VARCHAR(100) NOT NULL UNIQUE
+    name        VARCHAR(100) NOT NULL UNIQUE,
+    name_tr     VARCHAR(100) NOT NULL UNIQUE
 );
 
+-- Place names really are translated ('Cyprus'/'Kibris', 'Spain'/'Ispanya'),
+-- which is why city and country are bilingual while people's names are not.
 CREATE TABLE city (
     id          INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name        VARCHAR(100) NOT NULL,
+    name_tr     VARCHAR(100) NOT NULL,
     -- Required FK; RESTRICT means a country with cities cannot be deleted.
     country_id  INTEGER      NOT NULL REFERENCES country(id) ON DELETE RESTRICT,
     -- Composite uniqueness: a city name is unique *within* a country
-    -- ("Paris, France" and "Paris, Texas" are both allowed).
-    UNIQUE (name, country_id)
+    -- ("Paris, France" and "Paris, Texas" are both allowed). Applied to both
+    -- languages, so the Turkish side can't drift into duplicates either.
+    UNIQUE (name, country_id),
+    UNIQUE (name_tr, country_id)
 );
 
 -- ============================================================
@@ -78,7 +107,13 @@ CREATE TABLE artist (
     first_name      VARCHAR(100) NOT NULL,
     last_name       VARCHAR(100) NOT NULL,
     birthdate       DATE,
+    -- Optional prose, so the bilingual rule is a CHECK rather than NOT NULL:
+    -- an artist may have no description at all, but may not have one in only
+    -- one language. See the note above the lookup tables.
     description     TEXT,
+    description_tr  TEXT,
+    CONSTRAINT chk_artist_description_bilingual
+        CHECK ((description IS NULL) = (description_tr IS NULL)),
     created_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW(), -- TIMESTAMPTZ is a data type used in databases to store date and time information with time zone awareness, ensuring accurate timekeeping across different regions. It stores all timestamps in UTC and converts them to the appropriate time zone when retrieved.
     updated_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW()  -- TIMESTAMPTZ is a data type used in databases to store date and time information with time zone awareness, ensuring accurate timekeeping across different regions. It stores all timestamps in UTC and converts them to the appropriate time zone when retrieved.
 );
@@ -92,6 +127,9 @@ CREATE TABLE owner (
     city_id         INTEGER      REFERENCES city(id) ON DELETE SET NULL,
     nationality_id  INTEGER      REFERENCES nationality(id) ON DELETE SET NULL,
     description     TEXT,
+    description_tr  TEXT,
+    CONSTRAINT chk_owner_description_bilingual
+        CHECK ((description IS NULL) = (description_tr IS NULL)),
     created_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW(),  -- TIMESTAMPTZ is a data type used in databases to store date and time information with time zone awareness, ensuring accurate timekeeping across different regions. It stores all timestamps in UTC and converts them to the appropriate time zone when retrieved.
     updated_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW()  -- TIMESTAMPTZ is a data type used in databases to store date and time information with time zone awareness, ensuring accurate timekeeping across different regions. It stores all timestamps in UTC and converts them to the appropriate time zone when retrieved.
 );
@@ -100,12 +138,16 @@ CREATE TABLE owner (
 -- FK delete policies (artist RESTRICT = required; the rest SET NULL = optional).
 CREATE TABLE painting (
     id                   INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    -- Neither of these is bilingual: painting_no is an inventory code, and
+    -- painting_name is the work's title -- a proper name. 'Kurban' is
+    -- 'Kurban' in every language, the same way an artist's name is.
     painting_no          VARCHAR(50)   NOT NULL UNIQUE,
     painting_name        VARCHAR(255)  NOT NULL,
     width_cm             NUMERIC(7,2),
     height_cm            NUMERIC(7,2),
     radius_cm            NUMERIC(7,2),
-    painting_description  TEXT,
+    painting_description     TEXT,
+    painting_description_tr  TEXT,
     artist_id            INTEGER       NOT NULL REFERENCES artist(id) ON DELETE RESTRICT,
     year                 SMALLINT,
     technique_id         INTEGER       REFERENCES technique(id) ON DELETE SET NULL,
@@ -119,6 +161,9 @@ CREATE TABLE painting (
     -- added after the original schema file was written.
     is_available         BOOLEAN       NOT NULL,
 
+    -- Optional prose: no description is fine, a one-language description is not.
+    CONSTRAINT chk_painting_description_bilingual
+        CHECK ((painting_description IS NULL) = (painting_description_tr IS NULL)),
     CONSTRAINT chk_year       CHECK (year BETWEEN 1000 AND 2100),
     CONSTRAINT chk_width_cm   CHECK (width_cm  > 0),
     CONSTRAINT chk_height_cm  CHECK (height_cm > 0),

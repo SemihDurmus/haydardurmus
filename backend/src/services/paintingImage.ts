@@ -101,7 +101,7 @@ export function update(id: number, data: UpdateInput) {
 
 export async function remove(id: number): Promise<void> {
   const image = await prisma.paintingImage.delete({ where: { id } });
-  // Best-effort disk cleanup: filePath is "/images/paintings/<id>/<file>" and
+  // Best-effort disk cleanup: filePath is "/images/paintings/<painting_no>/<file>" and
   // /images/* is served from public/ (see app.ts). Resolve strictly inside
   // PUBLIC_ROOT so a mangled path can never delete outside the upload tree.
   const rel = image.filePath.replace(/^\/images\//, "");

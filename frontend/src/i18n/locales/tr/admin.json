@@ -66,9 +66,9 @@
     "locationCity": "Bulunduğu şehir",
     "owner": "Sahibi",
     "none": "Yok",
-    "image": "Görsel",
-    "imageHint": "Önce tablo kaydedilir, ardından görsel kendi klasörüne yüklenir; ilk görsel ana görsel olur.",
-    "addImageOptional": "Görsel ekle (isteğe bağlı)",
+    "image": "Görseller",
+    "imageHint": "Önce tablo kaydedilir, ardından görseller kendi klasörüne yüklenir; ilk görsel ana görsel olur.",
+    "addImagesOptional": "Görsel ekle (isteğe bağlı)",
     "remove": "Kaldır",
     "rectangular": "Dikdörtgen",
     "circular": "Dairesel",
@@ -151,7 +151,8 @@
       "birthdate": "Doğum tarihi",
       "city": "Şehir",
       "country": "Ülke",
-      "name": "İsim",
+      "name": "İsim (İngilizce)",
+      "nameTr": "İsim (Türkçe)",
       "code": "Kod",
       "symbol": "Sembol"
     }

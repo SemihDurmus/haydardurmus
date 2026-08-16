@@ -1,9 +1,9 @@
 import { apiGet } from '@shared/api/client';
 
 /**
- * Lookup options for the admin form selects. Unlike the public gallery (which
- * uses the curated bilingual lookups in data/lookups.ts), the admin form writes
- * real records, so it needs the backend's **numeric ids**.
+ * Lookup options for the admin form selects. The public gallery derives its
+ * filter options from the paintings it already loaded; the admin form writes
+ * real records, so it needs the backend's **numeric ids** instead.
  */
 export interface LookupOption {
   id: number;

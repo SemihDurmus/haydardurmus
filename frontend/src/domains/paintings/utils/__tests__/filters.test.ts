@@ -5,6 +5,7 @@ import {
   parseFiltersFromParams,
   serializeFiltersToParams,
   extractYears,
+  extractLookupOptions,
 } from '../filters';
 import { EMPTY_FILTERS } from '../../types';
 import type { Painting, PaintingFilters } from '../../types';
@@ -23,6 +24,10 @@ const mockPaintings: Painting[] = [
     materialId: 'canvas',
     locationCityId: 'istanbul',
     ownerId: 'artist',
+    technique: { en: 'Oil', tr: 'Yağlıboya' },
+    material: { en: 'Canvas', tr: 'Tuval' },
+    locationCity: null,
+    owner: 'artist',
   },
   {
     id: 'p002',
@@ -37,6 +42,10 @@ const mockPaintings: Painting[] = [
     materialId: 'linen',
     locationCityId: 'paris',
     ownerId: 'private_eu',
+    technique: { en: 'Oil', tr: 'Yağlıboya' },
+    material: null,
+    locationCity: null,
+    owner: 'private_eu',
   },
   {
     id: 'p003',
@@ -51,6 +60,10 @@ const mockPaintings: Painting[] = [
     materialId: 'paper',
     locationCityId: 'istanbul',
     ownerId: 'artist',
+    technique: { en: 'Watercolor', tr: 'Suluboya' },
+    material: { en: 'Paper', tr: 'Kağıt' },
+    locationCity: null,
+    owner: 'artist',
   },
 ];
 
@@ -209,5 +222,45 @@ describe('extractYears', () => {
       { ...mockPaintings[1], year: 2022 },
     ];
     expect(extractYears(paintings)).toEqual([2022]);
+  });
+});
+
+// The frontend holds no list of techniques or materials — filter options are
+// derived from whatever the loaded paintings actually use.
+describe('extractLookupOptions', () => {
+  it('derives options from the paintings, labelled in English', () => {
+    // Two of the three fixtures share 'oil', so it appears once.
+    const options = extractLookupOptions(mockPaintings, 'techniqueId', 'technique', 'en');
+    expect(options).toEqual([
+      { id: 'oil', label: 'Oil' },
+      { id: 'watercolor', label: 'Watercolor' },
+    ]);
+  });
+
+  it('labels the same options in Turkish', () => {
+    const options = extractLookupOptions(mockPaintings, 'techniqueId', 'technique', 'tr');
+    expect(options.map((o) => o.label)).toEqual(['Suluboya', 'Yağlıboya']);
+  });
+
+  it('deduplicates ids and skips paintings without the lookup', () => {
+    const paintings: Painting[] = [
+      mockPaintings[0],
+      { ...mockPaintings[1], techniqueId: 'oil', technique: { en: 'Oil', tr: 'Yağlıboya' } },
+      { ...mockPaintings[2], techniqueId: null, technique: null },
+    ];
+    const options = extractLookupOptions(paintings, 'techniqueId', 'technique', 'en');
+    expect(options).toEqual([{ id: 'oil', label: 'Oil' }]);
+  });
+
+  it('sorts with Turkish collation, not raw code points', () => {
+    const paintings: Painting[] = [
+      { ...mockPaintings[0], techniqueId: 'z', technique: { en: 'Z', tr: 'Zamk' } },
+      { ...mockPaintings[1], techniqueId: 'c', technique: { en: 'C', tr: 'Çini' } },
+      { ...mockPaintings[2], techniqueId: 'd', technique: { en: 'D', tr: 'Duralit' } },
+    ];
+    // In Turkish, Ç sorts right after C — ahead of D — rather than after Z
+    // where its code point would put it.
+    const options = extractLookupOptions(paintings, 'techniqueId', 'technique', 'tr');
+    expect(options.map((o) => o.label)).toEqual(['Çini', 'Duralit', 'Zamk']);
   });
 });

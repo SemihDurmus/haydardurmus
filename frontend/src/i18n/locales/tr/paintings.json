@@ -54,6 +54,9 @@
     "collection": "Koleksiyon",
     "relatedWorks": "İlgili Eserler",
     "previousPainting": "Önceki eser",
-    "nextPainting": "Sonraki eser"
+    "nextPainting": "Sonraki eser",
+    "previousImage": "Önceki görsel",
+    "nextImage": "Sonraki görsel",
+    "showImage": "{{number}}. görseli göster"
   }
 }

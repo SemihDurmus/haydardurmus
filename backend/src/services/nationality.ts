@@ -20,8 +20,13 @@ export async function list({ skip, take, name, search }: ListArgs) {
   // exact (case-insensitive) match, ?search= a partial `contains`. If both are
   // sent, exact wins — its spread is last, overriding the same `name` key.
   const where: Prisma.NationalityWhereInput = {
+    // ?search= matches EITHER language, so a Turkish visitor searching
+    // "Yağlıboya" finds the row whose English name is "Oil".
     ...(search !== undefined && {
-      name: { contains: search, mode: "insensitive" },
+      OR: [
+        { name: { contains: search, mode: "insensitive" } },
+        { nameTr: { contains: search, mode: "insensitive" } },
+      ],
     }),
     ...(name !== undefined && { name: { equals: name, mode: "insensitive" } }),
   };

@@ -29,6 +29,7 @@ const Artist = z
     lastName: z.string().max(100),
     birthdate: z.string().datetime().nullable(),
     description: z.string().nullable(),
+    descriptionTr: z.string().nullable(),
     createdAt: z.string().datetime(),
     updatedAt: z.string().datetime(),
     nationality: NationalityRef.optional(),
@@ -61,7 +62,10 @@ const ArtistCreate = z
     // optional() = key may be absent; nullable() = key may be null (both columns
     // are nullable, and the client may omit or explicitly clear them).
     birthdate: isoDate.optional().nullable(),
+    // Optional, but both-or-neither: the database CHECK rejects a description
+    // written in only one language. Leave both empty for no description.
     description: z.string().trim().max(10000).optional().nullable(),
+    descriptionTr: z.string().trim().max(10000).optional().nullable(),
   })
   .openapi("ArtistCreate");
 

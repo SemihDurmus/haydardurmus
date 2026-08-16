@@ -16,8 +16,13 @@ export async function list({ skip, take, countryId, name, search }: ListArgs) {
   // so a bare name lookup can return several rows — pair with countryId to narrow.
   const where: Prisma.CityWhereInput = {
     ...(countryId !== undefined && { countryId }),
+    // ?search= matches EITHER language, so a Turkish visitor searching
+    // "Yağlıboya" finds the row whose English name is "Oil".
     ...(search !== undefined && {
-      name: { contains: search, mode: "insensitive" },
+      OR: [
+        { name: { contains: search, mode: "insensitive" } },
+        { nameTr: { contains: search, mode: "insensitive" } },
+      ],
     }),
     ...(name !== undefined && { name: { equals: name, mode: "insensitive" } }),
   };

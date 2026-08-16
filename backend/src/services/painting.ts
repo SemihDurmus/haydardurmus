@@ -2,6 +2,7 @@ import type { Prisma } from "@prisma/client";
 import { prisma } from "../db/prisma";
 import { NotFoundError } from "../utils/errors";
 import { idSlug } from "../utils/slug";
+import { paintingImageUrl, renamePaintingDir } from "../utils/paintingFiles";
 
 export interface ListArgs {
   skip: number;
@@ -138,11 +139,50 @@ export async function update(
   id: number,
   data: Prisma.PaintingUpdateInput | Prisma.PaintingUncheckedUpdateInput,
 ) {
-  const updated = await prisma.painting.update({
+  // A painting's images live in a folder named by its painting_no, so changing
+  // the number has to move the folder and rewrite the stored URLs — otherwise
+  // every image 404s. (The painting_image.painting_no column is handled for us
+  // by a database trigger; file_path is not.)
+  const before = await prisma.painting.findUnique({
     where: { id },
-    data,
-    include: adminInclude,
+    select: { paintingNo: true },
   });
+  if (!before) throw new NotFoundError(`Painting ${id} not found`);
+
+  const nextNo = typeof data.paintingNo === "string" ? data.paintingNo : undefined;
+  const renaming = nextNo !== undefined && nextNo !== before.paintingNo;
+
+  const updated = await prisma.$transaction(async (tx) => {
+    await tx.painting.update({ where: { id }, data });
+
+    if (renaming) {
+      // Rebuild each URL from the canonical helper rather than string-replacing
+      // the old number, which would also corrupt a filename containing it.
+      const images = await tx.paintingImage.findMany({
+        where: { paintingId: id },
+        select: { id: true, filePath: true },
+      });
+      for (const image of images) {
+        const filename = image.filePath.split("/").pop();
+        if (!filename) continue;
+        await tx.paintingImage.update({
+          where: { id: image.id },
+          data: { filePath: paintingImageUrl(nextNo, filename) },
+        });
+      }
+
+      // Inside the transaction on purpose: if the directory can't be moved
+      // (name collision, permissions), this throws and the rename is rolled
+      // back, leaving the database and the disk agreeing with each other.
+      // The residual risk is the reverse order — a commit failing after a
+      // successful move — which would leave the files under the new name and
+      // the rows under the old one.
+      renamePaintingDir(before.paintingNo, nextNo);
+    }
+
+    return tx.painting.findUniqueOrThrow({ where: { id }, include: adminInclude });
+  });
+
   return withSlug(updated);
 }
 

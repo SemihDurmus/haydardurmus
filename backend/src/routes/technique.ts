@@ -20,12 +20,16 @@ const Technique = z
   .object({
     id: z.number().int(),
     name: z.string().max(100),
+    nameTr: z.string().max(100),
   })
   .openapi("Technique");
 
 const TechniqueCreate = z
   .object({
-    name: z.string().trim().min(1).max(100).openapi({ example: "Yağlı Boya" }),
+    // Both languages are required: name_tr is NOT NULL, because the public
+    // site renders lookups in Turkish straight from the database.
+    name: z.string().trim().min(1).max(100).openapi({ example: "Oil" }),
+    nameTr: z.string().trim().min(1).max(100).openapi({ example: "Yağlıboya" }),
   })
   .openapi("TechniqueCreate");
 

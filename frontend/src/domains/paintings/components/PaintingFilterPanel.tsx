@@ -3,8 +3,7 @@ import { X, SlidersHorizontal } from 'lucide-react';
 import { Typography } from '@shared/ui/Typography';
 import { cn } from '@shared/utils/cn';
 import type { usePaintingFilters } from '../hooks/usePaintingFilters';
-import { techniques, materials } from '../data/lookups';
-import { extractYears } from '../utils/filters';
+import { extractYears, extractLookupOptions } from '../utils/filters';
 import type { Painting } from '../types';
 
 type FilterHook = ReturnType<typeof usePaintingFilters>;
@@ -68,6 +67,20 @@ export function PaintingFilterPanel({
   const { filters, toggleMultiFilter, clearFilters, activeFilterCount, setFilter } = filterHook;
 
   const availableYears = extractYears(allPaintings);
+  // Options come from the paintings themselves, labelled in the active locale
+  // — no technique or material list is hardcoded in this codebase.
+  const techniqueOptions = extractLookupOptions(
+    allPaintings,
+    'techniqueId',
+    'technique',
+    locale,
+  );
+  const materialOptions = extractLookupOptions(
+    allPaintings,
+    'materialId',
+    'material',
+    locale,
+  );
 
   return (
     <aside className={cn('', className)}>
@@ -154,10 +167,10 @@ export function PaintingFilterPanel({
           showRemoveIcon={false}
           onClick={() => setFilter('techniqueIds', [])}
         />
-        {techniques.map((tech) => (
+        {techniqueOptions.map((tech) => (
           <FilterChip
             key={tech.id}
-            label={locale === 'tr' && tech.labelTr ? tech.labelTr : tech.label}
+            label={tech.label}
             active={filters.techniqueIds.includes(tech.id)}
             onClick={() => toggleMultiFilter('techniqueIds', tech.id)}
           />
@@ -172,10 +185,10 @@ export function PaintingFilterPanel({
           showRemoveIcon={false}
           onClick={() => setFilter('materialIds', [])}
         />
-        {materials.map((mat) => (
+        {materialOptions.map((mat) => (
           <FilterChip
             key={mat.id}
-            label={locale === 'tr' && mat.labelTr ? mat.labelTr : mat.label}
+            label={mat.label}
             active={filters.materialIds.includes(mat.id)}
             onClick={() => toggleMultiFilter('materialIds', mat.id)}
           />

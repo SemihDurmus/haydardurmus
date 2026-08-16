@@ -4,6 +4,7 @@ import * as imageService from "../services/paintingImage";
 import { parsePagination, paginated } from "../utils/pagination";
 import { parseIdSlug } from "../utils/slug";
 import { BadRequestError, NotFoundError } from "../utils/errors";
+import { paintingImageUrl } from "../utils/paintingFiles";
 
 export async function list(req: Request, res: Response, next: NextFunction) {
   try {
@@ -79,14 +80,15 @@ export async function remove(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-// POST /api/paintings/:id/images — multipart upload. multer has already written
-// the file to public/paintings/<id>/; here we record it. The first image for a
-// painting becomes its primary; later ones are added non-primary.
+// POST /api/paintings/:id/images — multipart upload. resolvePaintingFolder has
+// put the painting's number on the request and multer has already written the
+// file to public/paintings/<painting_no>/; here we record it. The first image
+// for a painting becomes its primary; later ones are added non-primary.
 export async function uploadImage(req: Request, res: Response, next: NextFunction) {
   try {
     const id = req.valid!.params.id as number;
     if (!req.file) throw new BadRequestError("No image file (form field 'image')");
-    const filePath = `/images/paintings/${id}/${req.file.filename}`;
+    const filePath = paintingImageUrl(req.paintingNo!, req.file.filename);
     const { total } = await imageService.list({ skip: 0, take: 1, paintingId: id });
     const created = await imageService.create({
       paintingId: id,

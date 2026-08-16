@@ -6,7 +6,7 @@ import { Container } from '@shared/ui/Container';
 import { Typography } from '@shared/ui/Typography';
 import { PaintingGrid } from '@domains/paintings/components/PaintingGrid';
 import { mockCollections } from '@domains/collection/types';
-import { mockPaintings } from '@domains/paintings/data/mockPaintings';
+import { useAllPaintings } from '@domains/paintings/hooks/usePaintings';
 import { ROUTES } from '@app/router/routes';
 import { useTranslatedText } from '@shared/hooks/useTranslatedText';
 
@@ -14,6 +14,9 @@ export default function CollectionDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { t } = useTranslation('collections');
   const collection = mockCollections.find((c) => c.id === id);
+  // Collections are curated site content, but the works in them are real
+  // records — fetched from the API and matched on painting_no.
+  const { data: paintings = [] } = useAllPaintings();
   const title = useTranslatedText(collection?.title ?? { en: '', tr: '' });
   const description = useTranslatedText(collection?.description ?? { en: '', tr: '' });
 
@@ -28,8 +31,8 @@ export default function CollectionDetailPage() {
     );
   }
 
-  const collectionPaintings = mockPaintings.filter((p) =>
-    collection.paintingIds.includes(p.id)
+  const collectionPaintings = paintings.filter((p) =>
+    collection.paintingNos.includes(p.paintingNo)
   );
 
   return (
@@ -44,7 +47,7 @@ export default function CollectionDetailPage() {
             {t('detail.back')}
           </Link>
           <Typography level="overline" tone="tertiary" className="mb-2 block">
-            {collection.year ?? ''} · {t('card.works', { count: collection.paintingIds.length })}
+            {collection.year ?? ''} · {t('card.works', { count: collection.paintingNos.length })}
           </Typography>
           <Typography level="h1" className="mb-4">{title}</Typography>
           <Typography level="body-lg" tone="secondary" className="max-w-container-sm text-pretty">
