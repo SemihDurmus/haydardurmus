@@ -21,7 +21,7 @@ export function PaintingCard({ painting, variant = 'default', className }: Paint
   const locale = (i18n.language?.split('-')[0] ?? 'en') as 'en' | 'tr';
 
   const displayName = getPaintingDisplayName(painting.paintingName, t('card.untitled'));
-  const metadataTitle = `${painting.paintingNo}${painting.paintingName ? ` - ${painting.paintingName}` : ''}`;
+  const metadataTitle = `#${painting.paintingNo}${painting.paintingName ? ` - ${painting.paintingName}` : ''}`;
   const technique = pickTranslated(painting.technique, locale);
   const material = pickTranslated(painting.material, locale);
   const techniqueMaterial = formatTechniqueMaterial(technique, material, locale);
@@ -50,7 +50,7 @@ export function PaintingCard({ painting, variant = 'default', className }: Paint
           fallback={
             <div className="flex h-full w-full flex-col items-center justify-center gap-3 p-6">
               <span className="font-sans text-label uppercase tracking-widest text-text-tertiary">
-                {painting.paintingNo}
+                #{painting.paintingNo}
               </span>
               {painting.paintingName && (
                 <span className="text-center font-serif text-body-sm text-text-secondary">

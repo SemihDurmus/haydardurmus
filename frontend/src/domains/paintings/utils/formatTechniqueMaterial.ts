@@ -8,10 +8,10 @@ export function formatTechniqueMaterial(
 ): string | null {
   if (technique && material) {
     if (locale === 'tr') {
-      return `${material} üzerine ${technique}`;
+      return `${material} üzeri ${technique.toLowerCase()}`;
     }
 
-    return `${technique} on ${material}`;
+    return `${technique} on ${material.toLowerCase()}`;
   }
 
   if (technique) return technique;

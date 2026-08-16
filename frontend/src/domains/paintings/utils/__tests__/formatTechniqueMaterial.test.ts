@@ -1,16 +1,16 @@
 import { formatTechniqueMaterial } from '../formatTechniqueMaterial';
 
 describe('formatTechniqueMaterial', () => {
-  it('combines technique and material in English', () => {
-    expect(formatTechniqueMaterial('Oil', 'Wood Panel', 'en')).toBe('Oil on Wood Panel');
-    expect(formatTechniqueMaterial('Collage', 'Cardboard', 'en')).toBe('Collage on Cardboard');
+  it('combines technique and material in English, material lowercased', () => {
+    expect(formatTechniqueMaterial('Oil', 'Wood Panel', 'en')).toBe('Oil on wood panel');
+    expect(formatTechniqueMaterial('Collage', 'Cardboard', 'en')).toBe('Collage on cardboard');
   });
 
-  it('combines technique and material in Turkish', () => {
+  it('combines technique and material in Turkish, technique lowercased', () => {
     expect(formatTechniqueMaterial('Yağlıboya', 'Ahşap Panel', 'tr')).toBe(
-      'Ahşap Panel üzerine Yağlıboya'
+      'Ahşap Panel üzerine yağlıboya'
     );
-    expect(formatTechniqueMaterial('Kolaj', 'Karton', 'tr')).toBe('Karton üzerine Kolaj');
+    expect(formatTechniqueMaterial('Kolaj', 'Karton', 'tr')).toBe('Karton üzerine kolaj');
   });
 
   it('returns technique only when material is missing', () => {

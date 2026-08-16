@@ -101,7 +101,7 @@ export default function PaintingDetailPage() {
                 fallback={
                   <div className="flex h-full w-full items-center justify-center">
                     <Typography level="h3" tone="tertiary">
-                      {painting.paintingNo}
+                      #{painting.paintingNo}
                     </Typography>
                   </div>
                 }
@@ -130,11 +130,13 @@ export default function PaintingDetailPage() {
             {/* Details */}
             <div className="flex flex-col justify-center">
               <Typography level="overline" tone="tertiary" className="mb-2 block normal-case">
-                {t('detail.paintingNumber', { number: painting.paintingNo })}
+                {t('detail.paintingNumber', { number: `#${painting.paintingNo}` })}
               </Typography>
-              <Typography level="h1" className="mb-8">
-                {displayName}
-              </Typography>
+              {painting.paintingName && (
+                <Typography level="h1" className="mb-8">
+                  {painting.paintingName}
+                </Typography>
+              )}
 
               <dl className="space-y-4 border-t border-border pt-6">
                 {metaItems.map(({ label, value }) => (

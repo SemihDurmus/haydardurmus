@@ -1,6 +1,12 @@
-import { API_ORIGIN } from '@shared/api/client';
 import type { TranslatedText } from '@shared/types';
 import type { Painting } from '../types';
+
+// TEMPORARY: images are served from ImageKit for now instead of the backend's
+// own /images/* storage, one file per painting named after its paintingNo
+// (e.g. https://ik.imagekit.io/haydardurmus/2183.jpg). Revert to
+// dto.paintingImages + API_ORIGIN (see git history) once real uploads move
+// back to the backend.
+const IMAGEKIT_BASE_URL = 'https://ik.imagekit.io/haydardurmus';
 
 /**
  * Translate a backend painting record into the frontend `Painting` model.
@@ -17,7 +23,11 @@ import type { Painting } from '../types';
  * frontend, which meant a technique added through the admin panel could never
  * be shown in Turkish. That table is gone.
  */
-const UNTITLED = 'Untitled';
+// Sentinel values the backend stores for a nameless work (paintingName is
+// NOT NULL) — 'Untitled' from the seed data, 'isimsiz' (Turkish) used in
+// production. Either maps back to null so the UI shows no name at all.
+const UNTITLED_NAMES = new Set(['untitled', 'isimsiz']);
+const isUntitled = (name: string): boolean => UNTITLED_NAMES.has(name.trim().toLowerCase());
 
 /** A lookup row as the API returns it: English name plus its Turkish. */
 interface NamedRef {
@@ -90,7 +100,7 @@ export function mapPainting(dto: PaintingDto): Painting {
   return {
     id: String(dto.id),
     paintingNo: dto.paintingNo,
-    paintingName: dto.paintingName === UNTITLED ? null : dto.paintingName,
+    paintingName: isUntitled(dto.paintingName) ? null : dto.paintingName,
     width: toNumber(dto.widthCm),
     height: toNumber(dto.heightCm),
     radius: toNumber(dto.radiusCm),
@@ -107,10 +117,12 @@ export function mapPainting(dto: PaintingDto): Painting {
     slug: dto.slug,
     // The backend only knows available/not — map onto the richer status enum.
     availability: dto.isAvailable ? 'for_sale' : 'sold',
-    // Backend-hosted images (primary first, as the API orders them).
-    images: (dto.paintingImages ?? []).map((img) => ({
-      src: `${API_ORIGIN}${img.filePath}`,
-      alt: dto.paintingName === UNTITLED ? dto.paintingNo : dto.paintingName,
-    })),
+    // TEMPORARY: ImageKit URL derived from paintingNo — see IMAGEKIT_BASE_URL above.
+    images: [
+      {
+        src: `${IMAGEKIT_BASE_URL}/${dto.paintingNo}.jpg`,
+        alt: isUntitled(dto.paintingName) ? dto.paintingNo : dto.paintingName,
+      },
+    ],
   };
 }

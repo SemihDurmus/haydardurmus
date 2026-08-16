@@ -44,7 +44,7 @@ export function FeaturedPaintingImages() {
             loading="lazy"
           />
           <div className="absolute inset-0 flex items-center justify-center bg-primary-950/70 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-            <span className="font-heading text-[26px] text-white">{painting.paintingNo}</span>
+            <span className="font-heading text-[26px] text-white">#{painting.paintingNo}</span>
           </div>
         </div>
       ))}
