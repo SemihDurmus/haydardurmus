@@ -42,6 +42,7 @@ coverage
 
 *.txt
 *.md
+!README.md
 package-lock.json
 docs/
 .claude/
