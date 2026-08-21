@@ -32,13 +32,26 @@ export function PaintingImage({
   title,
   width,
 }: PaintingImageProps) {
+  const [prevSrc, setPrevSrc] = useState(src);
+  const [currentSrc, setCurrentSrc] = useState(src);
   const [hasError, setHasError] = useState(false);
 
-  if (!src || hasError) return <>{fallback ?? null}</>;
+  // Most uploads on ImageKit are actually named `.JPG`, but URLs are built
+  // assuming lowercase `.jpg` (case-sensitive storage) — retry with `.JPG`
+  // once before falling back, instead of just failing. Reset synchronously
+  // during render when `src` changes (React's recommended alternative to an
+  // effect for adjusting state from a prop).
+  if (src !== prevSrc) {
+    setPrevSrc(src);
+    setCurrentSrc(src);
+    setHasError(false);
+  }
+
+  if (!currentSrc || hasError) return <>{fallback ?? null}</>;
 
   return (
     <img
-      src={src}
+      src={currentSrc}
       width={width}
       height={height}
       alt={alt}
@@ -46,7 +59,13 @@ export function PaintingImage({
       className={cn(fit === 'contain' ? 'object-contain' : 'object-cover', className)}
       loading={loading}
       onLoad={onLoad}
-      onError={() => setHasError(true)}
+      onError={() => {
+        if (currentSrc.endsWith('.jpg')) {
+          setCurrentSrc(`${currentSrc.slice(0, -4)}.JPG`);
+        } else {
+          setHasError(true);
+        }
+      }}
     />
   );
 }
