@@ -26,6 +26,12 @@
     "retry": "Tekrar Dene",
     "download": "İndir"
   },
+  "pagination": {
+    "previous": "Önceki sayfa",
+    "next": "Sonraki sayfa",
+    "page": "Sayfa {{page}}",
+    "morePages": "Daha fazla sayfa"
+  },
   "language": {
     "switcher": "Dil",
     "en": "English",

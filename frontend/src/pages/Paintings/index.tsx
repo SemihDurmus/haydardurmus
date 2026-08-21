@@ -9,7 +9,9 @@ import { PaintingGrid } from '@domains/paintings/components/PaintingGrid';
 import { PaintingFilterPanel } from '@domains/paintings/components/PaintingFilterPanel';
 import { usePaintings, useAllPaintings } from '@domains/paintings/hooks/usePaintings';
 import { usePaintingFilters } from '@domains/paintings/hooks/usePaintingFilters';
-import { PageTitle, SectionTitle } from '@/shared/ui';
+import { PageTitle, SectionTitle, Pagination } from '@/shared/ui';
+
+const PAGE_SIZE = 24;
 
 const SORT_OPTIONS = [
   { value: 'year_desc', labelKey: 'sort.newest' },
@@ -34,6 +36,15 @@ export default function PaintingsPage() {
     hasActiveFilters && paintings !== undefined
       ? t('page.countFiltered', { filtered: paintings.length, total: totalCount })
       : t('page.count', { count: totalCount });
+
+  const totalPages = Math.max(1, Math.ceil((paintings?.length ?? 0) / PAGE_SIZE));
+  const currentPage = Math.min(filterHook.page, totalPages);
+  const pageItems = (paintings ?? []).slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  const handlePageChange = (page: number) => {
+    filterHook.setPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <>
@@ -121,7 +132,15 @@ export default function PaintingsPage() {
 
             {/* Grid */}
             <div className="min-w-0 flex-1">
-              <PaintingGrid paintings={paintings ?? []} isLoading={isLoading} columns={3} />
+              <PaintingGrid paintings={pageItems} isLoading={isLoading} columns={3} />
+              {!isLoading && (
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                  className="mt-10"
+                />
+              )}
             </div>
           </div>
         </Container>

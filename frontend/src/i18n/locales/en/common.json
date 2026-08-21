@@ -26,6 +26,12 @@
     "retry": "Retry",
     "download": "Download"
   },
+  "pagination": {
+    "previous": "Previous page",
+    "next": "Next page",
+    "page": "Page {{page}}",
+    "morePages": "More pages"
+  },
   "language": {
     "switcher": "Language",
     "en": "English",
