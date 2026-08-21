@@ -28,18 +28,24 @@ export default function PaintingsPage() {
   const { t } = useTranslation('paintings');
   const [filterPanelOpen, setFilterPanelOpen] = useState(false);
   const filterHook = usePaintingFilters();
-  const { data: paintings, isLoading } = usePaintings(filterHook.filters, filterHook.sort);
+  const { data, isLoading } = usePaintings(
+    filterHook.filters,
+    filterHook.sort,
+    filterHook.page,
+    PAGE_SIZE,
+  );
+  const paintings = data?.items ?? [];
   const { data: allPaintings } = useAllPaintings();
   const totalCount = allPaintings?.length ?? 0;
   const hasActiveFilters = filterHook.activeFilterCount > 0;
+  const filteredCount = data?.pagination.total ?? 0;
   const countLabel =
-    hasActiveFilters && paintings !== undefined
-      ? t('page.countFiltered', { filtered: paintings.length, total: totalCount })
+    hasActiveFilters && data !== undefined
+      ? t('page.countFiltered', { filtered: filteredCount, total: totalCount })
       : t('page.count', { count: totalCount });
 
-  const totalPages = Math.max(1, Math.ceil((paintings?.length ?? 0) / PAGE_SIZE));
-  const currentPage = Math.min(filterHook.page, totalPages);
-  const pageItems = (paintings ?? []).slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  const totalPages = data?.pagination.totalPages ?? 1;
+  const currentPage = Math.min(data?.pagination.page ?? filterHook.page, totalPages);
 
   const handlePageChange = (page: number) => {
     filterHook.setPage(page);
@@ -132,7 +138,7 @@ export default function PaintingsPage() {
 
             {/* Grid */}
             <div className="min-w-0 flex-1">
-              <PaintingGrid paintings={pageItems} isLoading={isLoading} columns={3} />
+              <PaintingGrid paintings={paintings} isLoading={isLoading} columns={3} />
               {!isLoading && (
                 <Pagination
                   currentPage={currentPage}

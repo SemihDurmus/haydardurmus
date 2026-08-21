@@ -15,9 +15,9 @@ export interface Painting {
   artistId: string;
   year: number | null;
 
-  // Lookup ids, used for filtering and for URL query params. Slugs derived
-  // from the API's English name ('Oil' -> 'oil'), not values this codebase
-  // knows in advance.
+  // Lookup ids, used for filtering (server-side) and for URL query params.
+  // The backend's real numeric ids, stringified — not slugs — since the API
+  // filters paintings by these directly (?technique=3,7 etc.).
   techniqueId: string | null;
   materialId: string | null;
   locationCityId: string | null;
