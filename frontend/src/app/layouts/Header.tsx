@@ -35,7 +35,7 @@ export function Header() {
   const navItems = [
     { label: t('nav.biography'), href: ROUTES.BIOGRAPHY },
     { label: t('nav.paintings'), href: ROUTES.PAINTINGS },
-    { label: t('nav.collections'), href: ROUTES.COLLECTIONS },
+    { label: t('nav.collection'), href: ROUTES.COLLECTIONS },
     { label: t('nav.media'), href: ROUTES.MEDIA },
     { label: t('nav.book'), href: ROUTES.BOOK },
     { label: t('nav.contact'), href: ROUTES.CONTACT },
