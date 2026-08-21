@@ -2,6 +2,7 @@ export * from './Typography';
 export * from './PageTitle';
 export * from './SectionTitle';
 export * from './Button';
+export * from './Pagination';
 export * from './Container';
 export * from './Section';
 export * from './Card';

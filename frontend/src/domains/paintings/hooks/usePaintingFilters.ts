@@ -26,6 +26,11 @@ export function usePaintingFilters() {
     [searchParams]
   );
 
+  const page = useMemo(() => {
+    const parsed = Number(searchParams.get('page'));
+    return Number.isFinite(parsed) && parsed >= 1 ? Math.floor(parsed) : 1;
+  }, [searchParams]);
+
   const activeFilterCount = useMemo(() => countActiveFilters(filters), [filters]);
 
   const setFilter = useCallback(
@@ -48,6 +53,20 @@ export function usePaintingFilters() {
         const current = parseFiltersFromParams(prev);
         const params = serializeFiltersToParams(current);
         if (nextSort !== DEFAULT_SORT) params.set('sort', nextSort);
+        return params;
+      });
+    },
+    [setSearchParams]
+  );
+
+  const setPage = useCallback(
+    (nextPage: number) => {
+      setSearchParams((prev) => {
+        const currentFilters = parseFiltersFromParams(prev);
+        const currentSort = parseSortFromParam(prev.get('sort'), DEFAULT_SORT);
+        const params = serializeFiltersToParams(currentFilters);
+        if (currentSort !== DEFAULT_SORT) params.set('sort', currentSort);
+        if (nextPage > 1) params.set('page', String(nextPage));
         return params;
       });
     },
@@ -86,9 +105,11 @@ export function usePaintingFilters() {
   return {
     filters,
     sort,
+    page,
     activeFilterCount,
     setFilter,
     setSort,
+    setPage,
     clearFilters,
     clearAll,
     toggleMultiFilter,
