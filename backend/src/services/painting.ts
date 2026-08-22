@@ -4,20 +4,68 @@ import { NotFoundError } from "../utils/errors";
 import { idSlug } from "../utils/slug";
 import { paintingImageUrl, renamePaintingDir } from "../utils/paintingFiles";
 
+// Single source of truth for the sortable keys — reused by the route's zod
+// enum (routes/painting.ts) so the query-param contract and this service can
+// never drift apart.
+export const PAINTING_SORT_KEYS = [
+  "year_desc",
+  "year_asc",
+  "no_asc",
+  "no_desc",
+  "name_asc",
+  "name_desc",
+  "size_desc",
+  "size_asc",
+] as const;
+export type PaintingSort = (typeof PAINTING_SORT_KEYS)[number];
+
 export interface ListArgs {
   skip: number;
   take: number;
   artistId?: number;
-  ownerId?: number;
-  techniqueId?: number;
-  materialId?: number;
+  ownerId?: number[];
+  techniqueId?: number[];
+  materialId?: number[];
   locationCityId?: number;
   available?: boolean;
   minPrice?: number;
   maxPrice?: number;
   search?: string;
+  years?: number[];
+  widthMin?: number;
+  widthMax?: number;
+  heightMin?: number;
+  heightMax?: number;
+  sort?: PaintingSort;
   /** Authenticated admin caller — includes the owner record in the response. */
   forAdmin?: boolean;
+}
+
+// year_desc/year_asc and size_desc/size_asc break ties by id so a page split
+// is stable across requests instead of shuffling rows that tie on the sort key.
+const SIMPLE_ORDER_BY: Partial<
+  Record<PaintingSort, Prisma.PaintingOrderByWithRelationInput[]>
+> = {
+  year_desc: [{ year: "desc" }, { id: "desc" }],
+  year_asc: [{ year: "asc" }, { id: "asc" }],
+  no_asc: [{ paintingNo: "asc" }],
+  no_desc: [{ paintingNo: "desc" }],
+  name_asc: [{ paintingName: "asc" }],
+  name_desc: [{ paintingName: "desc" }],
+};
+
+// "Size" isn't a column — it's width*height OR π*radius², across two mutually
+// exclusive nullable columns — so Prisma's typed `orderBy` can't express it.
+function paintingArea(p: {
+  widthCm: Prisma.Decimal | null;
+  heightCm: Prisma.Decimal | null;
+  radiusCm: Prisma.Decimal | null;
+}): number {
+  if (p.radiusCm !== null) return Math.PI * Number(p.radiusCm) ** 2;
+  if (p.widthCm !== null && p.heightCm !== null) {
+    return Number(p.widthCm) * Number(p.heightCm);
+  }
+  return 0;
 }
 
 // The shared "card" graph — enough to render a painting in a list: artist
@@ -67,16 +115,37 @@ export async function list({
   minPrice,
   maxPrice,
   search,
+  years,
+  widthMin,
+  widthMax,
+  heightMin,
+  heightMax,
+  sort,
   forAdmin = false,
 }: ListArgs) {
   const where: Prisma.PaintingWhereInput = {
     ...(artistId !== undefined && { artistId }),
-    ...(ownerId !== undefined && { ownerId }),
-    ...(techniqueId !== undefined && { techniqueId }),
-    ...(materialId !== undefined && { materialId }),
+    ...(ownerId !== undefined && ownerId.length > 0 && { ownerId: { in: ownerId } }),
+    ...(techniqueId !== undefined &&
+      techniqueId.length > 0 && { techniqueId: { in: techniqueId } }),
+    ...(materialId !== undefined &&
+      materialId.length > 0 && { materialId: { in: materialId } }),
     // locationCityId is the painting's OWN city (public), not the owner's city.
     ...(locationCityId !== undefined && { locationCityId }),
     ...(available !== undefined && { isAvailable: available }),
+    ...(years !== undefined && years.length > 0 && { year: { in: years } }),
+    ...((widthMin !== undefined || widthMax !== undefined) && {
+      widthCm: {
+        ...(widthMin !== undefined && { gte: widthMin }),
+        ...(widthMax !== undefined && { lte: widthMax }),
+      },
+    }),
+    ...((heightMin !== undefined || heightMax !== undefined) && {
+      heightCm: {
+        ...(heightMin !== undefined && { gte: heightMin }),
+        ...(heightMax !== undefined && { lte: heightMax }),
+      },
+    }),
     // ?search= partial match on the painting's name (case-insensitive).
     ...(search !== undefined && {
       paintingName: { contains: search, mode: "insensitive" },
@@ -95,17 +164,61 @@ export async function list({
       },
     }),
   };
-  const [items, total] = await Promise.all([
-    prisma.painting.findMany({
-      where,
-      skip,
-      take,
-      orderBy: { createdAt: "desc" },
-      include: detailInclude(forAdmin),
-    }),
-    prisma.painting.count({ where }),
-  ]);
+
+  const total = await prisma.painting.count({ where });
+
+  if (sort === "size_desc" || sort === "size_asc") {
+    const items = await listSortedBySize({ where, skip, take, sort, forAdmin });
+    return { items: items.map(withSlug), total };
+  }
+
+  const items = await prisma.painting.findMany({
+    where,
+    skip,
+    take,
+    orderBy: SIMPLE_ORDER_BY[sort as PaintingSort] ?? [{ createdAt: "desc" }],
+    include: detailInclude(forAdmin),
+  });
   return { items: items.map(withSlug), total };
+}
+
+// "Size" spans two mutually exclusive nullable columns (width×height OR
+// π×radius²), which Prisma's typed `orderBy` can't express as a single sort
+// key. Rank in application code instead of hand-rolling raw SQL that would
+// have to duplicate the `where` clause above (and risk drifting from it):
+// fetch every matching row's id + dimensions (cheap — no joins), sort by
+// area, take just this page's ids, then fetch the full include graph for
+// those ids and restore the ranked order.
+async function listSortedBySize({
+  where,
+  skip,
+  take,
+  sort,
+  forAdmin,
+}: {
+  where: Prisma.PaintingWhereInput;
+  skip: number;
+  take: number;
+  sort: Extract<PaintingSort, "size_desc" | "size_asc">;
+  forAdmin: boolean;
+}) {
+  const dims = await prisma.painting.findMany({
+    where,
+    select: { id: true, widthCm: true, heightCm: true, radiusCm: true },
+  });
+  dims.sort((a, b) => {
+    const diff = paintingArea(a) - paintingArea(b);
+    return sort === "size_desc" ? -diff : diff;
+  });
+  const pageIds = dims.slice(skip, skip + take).map((d) => d.id);
+  if (pageIds.length === 0) return [];
+
+  const rows = await prisma.painting.findMany({
+    where: { id: { in: pageIds } },
+    include: detailInclude(forAdmin),
+  });
+  const byId = new Map(rows.map((r) => [r.id, r]));
+  return pageIds.map((id) => byId.get(id)).filter((r): r is (typeof rows)[number] => r !== undefined);
 }
 
 export async function get(id: number, forAdmin = false) {

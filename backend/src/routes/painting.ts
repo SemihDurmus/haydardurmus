@@ -19,6 +19,7 @@ import {
   resolvePaintingFolder,
 } from "../middleware/upload";
 import { PAINTING_NO_PATTERN } from "../utils/paintingFiles";
+import { PAINTING_SORT_KEYS } from "../services/painting";
 
 const router = Router();
 
@@ -162,11 +163,29 @@ const PaintingUpdate = PaintingCreate.partial().openapi("PaintingUpdate", {
 
 const PaintingList = paginated(Painting, "PaintingList");
 
+// Comma-separated ids ("3,7") -> number[]. A bare single id ("3") still works
+// (splits to one element), so this is a non-breaking widening of what used to
+// be single-value filters — lets the gallery's multi-select chips (technique,
+// material, owner) be expressed server-side.
+const csvIntList = (example: string) =>
+  z
+    .string()
+    .optional()
+    .openapi({ example, description: "Comma-separated ids" })
+    .transform((v) =>
+      v === undefined
+        ? undefined
+        : v
+            .split(",")
+            .map((s) => parseInt(s.trim(), 10))
+            .filter((n) => Number.isInteger(n)),
+    );
+
 const PaintingListQuery = z.object({
   artistId: z.coerce.number().int().positive().optional(),
-  ownerId: z.coerce.number().int().positive().optional(),
-  techniqueId: z.coerce.number().int().positive().optional(),
-  materialId: z.coerce.number().int().positive().optional(),
+  ownerId: csvIntList("4,7"),
+  techniqueId: csvIntList("1,2"),
+  materialId: csvIntList("3"),
   // locationCityId = the painting's own (public) city, not the owner's city.
   locationCityId: z.coerce.number().int().positive().optional(),
   // Query params are strings; validate the literal then map to a real boolean.
@@ -179,6 +198,12 @@ const PaintingListQuery = z.object({
   maxPrice: z.coerce.number().min(0).optional(),
   // ?search= partial match on the painting's name (case-insensitive).
   search: NameSearchQuery.shape.search,
+  year: csvIntList("1990,2005"),
+  widthMin: z.coerce.number().min(0).optional(),
+  widthMax: z.coerce.number().min(0).optional(),
+  heightMin: z.coerce.number().min(0).optional(),
+  heightMax: z.coerce.number().min(0).optional(),
+  sort: z.enum(PAINTING_SORT_KEYS).optional().openapi({ example: "year_desc" }),
   page: PaginationQuery.shape.page,
   limit: PaginationQuery.shape.limit,
 });

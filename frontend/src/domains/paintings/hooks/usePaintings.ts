@@ -1,13 +1,12 @@
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { paintingsService } from '../api/paintingsService';
-import { applyFilters, applySorting } from '../utils';
 import type { PaintingFilters, PaintingSortKey } from '../types';
 
 export const paintingKeys = {
   all: ['paintings'] as const,
   lists: () => [...paintingKeys.all, 'list'] as const,
-  list: (filters: PaintingFilters, sort: PaintingSortKey) =>
-    [...paintingKeys.lists(), { filters, sort }] as const,
+  list: (filters: PaintingFilters, sort: PaintingSortKey, page: number, limit: number) =>
+    [...paintingKeys.lists(), { filters, sort, page, limit }] as const,
   details: () => [...paintingKeys.all, 'detail'] as const,
   detail: (id: string) => [...paintingKeys.details(), id] as const,
   featured: (limit?: number) => [...paintingKeys.all, 'featured', limit] as const,
@@ -26,18 +25,21 @@ export function useAllPaintings() {
 }
 
 /**
- * Fetch all paintings and apply client-side filters + sorting.
- * When API supports server-side filtering, move filter params into the service call.
+ * Fetch one page of paintings, filtered and sorted server-side.
+ * `keepPreviousData` keeps the current page's results on screen while the
+ * next page loads, instead of flashing back to the loading skeleton.
  */
-export function usePaintings(filters: PaintingFilters, sort: PaintingSortKey) {
+export function usePaintings(
+  filters: PaintingFilters,
+  sort: PaintingSortKey,
+  page: number,
+  limit: number,
+) {
   return useQuery({
-    queryKey: paintingKeys.list(filters, sort),
-    queryFn: async () => {
-      const all = await paintingsService.getAll();
-      const filtered = applyFilters(all, filters);
-      return applySorting(filtered, sort);
-    },
+    queryKey: paintingKeys.list(filters, sort, page, limit),
+    queryFn: () => paintingsService.getPage(filters, sort, page, limit),
     staleTime: 5 * 60 * 1000, // 5 minutes
+    placeholderData: keepPreviousData,
   });
 }
 

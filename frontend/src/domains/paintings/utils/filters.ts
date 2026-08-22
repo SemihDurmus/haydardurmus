@@ -2,53 +2,6 @@ import type { SupportedLocale } from '@shared/types';
 import { pickTranslated } from '@shared/hooks/useTranslatedText';
 import type { Painting, PaintingFilters, PaintingLookupOption } from '../types';
 
-/**
- * Apply all active filters to a paintings array.
- * Pure function — no side effects. Fully unit testable.
- * Adding a new filter: add a predicate block and update PaintingFilters type.
- */
-export function applyFilters(paintings: Painting[], filters: PaintingFilters): Painting[] {
-  return paintings.filter((p) => {
-    // Full-text search
-    if (filters.search.trim()) {
-      const q = filters.search.toLowerCase();
-      const nameMatch = p.paintingName?.toLowerCase().includes(q) ?? false;
-      const noMatch = p.paintingNo.toLowerCase().includes(q);
-      if (!nameMatch && !noMatch) return false;
-    }
-
-    // Year filter
-    if (filters.years.length > 0) {
-      if (p.year === null || !filters.years.includes(p.year)) return false;
-    }
-
-    // Technique filter
-    if (filters.techniqueIds.length > 0) {
-      if (!p.techniqueId || !filters.techniqueIds.includes(p.techniqueId)) return false;
-    }
-
-    // Material filter
-    if (filters.materialIds.length > 0) {
-      if (!p.materialId || !filters.materialIds.includes(p.materialId)) return false;
-    }
-
-    // Owner filter
-    if (filters.ownerIds.length > 0) {
-      if (!p.ownerId || !filters.ownerIds.includes(p.ownerId)) return false;
-    }
-
-    // Dimension range filters
-    if (filters.widthMin !== null && (p.width === null || p.width < filters.widthMin)) return false;
-    if (filters.widthMax !== null && (p.width === null || p.width > filters.widthMax)) return false;
-    if (filters.heightMin !== null && (p.height === null || p.height < filters.heightMin))
-      return false;
-    if (filters.heightMax !== null && (p.height === null || p.height > filters.heightMax))
-      return false;
-
-    return true;
-  });
-}
-
 /** Count how many filter dimensions are currently active. */
 export function countActiveFilters(filters: PaintingFilters): number {
   let count = 0;

@@ -1,5 +1,4 @@
 import {
-  applyFilters,
   countActiveFilters,
   isFiltersEmpty,
   parseFiltersFromParams,
@@ -66,84 +65,6 @@ const mockPaintings: Painting[] = [
     owner: 'artist',
   },
 ];
-
-describe('applyFilters', () => {
-  it('returns all paintings when filters are empty', () => {
-    const result = applyFilters(mockPaintings, EMPTY_FILTERS);
-    expect(result).toHaveLength(3);
-  });
-
-  it('filters by year', () => {
-    const filters: PaintingFilters = { ...EMPTY_FILTERS, years: [2023] };
-    const result = applyFilters(mockPaintings, filters);
-    expect(result).toHaveLength(1);
-    expect(result[0].id).toBe('p001');
-  });
-
-  it('filters by multiple years', () => {
-    const filters: PaintingFilters = { ...EMPTY_FILTERS, years: [2022, 2023] };
-    const result = applyFilters(mockPaintings, filters);
-    expect(result).toHaveLength(2);
-  });
-
-  it('filters by technique', () => {
-    const filters: PaintingFilters = { ...EMPTY_FILTERS, techniqueIds: ['watercolor'] };
-    const result = applyFilters(mockPaintings, filters);
-    expect(result).toHaveLength(1);
-    expect(result[0].id).toBe('p003');
-  });
-
-  it('filters by material', () => {
-    const filters: PaintingFilters = { ...EMPTY_FILTERS, materialIds: ['linen'] };
-    const result = applyFilters(mockPaintings, filters);
-    expect(result).toHaveLength(1);
-    expect(result[0].id).toBe('p002');
-  });
-
-  it('filters by multiple dimensions simultaneously', () => {
-    const filters: PaintingFilters = {
-      ...EMPTY_FILTERS,
-      techniqueIds: ['oil'],
-      materialIds: ['canvas'],
-    };
-    const result = applyFilters(mockPaintings, filters);
-    expect(result).toHaveLength(1);
-    expect(result[0].id).toBe('p001');
-  });
-
-  it('filters by search text — matches name', () => {
-    const filters: PaintingFilters = { ...EMPTY_FILTERS, search: 'morning' };
-    const result = applyFilters(mockPaintings, filters);
-    expect(result).toHaveLength(1);
-    expect(result[0].id).toBe('p001');
-  });
-
-  it('filters by search text — matches painting number', () => {
-    const filters: PaintingFilters = { ...EMPTY_FILTERS, search: 'HD-003' };
-    const result = applyFilters(mockPaintings, filters);
-    expect(result).toHaveLength(1);
-    expect(result[0].id).toBe('p003');
-  });
-
-  it('search is case-insensitive', () => {
-    const filters: PaintingFilters = { ...EMPTY_FILTERS, search: 'MORNING' };
-    const result = applyFilters(mockPaintings, filters);
-    expect(result).toHaveLength(1);
-  });
-
-  it('returns empty array when no paintings match', () => {
-    const filters: PaintingFilters = { ...EMPTY_FILTERS, years: [1900] };
-    const result = applyFilters(mockPaintings, filters);
-    expect(result).toHaveLength(0);
-  });
-
-  it('filters by width range', () => {
-    const filters: PaintingFilters = { ...EMPTY_FILTERS, widthMin: 100 };
-    const result = applyFilters(mockPaintings, filters);
-    expect(result).toHaveLength(1);
-    expect(result[0].id).toBe('p002');
-  });
-});
 
 describe('countActiveFilters', () => {
   it('returns 0 for empty filters', () => {
