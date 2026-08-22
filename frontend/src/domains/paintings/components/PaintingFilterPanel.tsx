@@ -35,19 +35,29 @@ function FilterChip({ label, active, onClick, showRemoveIcon = true }: FilterChi
 
 interface FilterSectionProps {
   title: string;
+  action?: React.ReactNode;
   children: React.ReactNode;
 }
 
-function FilterSection({ title, children }: FilterSectionProps) {
+function FilterSection({ title, action, children }: FilterSectionProps) {
   return (
     <div className="border-b border-border py-5">
-      <Typography level="overline" tone="tertiary" className="mb-3 block">
-        {title}
-      </Typography>
+      <div className="mb-3 flex items-center justify-between">
+        <Typography level="overline" tone="tertiary" className="block">
+          {title}
+        </Typography>
+        {action}
+      </div>
       <div className="flex flex-wrap gap-1.5">{children}</div>
     </div>
   );
 }
+
+// A single thin border in the page title's color on focus — the app-wide
+// `:focus-visible` ring (globals.css) would otherwise stack a second,
+// offset ring on top of this border and read as a double outline.
+const FOCUS_INPUT_CLASSES =
+  'transition-colors focus:border-text-title focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0';
 
 interface PaintingFilterPanelProps {
   filterHook: FilterHook;
@@ -62,7 +72,9 @@ export function PaintingFilterPanel({
 }: PaintingFilterPanelProps) {
   const { t, i18n } = useTranslation('paintings');
   const locale = (i18n.language?.split('-')[0] ?? 'en') as 'en' | 'tr';
-  const { filters, toggleMultiFilter, clearFilters, activeFilterCount, setFilter } = filterHook;
+  const { filters, toggleMultiFilter, clearFilters, clearYearRange, activeFilterCount, setFilter } =
+    filterHook;
+  const hasYearRange = filters.yearMin !== null || filters.yearMax !== null;
 
   // Options come from the backend's filter facets endpoint, labelled in the
   // active locale — no technique or material list is hardcoded in this
@@ -114,7 +126,7 @@ export function PaintingFilterPanel({
           className={cn(
             'w-full border border-border bg-background px-4 py-2.5',
             'font-sans text-body-sm text-text-primary placeholder:text-text-tertiary',
-            'transition-colors focus:border-primary-400 focus:outline-none'
+            FOCUS_INPUT_CLASSES
           )}
         />
       </div>
@@ -122,7 +134,19 @@ export function PaintingFilterPanel({
       {/* Year — a from/to range instead of one chip per year, since the
           catalogue spans decades and a chip-per-year list would be unusable. */}
       {yearFloor !== null && yearCeil !== null && (
-        <FilterSection title={t('filters.year')}>
+        <FilterSection
+          title={t('filters.year')}
+          action={
+            hasYearRange && (
+              <button
+                onClick={clearYearRange}
+                className="font-sans text-body-sm text-text-tertiary transition-colors hover:text-text-primary"
+              >
+                {t('filters.clearFilter')}
+              </button>
+            )
+          }
+        >
           <div className="flex w-full items-center gap-2">
             <input
               type="number"
@@ -137,7 +161,7 @@ export function PaintingFilterPanel({
               className={cn(
                 'w-0 min-w-0 flex-1 border border-border bg-background px-2.5 py-2',
                 'font-sans text-body-sm text-text-primary placeholder:text-text-tertiary',
-                'transition-colors focus:border-primary-400 focus:outline-none'
+                FOCUS_INPUT_CLASSES
               )}
             />
             <span className="shrink-0 text-text-tertiary">–</span>
@@ -154,7 +178,7 @@ export function PaintingFilterPanel({
               className={cn(
                 'w-0 min-w-0 flex-1 border border-border bg-background px-2.5 py-2',
                 'font-sans text-body-sm text-text-primary placeholder:text-text-tertiary',
-                'transition-colors focus:border-primary-400 focus:outline-none'
+                FOCUS_INPUT_CLASSES
               )}
             />
           </div>

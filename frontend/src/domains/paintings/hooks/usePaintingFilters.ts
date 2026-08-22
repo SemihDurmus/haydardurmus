@@ -73,6 +73,16 @@ export function usePaintingFilters() {
     [setSearchParams]
   );
 
+  const clearYearRange = useCallback(() => {
+    setSearchParams((prev) => {
+      const current = parseFiltersFromParams(prev);
+      const currentSort = parseSortFromParam(prev.get('sort'), DEFAULT_SORT);
+      const params = serializeFiltersToParams({ ...current, yearMin: null, yearMax: null });
+      if (currentSort !== DEFAULT_SORT) params.set('sort', currentSort);
+      return params;
+    });
+  }, [setSearchParams]);
+
   const clearFilters = useCallback(() => {
     setSearchParams((prev) => {
       const currentSort = parseSortFromParam(prev.get('sort'), DEFAULT_SORT);
@@ -110,6 +120,7 @@ export function usePaintingFilters() {
     setFilter,
     setSort,
     setPage,
+    clearYearRange,
     clearFilters,
     clearAll,
     toggleMultiFilter,

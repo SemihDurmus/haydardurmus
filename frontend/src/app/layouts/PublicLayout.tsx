@@ -14,7 +14,10 @@ export function PublicLayout() {
         <Outlet />
       </main>
       <Footer />
-      <ScrollRestoration />
+      {/* Key by pathname only (not search params), so changing filters/sort —
+          which only touch the query string — doesn't reset scroll position.
+          Actual page navigations (a new pathname) still reset to top. */}
+      <ScrollRestoration getKey={(location) => location.pathname} />
     </div>
   );
 }
