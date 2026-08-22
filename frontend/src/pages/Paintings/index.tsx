@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SlidersHorizontal } from 'lucide-react';
 import { Section } from '@shared/ui/Section';
@@ -39,6 +39,24 @@ export default function PaintingsPage() {
 
   const totalPages = data?.pagination.totalPages ?? 1;
   const currentPage = Math.min(data?.pagination.page ?? filterHook.page, totalPages);
+
+  // Guards against a page number left over in the URL that no longer fits
+  // the current filters (e.g. a filter narrowed the results while the user
+  // was sitting on page 2+) — the request for that page comes back with an
+  // empty `items` array but a correct `totalPages`, so snap back into range
+  // instead of leaving the grid stuck empty.
+  const { page: fetchedPage, totalPages: fetchedTotalPages } = data?.pagination ?? {};
+  const { setPage } = filterHook;
+  useEffect(() => {
+    if (
+      fetchedTotalPages !== undefined &&
+      fetchedPage !== undefined &&
+      fetchedTotalPages > 0 &&
+      fetchedPage > fetchedTotalPages
+    ) {
+      setPage(fetchedTotalPages);
+    }
+  }, [fetchedPage, fetchedTotalPages, setPage]);
 
   const handlePageChange = (page: number) => {
     filterHook.setPage(page);
@@ -117,7 +135,11 @@ export default function PaintingsPage() {
             <aside
               className={`w-full shrink-0 lg:w-56 ${filterPanelOpen ? 'block' : 'hidden lg:block'}`}
             >
-              <PaintingFilterPanel filterHook={filterHook} filterOptions={filterOptions} />
+              <PaintingFilterPanel
+                filterHook={filterHook}
+                filterOptions={filterOptions}
+                resultCount={data?.pagination.total}
+              />
             </aside>
 
             {/* Grid */}

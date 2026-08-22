@@ -62,12 +62,14 @@ const FOCUS_INPUT_CLASSES =
 interface PaintingFilterPanelProps {
   filterHook: FilterHook;
   filterOptions: PaintingFilterOptions | undefined;
+  resultCount?: number;
   className?: string;
 }
 
 export function PaintingFilterPanel({
   filterHook,
   filterOptions,
+  resultCount,
   className,
 }: PaintingFilterPanelProps) {
   const { t, i18n } = useTranslation('paintings');
@@ -96,24 +98,35 @@ export function PaintingFilterPanel({
           </button>
         )}
       </div>
-      <div className="hidden items-center justify-between pb-4 lg:flex">
-        <div className="flex items-center gap-2">
-          <SlidersHorizontal className="h-4 w-4 text-text-tertiary" />
-          <Typography level="label">{t('filters.title')}</Typography>
+      <div className="hidden pb-4 lg:block">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <SlidersHorizontal className="h-4 w-4 text-text-tertiary" />
+            <Typography level="label">{t('filters.title')}</Typography>
+            {activeFilterCount > 0 && (
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary-900 font-sans text-caption text-text-inverted">
+                {activeFilterCount}
+              </span>
+            )}
+          </div>
           {activeFilterCount > 0 && (
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary-900 font-sans text-caption text-text-inverted">
-              {activeFilterCount}
-            </span>
+            <button
+              onClick={clearFilters}
+              className="font-sans text-body-sm text-text-tertiary transition-colors hover:text-text-primary"
+            >
+              {t('filters.clear')}
+            </button>
           )}
         </div>
-        {activeFilterCount > 0 && (
-          <button
-            onClick={clearFilters}
-            className="font-sans text-body-sm text-text-tertiary transition-colors hover:text-text-primary"
-          >
-            {t('filters.clear')}
-          </button>
-        )}
+        {/* Reserved height regardless of content, so the panel below doesn't
+            shift up/down as this line appears and disappears with filters. */}
+        <div className="mt-1 h-4">
+          {activeFilterCount > 0 && resultCount !== undefined && (
+            <Typography level="body-sm" className="leading-none text-text-title">
+              {t('filters.resultCount', { count: resultCount })}
+            </Typography>
+          )}
+        </div>
       </div>
 
       {/* Search */}
