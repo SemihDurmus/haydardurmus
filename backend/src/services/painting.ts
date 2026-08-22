@@ -19,6 +19,15 @@ export const PAINTING_SORT_KEYS = [
 ] as const;
 export type PaintingSort = (typeof PAINTING_SORT_KEYS)[number];
 
+// The gallery's own artist. Public listings (the paintings page, featured
+// works, curated collections — anywhere a caller doesn't ask for a specific
+// artist) default to just his work. Other artists' paintings currently exist
+// in the table for an upcoming "collection" section, not the main gallery,
+// so they stay out of the public list unless a caller explicitly filters for
+// them. Admin callers never get this default — the admin panel manages every
+// artist's paintings.
+const GALLERY_ARTIST_ID = 1; //Haydar Durmus
+
 export interface ListArgs {
   skip: number;
   take: number;
@@ -125,8 +134,9 @@ export async function list({
   sort,
   forAdmin = false,
 }: ListArgs) {
+  const effectiveArtistId = artistId ?? (forAdmin ? undefined : GALLERY_ARTIST_ID);
   const where: Prisma.PaintingWhereInput = {
-    ...(artistId !== undefined && { artistId }),
+    ...(effectiveArtistId !== undefined && { artistId: effectiveArtistId }),
     ...(ownerId !== undefined && ownerId.length > 0 && { ownerId: { in: ownerId } }),
     ...(techniqueId !== undefined &&
       techniqueId.length > 0 && { techniqueId: { in: techniqueId } }),
