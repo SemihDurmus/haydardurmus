@@ -3,67 +3,14 @@ import {
   isFiltersEmpty,
   parseFiltersFromParams,
   serializeFiltersToParams,
-  extractYears,
-  extractLookupOptions,
+  resolveLookupOptions,
 } from '../filters';
 import { EMPTY_FILTERS } from '../../types';
-import type { Painting, PaintingFilters } from '../../types';
+import type { PaintingFilters, PaintingFilterOptions } from '../../types';
 
-const mockPaintings: Painting[] = [
-  {
-    id: 'p001',
-    paintingNo: 'HD-001',
-    paintingName: 'Morning Light',
-    width: 80,
-    height: 100,
-    radius: null,
-    artistId: 'a1',
-    year: 2023,
-    techniqueId: 'oil',
-    materialId: 'canvas',
-    locationCityId: 'istanbul',
-    ownerId: 'artist',
-    technique: { en: 'Oil', tr: 'Yağlıboya' },
-    material: { en: 'Canvas', tr: 'Tuval' },
-    locationCity: null,
-    owner: 'artist',
-  },
-  {
-    id: 'p002',
-    paintingNo: 'HD-002',
-    paintingName: 'Silent Horizon',
-    width: 120,
-    height: 90,
-    radius: null,
-    artistId: 'a1',
-    year: 2022,
-    techniqueId: 'oil',
-    materialId: 'linen',
-    locationCityId: 'paris',
-    ownerId: 'private_eu',
-    technique: { en: 'Oil', tr: 'Yağlıboya' },
-    material: null,
-    locationCity: null,
-    owner: 'private_eu',
-  },
-  {
-    id: 'p003',
-    paintingNo: 'HD-003',
-    paintingName: null,
-    width: 40,
-    height: 50,
-    radius: null,
-    artistId: 'a1',
-    year: 2020,
-    techniqueId: 'watercolor',
-    materialId: 'paper',
-    locationCityId: 'istanbul',
-    ownerId: 'artist',
-    technique: { en: 'Watercolor', tr: 'Suluboya' },
-    material: { en: 'Paper', tr: 'Kağıt' },
-    locationCity: null,
-    owner: 'artist',
-  },
+const mockLookupOptions: PaintingFilterOptions['techniques'] = [
+  { id: 'oil', label: { en: 'Oil', tr: 'Yağlıboya' } },
+  { id: 'watercolor', label: { en: 'Watercolor', tr: 'Suluboya' } },
 ];
 
 describe('countActiveFilters', () => {
@@ -74,7 +21,7 @@ describe('countActiveFilters', () => {
   it('counts each active dimension', () => {
     const filters: PaintingFilters = {
       ...EMPTY_FILTERS,
-      years: [2023],
+      yearMin: 2023,
       techniqueIds: ['oil'],
     };
     expect(countActiveFilters(filters)).toBe(2);
@@ -97,7 +44,7 @@ describe('isFiltersEmpty', () => {
   });
 
   it('returns false when any filter is active', () => {
-    expect(isFiltersEmpty({ ...EMPTY_FILTERS, years: [2023] })).toBe(false);
+    expect(isFiltersEmpty({ ...EMPTY_FILTERS, yearMin: 2023 })).toBe(false);
   });
 });
 
@@ -106,7 +53,8 @@ describe('parseFiltersFromParams / serializeFiltersToParams', () => {
     const original: PaintingFilters = {
       ...EMPTY_FILTERS,
       search: 'test',
-      years: [2022, 2023],
+      yearMin: 2022,
+      yearMax: 2023,
       techniqueIds: ['oil', 'acrylic'],
     };
 
@@ -114,7 +62,8 @@ describe('parseFiltersFromParams / serializeFiltersToParams', () => {
     const parsed = parseFiltersFromParams(params);
 
     expect(parsed.search).toBe('test');
-    expect(parsed.years).toEqual([2022, 2023]);
+    expect(parsed.yearMin).toBe(2022);
+    expect(parsed.yearMax).toBe(2023);
     expect(parsed.techniqueIds).toEqual(['oil', 'acrylic']);
   });
 
@@ -125,63 +74,42 @@ describe('parseFiltersFromParams / serializeFiltersToParams', () => {
   });
 
   it('ignores invalid number values', () => {
-    const params = new URLSearchParams('year=notanumber,2023');
+    const params = new URLSearchParams('y_min=notanumber&y_max=2023');
     const parsed = parseFiltersFromParams(params);
-    expect(parsed.years).toEqual([2023]);
+    expect(parsed.yearMin).toBeNull();
+    expect(parsed.yearMax).toBe(2023);
   });
 });
 
-describe('extractYears', () => {
-  it('extracts unique years sorted descending', () => {
-    const years = extractYears(mockPaintings);
-    expect(years).toEqual([2023, 2022, 2020]);
-  });
-
-  it('ignores null years', () => {
-    const paintings: Painting[] = [
-      { ...mockPaintings[0], year: null },
-      { ...mockPaintings[1], year: 2022 },
-    ];
-    expect(extractYears(paintings)).toEqual([2022]);
-  });
-});
-
-// The frontend holds no list of techniques or materials — filter options are
-// derived from whatever the loaded paintings actually use.
-describe('extractLookupOptions', () => {
-  it('derives options from the paintings, labelled in English', () => {
-    // Two of the three fixtures share 'oil', so it appears once.
-    const options = extractLookupOptions(mockPaintings, 'techniqueId', 'technique', 'en');
+// The frontend holds no hardcoded list of techniques or materials — options
+// come from the backend's filter-options facet endpoint (every painting, not
+// just a loaded page), resolved here to the active locale's label.
+describe('resolveLookupOptions', () => {
+  it('resolves labels in English, sorted', () => {
+    const options = resolveLookupOptions(mockLookupOptions, 'en');
     expect(options).toEqual([
       { id: 'oil', label: 'Oil' },
       { id: 'watercolor', label: 'Watercolor' },
     ]);
   });
 
-  it('labels the same options in Turkish', () => {
-    const options = extractLookupOptions(mockPaintings, 'techniqueId', 'technique', 'tr');
+  it('resolves labels in Turkish, sorted', () => {
+    const options = resolveLookupOptions(mockLookupOptions, 'tr');
     expect(options.map((o) => o.label)).toEqual(['Suluboya', 'Yağlıboya']);
   });
 
-  it('deduplicates ids and skips paintings without the lookup', () => {
-    const paintings: Painting[] = [
-      mockPaintings[0],
-      { ...mockPaintings[1], techniqueId: 'oil', technique: { en: 'Oil', tr: 'Yağlıboya' } },
-      { ...mockPaintings[2], techniqueId: null, technique: null },
-    ];
-    const options = extractLookupOptions(paintings, 'techniqueId', 'technique', 'en');
-    expect(options).toEqual([{ id: 'oil', label: 'Oil' }]);
-  });
-
   it('sorts with Turkish collation, not raw code points', () => {
-    const paintings: Painting[] = [
-      { ...mockPaintings[0], techniqueId: 'z', technique: { en: 'Z', tr: 'Zamk' } },
-      { ...mockPaintings[1], techniqueId: 'c', technique: { en: 'C', tr: 'Çini' } },
-      { ...mockPaintings[2], techniqueId: 'd', technique: { en: 'D', tr: 'Duralit' } },
+    const options: PaintingFilterOptions['techniques'] = [
+      { id: 'z', label: { en: 'Z', tr: 'Zamk' } },
+      { id: 'c', label: { en: 'C', tr: 'Çini' } },
+      { id: 'd', label: { en: 'D', tr: 'Duralit' } },
     ];
     // In Turkish, Ç sorts right after C — ahead of D — rather than after Z
     // where its code point would put it.
-    const options = extractLookupOptions(paintings, 'techniqueId', 'technique', 'tr');
-    expect(options.map((o) => o.label)).toEqual(['Çini', 'Duralit', 'Zamk']);
+    expect(resolveLookupOptions(options, 'tr').map((o) => o.label)).toEqual([
+      'Çini',
+      'Duralit',
+      'Zamk',
+    ]);
   });
 });

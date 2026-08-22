@@ -10,6 +10,7 @@ export const paintingKeys = {
   details: () => [...paintingKeys.all, 'detail'] as const,
   detail: (id: string) => [...paintingKeys.details(), id] as const,
   featured: (limit?: number) => [...paintingKeys.all, 'featured', limit] as const,
+  filterOptions: () => [...paintingKeys.all, 'filter-options'] as const,
 };
 
 /**
@@ -40,6 +41,19 @@ export function usePaintings(
     queryFn: () => paintingsService.getPage(filters, sort, page, limit),
     staleTime: 5 * 60 * 1000, // 5 minutes
     placeholderData: keepPreviousData,
+  });
+}
+
+/**
+ * Fetch the gallery's filter facets (year range, techniques, materials in
+ * use) — computed across every painting, unlike `useAllPaintings`, which is
+ * capped at one page.
+ */
+export function usePaintingFilterOptions() {
+  return useQuery({
+    queryKey: paintingKeys.filterOptions(),
+    queryFn: () => paintingsService.getFilterOptions(),
+    staleTime: 5 * 60 * 1000,
   });
 }
 

@@ -87,7 +87,7 @@ export function usePaintingFilters() {
   }, [setSearchParams]);
 
   const toggleMultiFilter = useCallback(
-    (key: 'years' | 'techniqueIds' | 'materialIds' | 'ownerIds', value: string | number) => {
+    (key: 'techniqueIds' | 'materialIds' | 'ownerIds', value: string | number) => {
       setSearchParams((prev) => {
         const current = parseFiltersFromParams(prev);
         const currentSort = parseSortFromParam(prev.get('sort'), DEFAULT_SORT);

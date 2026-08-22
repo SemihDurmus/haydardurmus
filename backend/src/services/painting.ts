@@ -31,7 +31,8 @@ export interface ListArgs {
   minPrice?: number;
   maxPrice?: number;
   search?: string;
-  years?: number[];
+  yearMin?: number;
+  yearMax?: number;
   widthMin?: number;
   widthMax?: number;
   heightMin?: number;
@@ -115,7 +116,8 @@ export async function list({
   minPrice,
   maxPrice,
   search,
-  years,
+  yearMin,
+  yearMax,
   widthMin,
   widthMax,
   heightMin,
@@ -133,7 +135,12 @@ export async function list({
     // locationCityId is the painting's OWN city (public), not the owner's city.
     ...(locationCityId !== undefined && { locationCityId }),
     ...(available !== undefined && { isAvailable: available }),
-    ...(years !== undefined && years.length > 0 && { year: { in: years } }),
+    ...((yearMin !== undefined || yearMax !== undefined) && {
+      year: {
+        ...(yearMin !== undefined && { gte: yearMin }),
+        ...(yearMax !== undefined && { lte: yearMax }),
+      },
+    }),
     ...((widthMin !== undefined || widthMax !== undefined) && {
       widthCm: {
         ...(widthMin !== undefined && { gte: widthMin }),
@@ -219,6 +226,29 @@ async function listSortedBySize({
   });
   const byId = new Map(rows.map((r) => [r.id, r]));
   return pageIds.map((id) => byId.get(id)).filter((r): r is (typeof rows)[number] => r !== undefined);
+}
+
+// Powers the public gallery's filter panel: the year range and the set of
+// techniques/materials actually used by at least one painting, computed
+// across the WHOLE table rather than whatever page the client last fetched.
+export async function getFilterOptions() {
+  const [yearRange, techniques, materials] = await Promise.all([
+    prisma.painting.aggregate({ _min: { year: true }, _max: { year: true } }),
+    prisma.technique.findMany({
+      where: { paintings: { some: {} } },
+      orderBy: { name: "asc" },
+    }),
+    prisma.material.findMany({
+      where: { paintings: { some: {} } },
+      orderBy: { name: "asc" },
+    }),
+  ]);
+  return {
+    yearMin: yearRange._min.year,
+    yearMax: yearRange._max.year,
+    techniques,
+    materials,
+  };
 }
 
 export async function get(id: number, forAdmin = false) {

@@ -1,6 +1,12 @@
 import { apiGet, ApiError } from '@shared/api/client';
-import { mapPainting, type PaintingDto, type PaintingListDto } from './mapPainting';
-import type { Painting, PaintingFilters, PaintingSortKey } from '../types';
+import {
+  mapPainting,
+  mapFilterOptions,
+  type PaintingDto,
+  type PaintingListDto,
+  type PaintingFilterOptionsDto,
+} from './mapPainting';
+import type { Painting, PaintingFilterOptions, PaintingFilters, PaintingSortKey } from '../types';
 
 /**
  * Paintings service — all data fetching for paintings goes through here.
@@ -39,7 +45,8 @@ export const paintingsService = {
   ): Promise<PaintingPage> {
     const params = new URLSearchParams();
     if (filters.search.trim()) params.set('search', filters.search.trim());
-    if (filters.years.length) params.set('year', filters.years.join(','));
+    if (filters.yearMin !== null) params.set('yearMin', String(filters.yearMin));
+    if (filters.yearMax !== null) params.set('yearMax', String(filters.yearMax));
     if (filters.techniqueIds.length) params.set('techniqueId', filters.techniqueIds.join(','));
     if (filters.materialIds.length) params.set('materialId', filters.materialIds.join(','));
     if (filters.ownerIds.length) params.set('ownerId', filters.ownerIds.join(','));
@@ -53,6 +60,15 @@ export const paintingsService = {
 
     const res = await apiGet<PaintingListDto>(`/paintings?${params.toString()}`);
     return { items: res.data.map(mapPainting), pagination: res.pagination };
+  },
+
+  /**
+   * Fetch the gallery's filter facets — year range plus techniques/materials
+   * in use — computed server-side across every painting, not just one page.
+   */
+  async getFilterOptions(): Promise<PaintingFilterOptions> {
+    const dto = await apiGet<PaintingFilterOptionsDto>('/paintings/filter-options');
+    return mapFilterOptions(dto);
   },
 
   /** Fetch a single painting by id. Returns null if it doesn't exist. */

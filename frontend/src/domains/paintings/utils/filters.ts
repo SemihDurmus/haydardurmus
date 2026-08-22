@@ -1,12 +1,12 @@
-import type { SupportedLocale } from '@shared/types';
+import type { SupportedLocale, TranslatedText } from '@shared/types';
 import { pickTranslated } from '@shared/hooks/useTranslatedText';
-import type { Painting, PaintingFilters, PaintingLookupOption } from '../types';
+import type { PaintingFilters, PaintingLookupOption } from '../types';
 
 /** Count how many filter dimensions are currently active. */
 export function countActiveFilters(filters: PaintingFilters): number {
   let count = 0;
   if (filters.search.trim()) count++;
-  if (filters.years.length) count++;
+  if (filters.yearMin !== null || filters.yearMax !== null) count++;
   if (filters.techniqueIds.length) count++;
   if (filters.materialIds.length) count++;
   if (filters.ownerIds.length) count++;
@@ -34,12 +34,6 @@ export function parseFiltersFromParams(params: URLSearchParams): PaintingFilters
       .filter(Boolean);
   };
 
-  const parseNumbers = (key: string): number[] => {
-    return parseIds(key)
-      .map(Number)
-      .filter((n) => !isNaN(n));
-  };
-
   const parseNumber = (key: string): number | null => {
     const val = params.get(key);
     if (!val) return null;
@@ -49,7 +43,8 @@ export function parseFiltersFromParams(params: URLSearchParams): PaintingFilters
 
   return {
     search: params.get('q') ?? '',
-    years: parseNumbers('year'),
+    yearMin: parseNumber('y_min'),
+    yearMax: parseNumber('y_max'),
     techniqueIds: parseIds('technique'),
     materialIds: parseIds('material'),
     ownerIds: parseIds('owner'),
@@ -68,7 +63,8 @@ export function serializeFiltersToParams(filters: PaintingFilters): URLSearchPar
   const params = new URLSearchParams();
 
   if (filters.search.trim()) params.set('q', filters.search.trim());
-  if (filters.years.length) params.set('year', filters.years.join(','));
+  if (filters.yearMin !== null) params.set('y_min', String(filters.yearMin));
+  if (filters.yearMax !== null) params.set('y_max', String(filters.yearMax));
   if (filters.techniqueIds.length) params.set('technique', filters.techniqueIds.join(','));
   if (filters.materialIds.length) params.set('material', filters.materialIds.join(','));
   if (filters.ownerIds.length) params.set('owner', filters.ownerIds.join(','));
@@ -81,40 +77,19 @@ export function serializeFiltersToParams(filters: PaintingFilters): URLSearchPar
 }
 
 /**
- * Extract unique years from a paintings array, sorted descending.
- */
-/**
- * Build the filter options for a lookup out of the paintings themselves.
+ * Resolve a lookup's server-provided options (see PaintingFilterOptions) to
+ * the active locale's label, sorted with localeCompare so Turkish letters
+ * order correctly (ç, ğ, ı, ö, ş, ü) instead of being pushed to the end.
  *
- * The frontend holds no list of techniques or materials — the options are
- * whatever the loaded paintings actually use, labelled in the current locale
- * straight from the database. Adding a technique in the admin panel makes it
- * appear here as soon as a painting uses it; nothing to redeploy.
- *
- * Sorted with localeCompare under the active locale, so Turkish letters order
- * correctly (ç, ğ, ı, ö, ş, ü) instead of being pushed to the end.
+ * The frontend holds no hardcoded list of techniques or materials — the
+ * options come from the backend's /paintings/filter-options facet endpoint,
+ * which reflects every painting in the database, not just a loaded page.
  */
-export function extractLookupOptions(
-  paintings: Painting[],
-  idKey: 'techniqueId' | 'materialId',
-  labelKey: 'technique' | 'material',
+export function resolveLookupOptions(
+  options: { id: string; label: TranslatedText }[],
   locale: SupportedLocale,
 ): PaintingLookupOption[] {
-  const options = new Map<string, string>();
-  for (const p of paintings) {
-    const id = p[idKey];
-    const label = pickTranslated(p[labelKey], locale);
-    if (id && label && !options.has(id)) options.set(id, label);
-  }
-  return Array.from(options, ([id, label]) => ({ id, label })).sort((a, b) =>
-    a.label.localeCompare(b.label, locale),
-  );
-}
-
-export function extractYears(paintings: Painting[]): number[] {
-  const years = new Set<number>();
-  for (const p of paintings) {
-    if (p.year !== null) years.add(p.year);
-  }
-  return Array.from(years).sort((a, b) => b - a);
+  return options
+    .map(({ id, label }) => ({ id, label: pickTranslated(label, locale) ?? '' }))
+    .sort((a, b) => a.label.localeCompare(b.label, locale));
 }

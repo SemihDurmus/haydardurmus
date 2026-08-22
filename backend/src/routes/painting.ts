@@ -30,6 +30,11 @@ const ArtistRef = z.object({
   nationality: z.object({ id: z.number().int(), name: z.string() }).optional(),
 });
 const NamedRef = z.object({ id: z.number().int(), name: z.string() });
+const NamedRefBilingual = z.object({
+  id: z.number().int(),
+  name: z.string(),
+  nameTr: z.string(),
+});
 const CityWithCountry = z.object({
   id: z.number().int(),
   name: z.string(),
@@ -163,6 +168,18 @@ const PaintingUpdate = PaintingCreate.partial().openapi("PaintingUpdate", {
 
 const PaintingList = paginated(Painting, "PaintingList");
 
+// Filter facets for the public gallery: the year range plus the techniques
+// and materials actually used by at least one painting — computed across the
+// whole table, not just a single fetched page.
+const PaintingFilterOptions = z
+  .object({
+    yearMin: z.number().int().nullable(),
+    yearMax: z.number().int().nullable(),
+    techniques: z.array(NamedRefBilingual),
+    materials: z.array(NamedRefBilingual),
+  })
+  .openapi("PaintingFilterOptions");
+
 // Comma-separated ids ("3,7") -> number[]. A bare single id ("3") still works
 // (splits to one element), so this is a non-breaking widening of what used to
 // be single-value filters — lets the gallery's multi-select chips (technique,
@@ -198,7 +215,8 @@ const PaintingListQuery = z.object({
   maxPrice: z.coerce.number().min(0).optional(),
   // ?search= partial match on the painting's name (case-insensitive).
   search: NameSearchQuery.shape.search,
-  year: csvIntList("1990,2005"),
+  yearMin: z.coerce.number().int().optional().openapi({ example: 1990 }),
+  yearMax: z.coerce.number().int().optional().openapi({ example: 2005 }),
   widthMin: z.coerce.number().min(0).optional(),
   widthMax: z.coerce.number().min(0).optional(),
   heightMin: z.coerce.number().min(0).optional(),
@@ -275,6 +293,17 @@ registry.registerPath({
   request: { query: PaintingListQuery },
   responses: {
     200: jsonResponse("Paginated list with full join graph", PaintingList),
+  },
+});
+
+registry.registerPath({
+  method: "get",
+  path: `${basePath}/filter-options`,
+  tags: [tag],
+  summary:
+    "Filter facets for the gallery: year min/max plus techniques and materials in use, across ALL paintings",
+  responses: {
+    200: jsonResponse("Filter facets", PaintingFilterOptions),
   },
 });
 
@@ -374,7 +403,8 @@ registry.registerPath({
 });
 
 router.get("/", validate({ query: PaintingListQuery }), controller.list);
-// by-slug must precede /:id so "/by-slug/..." isn't swallowed as an id.
+// filter-options and by-slug must precede /:id so they aren't swallowed as an id.
+router.get("/filter-options", controller.filterOptions);
 router.get(
   "/by-slug/:slug",
   validate({ params: SlugParam }),

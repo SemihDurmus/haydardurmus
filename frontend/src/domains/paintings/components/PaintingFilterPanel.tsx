@@ -3,8 +3,8 @@ import { X, SlidersHorizontal } from 'lucide-react';
 import { Typography } from '@shared/ui/Typography';
 import { cn } from '@shared/utils/cn';
 import type { usePaintingFilters } from '../hooks/usePaintingFilters';
-import { extractYears, extractLookupOptions } from '../utils/filters';
-import type { Painting } from '../types';
+import { resolveLookupOptions } from '../utils/filters';
+import type { PaintingFilterOptions } from '../types';
 
 type FilterHook = ReturnType<typeof usePaintingFilters>;
 
@@ -51,57 +51,37 @@ function FilterSection({ title, children }: FilterSectionProps) {
 
 interface PaintingFilterPanelProps {
   filterHook: FilterHook;
-  allPaintings: Painting[];
-  countLabel?: string;
+  filterOptions: PaintingFilterOptions | undefined;
   className?: string;
 }
 
 export function PaintingFilterPanel({
   filterHook,
-  allPaintings,
-  countLabel,
+  filterOptions,
   className,
 }: PaintingFilterPanelProps) {
   const { t, i18n } = useTranslation('paintings');
   const locale = (i18n.language?.split('-')[0] ?? 'en') as 'en' | 'tr';
   const { filters, toggleMultiFilter, clearFilters, activeFilterCount, setFilter } = filterHook;
 
-  const availableYears = extractYears(allPaintings);
-  // Options come from the paintings themselves, labelled in the active locale
-  // — no technique or material list is hardcoded in this codebase.
-  const techniqueOptions = extractLookupOptions(
-    allPaintings,
-    'techniqueId',
-    'technique',
-    locale,
-  );
-  const materialOptions = extractLookupOptions(
-    allPaintings,
-    'materialId',
-    'material',
-    locale,
-  );
+  // Options come from the backend's filter facets endpoint, labelled in the
+  // active locale — no technique or material list is hardcoded in this
+  // codebase, and the facets cover every painting, not just a loaded page.
+  const techniqueOptions = resolveLookupOptions(filterOptions?.techniques ?? [], locale);
+  const materialOptions = resolveLookupOptions(filterOptions?.materials ?? [], locale);
+  const { yearMin: yearFloor, yearMax: yearCeil } = filterOptions ?? { yearMin: null, yearMax: null };
 
   return (
     <aside className={cn('', className)}>
-      {/* Panel header — mobile: count + clear; desktop: filter title + clear */}
-      <div className="flex items-center justify-between pb-4 lg:hidden">
-        {activeFilterCount > 0 ? (
+      {/* Panel header — mobile: clear; desktop: filter title + clear */}
+      <div className="flex items-center justify-end pb-4 lg:hidden">
+        {activeFilterCount > 0 && (
           <button
             onClick={clearFilters}
             className="shrink-0 font-sans text-body-sm text-text-tertiary transition-colors hover:text-text-primary"
           >
             {t('filters.clear')}
           </button>
-        ) : (
-          <span />
-        )}
-        {countLabel ? (
-          <Typography level="body-sm" tone="tertiary">
-            {countLabel}
-          </Typography>
-        ) : (
-          <span />
         )}
       </div>
       <div className="hidden items-center justify-between pb-4 lg:flex">
@@ -139,23 +119,45 @@ export function PaintingFilterPanel({
         />
       </div>
 
-      {/* Year */}
-      {availableYears.length > 0 && (
+      {/* Year — a from/to range instead of one chip per year, since the
+          catalogue spans decades and a chip-per-year list would be unusable. */}
+      {yearFloor !== null && yearCeil !== null && (
         <FilterSection title={t('filters.year')}>
-          <FilterChip
-            label={t('filters.all')}
-            active={filters.years.length === 0}
-            showRemoveIcon={false}
-            onClick={() => setFilter('years', [])}
-          />
-          {availableYears.map((year) => (
-            <FilterChip
-              key={year}
-              label={String(year)}
-              active={filters.years.includes(year)}
-              onClick={() => toggleMultiFilter('years', year)}
+          <div className="flex w-full items-center gap-2">
+            <input
+              type="number"
+              inputMode="numeric"
+              min={yearFloor}
+              max={yearCeil}
+              placeholder={String(yearFloor)}
+              value={filters.yearMin ?? ''}
+              onChange={(e) =>
+                setFilter('yearMin', e.target.value === '' ? null : Number(e.target.value))
+              }
+              className={cn(
+                'w-0 min-w-0 flex-1 border border-border bg-background px-2.5 py-2',
+                'font-sans text-body-sm text-text-primary placeholder:text-text-tertiary',
+                'transition-colors focus:border-primary-400 focus:outline-none'
+              )}
             />
-          ))}
+            <span className="shrink-0 text-text-tertiary">–</span>
+            <input
+              type="number"
+              inputMode="numeric"
+              min={yearFloor}
+              max={yearCeil}
+              placeholder={String(yearCeil)}
+              value={filters.yearMax ?? ''}
+              onChange={(e) =>
+                setFilter('yearMax', e.target.value === '' ? null : Number(e.target.value))
+              }
+              className={cn(
+                'w-0 min-w-0 flex-1 border border-border bg-background px-2.5 py-2',
+                'font-sans text-body-sm text-text-primary placeholder:text-text-tertiary',
+                'transition-colors focus:border-primary-400 focus:outline-none'
+              )}
+            />
+          </div>
         </FilterSection>
       )}
 

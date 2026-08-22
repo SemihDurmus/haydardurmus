@@ -22,7 +22,8 @@ export async function list(req: Request, res: Response, next: NextFunction) {
       minPrice: q.minPrice as number | undefined,
       maxPrice: q.maxPrice as number | undefined,
       search: q.search as string | undefined,
-      years: q.year as number[] | undefined,
+      yearMin: q.yearMin as number | undefined,
+      yearMax: q.yearMax as number | undefined,
       widthMin: q.widthMin as number | undefined,
       widthMax: q.widthMax as number | undefined,
       heightMin: q.heightMin as number | undefined,
@@ -33,6 +34,14 @@ export async function list(req: Request, res: Response, next: NextFunction) {
       forAdmin: Boolean(req.admin),
     });
     res.json(paginated(items, total, pg));
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function filterOptions(req: Request, res: Response, next: NextFunction) {
+  try {
+    res.json(await service.getFilterOptions());
   } catch (err) {
     next(err);
   }

@@ -1,5 +1,5 @@
 import type { TranslatedText } from '@shared/types';
-import type { Painting } from '../types';
+import type { Painting, PaintingFilterOptions } from '../types';
 
 // TEMPORARY: images are served from ImageKit for now instead of the backend's
 // own /images/* storage, one file per painting named after its paintingNo
@@ -67,6 +67,14 @@ export interface PaintingListDto {
   pagination: { page: number; limit: number; total: number; totalPages: number };
 }
 
+/** The backend's filter facets response — see GET /paintings/filter-options. */
+export interface PaintingFilterOptionsDto {
+  yearMin: number | null;
+  yearMax: number | null;
+  techniques: NamedRef[];
+  materials: NamedRef[];
+}
+
 const toNumber = (v: string | null): number | null => (v == null ? null : Number(v));
 
 function slugify(value: string): string {
@@ -98,6 +106,17 @@ const personId = (p?: PersonRef | null): string | null => (p ? String(p.id) : nu
 
 const personName = (p?: PersonRef | null): string | null =>
   p ? `${p.firstName} ${p.lastName}` : null;
+
+export function mapFilterOptions(dto: PaintingFilterOptionsDto): PaintingFilterOptions {
+  const toOptions = (refs: NamedRef[]) =>
+    refs.map((ref) => ({ id: String(ref.id), label: lookupLabel(ref)! }));
+  return {
+    yearMin: dto.yearMin,
+    yearMax: dto.yearMax,
+    techniques: toOptions(dto.techniques),
+    materials: toOptions(dto.materials),
+  };
+}
 
 export function mapPainting(dto: PaintingDto): Painting {
   return {

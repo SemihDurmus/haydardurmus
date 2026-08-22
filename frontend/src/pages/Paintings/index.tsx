@@ -7,7 +7,7 @@ import { Typography } from '@shared/ui/Typography';
 import { Button } from '@shared/ui/Button';
 import { PaintingGrid } from '@domains/paintings/components/PaintingGrid';
 import { PaintingFilterPanel } from '@domains/paintings/components/PaintingFilterPanel';
-import { usePaintings, useAllPaintings } from '@domains/paintings/hooks/usePaintings';
+import { usePaintings, usePaintingFilterOptions } from '@domains/paintings/hooks/usePaintings';
 import { usePaintingFilters } from '@domains/paintings/hooks/usePaintingFilters';
 import { PageTitle, SectionTitle, Pagination } from '@/shared/ui';
 
@@ -35,14 +35,7 @@ export default function PaintingsPage() {
     PAGE_SIZE,
   );
   const paintings = data?.items ?? [];
-  const { data: allPaintings } = useAllPaintings();
-  const totalCount = allPaintings?.length ?? 0;
-  const hasActiveFilters = filterHook.activeFilterCount > 0;
-  const filteredCount = data?.pagination.total ?? 0;
-  const countLabel =
-    hasActiveFilters && data !== undefined
-      ? t('page.countFiltered', { filtered: filteredCount, total: totalCount })
-      : t('page.count', { count: totalCount });
+  const { data: filterOptions } = usePaintingFilterOptions();
 
   const totalPages = data?.pagination.totalPages ?? 1;
   const currentPage = Math.min(data?.pagination.page ?? filterHook.page, totalPages);
@@ -97,13 +90,8 @@ export default function PaintingsPage() {
             </div>
           </div>
 
-          {/* Desktop: count + sort on one row, vertically centered */}
-          <div className="hidden items-center justify-between border-b border-border pb-6 lg:flex">
-            {!isLoading && (
-              <Typography level="body-sm" tone="tertiary" className="leading-none">
-                {countLabel}
-              </Typography>
-            )}
+          {/* Desktop: sort, right-aligned */}
+          <div className="hidden items-center justify-end border-b border-border pb-6 lg:flex">
             <div className="flex items-center gap-2">
               <Typography level="label" tone="tertiary" className="leading-none">
                 {t('sort.label')}
@@ -129,11 +117,7 @@ export default function PaintingsPage() {
             <aside
               className={`w-full shrink-0 lg:w-56 ${filterPanelOpen ? 'block' : 'hidden lg:block'}`}
             >
-              <PaintingFilterPanel
-                filterHook={filterHook}
-                allPaintings={allPaintings ?? []}
-                countLabel={!isLoading ? countLabel : undefined}
-              />
+              <PaintingFilterPanel filterHook={filterHook} filterOptions={filterOptions} />
             </aside>
 
             {/* Grid */}

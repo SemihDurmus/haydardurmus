@@ -48,17 +48,30 @@ export interface Painting {
 /**
  * A selectable filter option, derived at runtime from the paintings the API
  * returned. There is deliberately no hardcoded list of techniques or
- * materials in this codebase — see utils/filters.ts#extractLookupOptions.
+ * materials in this codebase — see utils/filters.ts#resolveLookupOptions.
  */
 export interface PaintingLookupOption {
   id: string;
   label: string;
 }
 
+/**
+ * Filter facets computed server-side across ALL paintings (not just the
+ * current page) — the year range and the techniques/materials actually in
+ * use. See api/paintingsService.ts#getFilterOptions.
+ */
+export interface PaintingFilterOptions {
+  yearMin: number | null;
+  yearMax: number | null;
+  techniques: { id: string; label: TranslatedText }[];
+  materials: { id: string; label: TranslatedText }[];
+}
+
 /** All available filter dimensions */
 export interface PaintingFilters {
   search: string;
-  years: number[];
+  yearMin: number | null;
+  yearMax: number | null;
   techniqueIds: string[];
   materialIds: string[];
   ownerIds: string[];
@@ -83,7 +96,8 @@ export const DEFAULT_SORT: PaintingSortKey = 'year_desc';
 
 export const EMPTY_FILTERS: PaintingFilters = {
   search: '',
-  years: [],
+  yearMin: null,
+  yearMax: null,
   techniqueIds: [],
   materialIds: [],
   ownerIds: [],
@@ -96,7 +110,8 @@ export const EMPTY_FILTERS: PaintingFilters = {
 /** URL query param key names */
 export const FILTER_PARAMS = {
   search: 'q',
-  years: 'year',
+  yearMin: 'y_min',
+  yearMax: 'y_max',
   techniqueIds: 'technique',
   materialIds: 'material',
   ownerIds: 'owner',
