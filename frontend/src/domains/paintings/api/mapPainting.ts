@@ -79,12 +79,12 @@ function slugify(value: string): string {
 }
 
 /**
- * Filter id for a lookup, derived from its English name ('Oil' -> 'oil').
- * Deriving it keeps query strings readable (?technique=oil) without the
- * frontend having to know the set of techniques in advance.
+ * Filter id for a lookup — the backend's real numeric id, as a string. Used
+ * for both display keying and for the ?technique=/?material=/?owner= query
+ * params the backend's server-side filtering expects.
  */
-const lookupId = (ref?: NamedRef | null): string | null =>
-  ref ? slugify(ref.name) : null;
+const lookupId = (ref?: { id: number } | null): string | null =>
+  ref ? String(ref.id) : null;
 
 /** Both languages of a lookup's name, for display. */
 const lookupLabel = (ref?: NamedRef | null): TranslatedText | null =>
@@ -92,6 +92,9 @@ const lookupLabel = (ref?: NamedRef | null): TranslatedText | null =>
 
 const personSlug = (p?: PersonRef | null): string | null =>
   p ? slugify(`${p.firstName} ${p.lastName}`) : null;
+
+/** The backend's real numeric id, as a string — see `lookupId` above. */
+const personId = (p?: PersonRef | null): string | null => (p ? String(p.id) : null);
 
 const personName = (p?: PersonRef | null): string | null =>
   p ? `${p.firstName} ${p.lastName}` : null;
@@ -109,7 +112,7 @@ export function mapPainting(dto: PaintingDto): Painting {
     techniqueId: lookupId(dto.technique),
     materialId: lookupId(dto.material),
     locationCityId: lookupId(dto.city),
-    ownerId: personSlug(dto.owner),
+    ownerId: personId(dto.owner),
     technique: lookupLabel(dto.technique),
     material: lookupLabel(dto.material),
     locationCity: lookupLabel(dto.city),

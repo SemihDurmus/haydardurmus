@@ -1,6 +1,6 @@
 import { apiGet, ApiError } from '@shared/api/client';
 import { mapPainting, type PaintingDto, type PaintingListDto } from './mapPainting';
-import type { Painting } from '../types';
+import type { Painting, PaintingFilters, PaintingSortKey } from '../types';
 
 /**
  * Paintings service — all data fetching for paintings goes through here.
@@ -14,11 +14,45 @@ import type { Painting } from '../types';
 // enough. Filtering and sorting still happen client-side in the hooks.
 const ALL_LIMIT = 100;
 
+export interface PaintingPage {
+  items: Painting[];
+  pagination: PaintingListDto['pagination'];
+}
+
 export const paintingsService = {
   /** Fetch all paintings. */
   async getAll(): Promise<Painting[]> {
     const res = await apiGet<PaintingListDto>(`/paintings?limit=${ALL_LIMIT}`);
     return res.data.map(mapPainting);
+  },
+
+  /**
+   * Fetch one page of paintings, filtered and sorted server-side. Used by the
+   * public gallery — filtering, sorting, and pagination all happen in the
+   * backend's query now, so this never over-fetches like `getAll()` does.
+   */
+  async getPage(
+    filters: PaintingFilters,
+    sort: PaintingSortKey,
+    page: number,
+    limit: number,
+  ): Promise<PaintingPage> {
+    const params = new URLSearchParams();
+    if (filters.search.trim()) params.set('search', filters.search.trim());
+    if (filters.years.length) params.set('year', filters.years.join(','));
+    if (filters.techniqueIds.length) params.set('techniqueId', filters.techniqueIds.join(','));
+    if (filters.materialIds.length) params.set('materialId', filters.materialIds.join(','));
+    if (filters.ownerIds.length) params.set('ownerId', filters.ownerIds.join(','));
+    if (filters.widthMin !== null) params.set('widthMin', String(filters.widthMin));
+    if (filters.widthMax !== null) params.set('widthMax', String(filters.widthMax));
+    if (filters.heightMin !== null) params.set('heightMin', String(filters.heightMin));
+    if (filters.heightMax !== null) params.set('heightMax', String(filters.heightMax));
+    params.set('sort', sort);
+    params.set('page', String(page));
+    params.set('limit', String(limit));
+
+    const res = await apiGet<PaintingListDto>(`/paintings?${params.toString()}`);
+    return { items: res.data.map(mapPainting), pagination: res.pagination };
   },
 
   /** Fetch a single painting by id. Returns null if it doesn't exist. */

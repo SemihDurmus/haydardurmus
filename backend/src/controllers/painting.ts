@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import * as service from "../services/painting";
+import type { PaintingSort } from "../services/painting";
 import * as imageService from "../services/paintingImage";
 import { parsePagination, paginated } from "../utils/pagination";
 import { parseIdSlug } from "../utils/slug";
@@ -13,14 +14,20 @@ export async function list(req: Request, res: Response, next: NextFunction) {
     const { items, total } = await service.list({
       ...pg,
       artistId: q.artistId as number | undefined,
-      ownerId: q.ownerId as number | undefined,
-      techniqueId: q.techniqueId as number | undefined,
-      materialId: q.materialId as number | undefined,
+      ownerId: q.ownerId as number[] | undefined,
+      techniqueId: q.techniqueId as number[] | undefined,
+      materialId: q.materialId as number[] | undefined,
       locationCityId: q.locationCityId as number | undefined,
       available: q.available as boolean | undefined,
       minPrice: q.minPrice as number | undefined,
       maxPrice: q.maxPrice as number | undefined,
       search: q.search as string | undefined,
+      years: q.year as number[] | undefined,
+      widthMin: q.widthMin as number | undefined,
+      widthMax: q.widthMax as number | undefined,
+      heightMin: q.heightMin as number | undefined,
+      heightMax: q.heightMax as number | undefined,
+      sort: q.sort as PaintingSort | undefined,
       // req.admin is set by requireAuth. Anonymous callers get the public
       // graph (no owner); the admin panel, which sends a token, gets the full one.
       forAdmin: Boolean(req.admin),
