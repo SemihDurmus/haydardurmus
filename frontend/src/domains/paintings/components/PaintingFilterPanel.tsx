@@ -20,15 +20,15 @@ function FilterChip({ label, active, onClick, showRemoveIcon = true }: FilterChi
     <button
       onClick={onClick}
       className={cn(
-        'inline-flex items-center gap-1 rounded-full border px-2.5 py-1',
-        'font-sans text-label uppercase tracking-wide transition-all duration-150',
+        'inline-flex items-center gap-0.5 rounded-full border px-2 py-0.5',
+        'font-sans text-[0.75rem] uppercase tracking-wide transition-all duration-150',
         active
           ? 'border-primary-900 bg-primary-900 text-text-inverted'
           : 'border-border bg-transparent text-text-secondary hover:border-primary-400 hover:text-text-primary'
       )}
     >
       {label}
-      {active && showRemoveIcon && <X className="h-2.5 w-2.5 shrink-0" />}
+      {active && showRemoveIcon && <X className="h-2 w-2 shrink-0" />}
     </button>
   );
 }
@@ -48,7 +48,7 @@ function FilterSection({ title, action, children }: FilterSectionProps) {
         </Typography>
         {action}
       </div>
-      <div className="flex flex-wrap gap-1.5">{children}</div>
+      <div className="flex flex-wrap gap-1">{children}</div>
     </div>
   );
 }
@@ -124,7 +124,7 @@ export function PaintingFilterPanel({
           value={filters.search}
           onChange={(e) => filterHook.setFilter('search', e.target.value)}
           className={cn(
-            'w-full border border-border bg-background px-4 py-2.5',
+            'w-full rounded border border-border bg-background px-4 py-2.5',
             'font-sans text-body-sm text-text-primary placeholder:text-text-tertiary',
             FOCUS_INPUT_CLASSES
           )}
@@ -159,7 +159,7 @@ export function PaintingFilterPanel({
                 setFilter('yearMin', e.target.value === '' ? null : Number(e.target.value))
               }
               className={cn(
-                'w-0 min-w-0 flex-1 border border-border bg-background px-2.5 py-2',
+                'w-0 min-w-0 flex-1 rounded border border-border bg-background px-2.5 py-2',
                 'font-sans text-body-sm text-text-primary placeholder:text-text-tertiary',
                 FOCUS_INPUT_CLASSES
               )}
@@ -172,11 +172,28 @@ export function PaintingFilterPanel({
               max={yearCeil}
               placeholder={String(yearCeil)}
               value={filters.yearMax ?? ''}
-              onChange={(e) =>
-                setFilter('yearMax', e.target.value === '' ? null : Number(e.target.value))
-              }
+              onChange={(e) => {
+                const raw = e.target.value;
+                if (raw === '') {
+                  setFilter('yearMax', null);
+                  return;
+                }
+                // The browser's spin buttons/arrow keys fill an EMPTY number
+                // input to its `min` attribute regardless of direction — so
+                // this field (min={yearFloor}) would jump straight to the
+                // gallery's earliest year on the very first click. Typing
+                // always goes through intermediate digits first, so seeing
+                // the full min value appear in one shot from a null filter
+                // is the spin gesture, not a keystroke — start it from the
+                // top of the range instead.
+                if (filters.yearMax === null && Number(raw) === yearFloor) {
+                  setFilter('yearMax', yearCeil);
+                  return;
+                }
+                setFilter('yearMax', Number(raw));
+              }}
               className={cn(
-                'w-0 min-w-0 flex-1 border border-border bg-background px-2.5 py-2',
+                'w-0 min-w-0 flex-1 rounded border border-border bg-background px-2.5 py-2',
                 'font-sans text-body-sm text-text-primary placeholder:text-text-tertiary',
                 FOCUS_INPUT_CLASSES
               )}
