@@ -17,7 +17,7 @@ import { ROUTES } from '@app/router/routes';
 
 export default function PaintingDetailPage() {
   const { id = '' } = useParams<{ id: string }>();
-  const { t, i18n } = useTranslation(['paintings', 'common']);
+  const { t, i18n } = useTranslation(['paintings', 'common', 'collections']);
   const locale = (i18n.language?.split('-')[0] ?? 'en') as 'en' | 'tr';
   const { data: painting, isLoading } = usePainting(id);
   const galleryNav = usePaintingGalleryNavigation(id);
@@ -84,11 +84,11 @@ export default function PaintingDetailPage() {
       <Section spacing="none" background="default" className="pb-8 pt-4 md:pb-section-sm md:pt-6">
         <Container width="wide">
           <Link
-            to={ROUTES.PAINTINGS}
+            to={mainArtist ? ROUTES.PAINTINGS : ROUTES.COLLECTIONS}
             className="mb-4 flex items-center gap-2 font-sans text-body-sm text-text-tertiary transition-colors hover:text-text-primary"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
-            {t('page.title')}
+            {mainArtist ? t('page.title') : t('page.title', { ns: 'collections' })}
           </Link>
 
           <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-2 lg:gap-12 lg:pt-4">
