@@ -1,4 +1,4 @@
-import { useState, type ImgHTMLAttributes, type ReactNode } from 'react';
+import { useEffect, useState, type ImgHTMLAttributes, type ReactNode } from 'react';
 import { cn } from '@shared/utils/cn';
 
 interface PaintingImageProps {
@@ -11,6 +11,8 @@ interface PaintingImageProps {
   height?: number;
   loading?: 'eager' | 'lazy';
   onLoad?: ImgHTMLAttributes<HTMLImageElement>['onLoad'];
+  /** Fires when the fallback is showing — no src, or the image failed to load. */
+  onFallback?: () => void;
   title?: string;
   width?: number;
 }
@@ -29,6 +31,7 @@ export function PaintingImage({
   height,
   loading = 'lazy',
   onLoad,
+  onFallback,
   title,
   width,
 }: PaintingImageProps) {
@@ -47,7 +50,16 @@ export function PaintingImage({
     setHasError(false);
   }
 
-  if (!currentSrc || hasError) return <>{fallback ?? null}</>;
+  const showingFallback = !currentSrc || hasError;
+
+  // Told via effect, not during render — the parent (PaintingImageFrame)
+  // uses this to size the frame like a real image instead of shrinking to
+  // fit just the fallback content.
+  useEffect(() => {
+    if (showingFallback) onFallback?.();
+  }, [showingFallback, onFallback]);
+
+  if (showingFallback) return <>{fallback ?? null}</>;
 
   return (
     <img

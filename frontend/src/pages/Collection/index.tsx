@@ -34,7 +34,7 @@ const FOCUS_INPUT_CLASSES =
 function ArtistsTab() {
   const { t, i18n } = useTranslation('collections');
   const locale = i18n.language;
-  const { data: artists } = useCollectionArtists();
+  const { data: artists, isLoading } = useCollectionArtists();
   const navigate = useNavigate();
   const [pendingArtistId, setPendingArtistId] = useState<number | null>(null);
   const [search, setSearch] = useState('');
@@ -90,7 +90,13 @@ function ArtistsTab() {
         </div>
       </div>
 
-      {artists && visibleArtists.length === 0 ? (
+      {isLoading ? (
+        <div className="grid grid-cols-2 gap-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+          {Array.from({ length: 96 }).map((_, i) => (
+            <div key={i} className="h-11 animate-pulse bg-grey-20" />
+          ))}
+        </div>
+      ) : visibleArtists.length === 0 ? (
         <p className="font-sans text-body-sm text-text-tertiary">{t('artistsTab.noResults')}</p>
       ) : (
         <div className="grid grid-cols-2 gap-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
@@ -123,10 +129,11 @@ function ArtistsTab() {
 // the link carries `?tab=gallery` so the painting page's back button returns
 // to this tab instead of defaulting to Artists.
 function GalleryTab() {
-  const { data: paintings } = useCollectionPaintings();
+  const { data: paintings, isLoading } = useCollectionPaintings();
   return (
     <PaintingImageGrid
       paintings={paintings ?? []}
+      isLoading={isLoading}
       overlayLabel={(painting) => painting.artistName ?? ''}
       linkTo={(painting) => `${buildRoute.paintingDetail(painting.id)}?tab=gallery`}
     />

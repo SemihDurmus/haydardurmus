@@ -67,6 +67,10 @@ function PaintingImageFrameInner({
   const containerRef = useRef<HTMLDivElement>(null);
   const naturalSizeRef = useRef<{ width: number; height: number } | null>(null);
   const [frameSize, setFrameSize] = useState<{ width: number; height: number } | null>(null);
+  // Starts true when there's no src at all; also set once PaintingImage tells
+  // us it fell back (e.g. the src 404s — every painting gets a guessed image
+  // URL up front, so a missing photo isn't known until the request fails).
+  const [noImage, setNoImage] = useState(!src);
 
   const updateFrameSize = useCallback(() => {
     const container = containerRef.current;
@@ -108,6 +112,21 @@ function PaintingImageFrameInner({
     [updateFrameSize]
   );
 
+  // No real image (as opposed to one still loading) — there's nothing to
+  // measure, so `frameSize` would otherwise never be set and the frame would
+  // shrink to fit just the fallback content (a single line of text) instead
+  // of looking like a painting. Give it a fixed, painting-shaped size instead.
+  // `overlay` is deliberately omitted here — it's the expand-to-lightbox
+  // button (plus prev/next arrows, moot with zero images), and there's
+  // nothing meaningful to expand when there's no real image.
+  if (noImage) {
+    return (
+      <div className={cn('flex w-full items-center justify-center bg-muted', className)}>
+        <div className="relative aspect-[3/4] w-full max-w-sm">{fallback}</div>
+      </div>
+    );
+  }
+
   return (
     <div
       ref={containerRef}
@@ -136,6 +155,7 @@ function PaintingImageFrameInner({
           loading={loading}
           fallback={fallback}
           onLoad={handleImageLoad}
+          onFallback={() => setNoImage(true)}
         />
         {overlay}
       </div>

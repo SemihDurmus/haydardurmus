@@ -8,6 +8,7 @@ import {
 } from './mapPainting';
 import type { Painting, PaintingFilterOptions, PaintingFilters, PaintingSortKey } from '../types';
 import { GALLERY_ARTIST_ID } from '@domains/artists/utils/isMainArtist';
+import { paintingHasImage } from '../utils/probePaintingImage';
 
 /**
  * Paintings service — all data fetching for paintings goes through here.
@@ -100,12 +101,57 @@ export const paintingsService = {
   },
 
   /**
-   * Fetch featured paintings for the home page. The backend has no "featured"
-   * flag, so we simply take the first `limit` paintings it returns.
+   * Fetch `limit` random paintings for the home page's Selected Works — a
+   * different set on every call, and only ones whose photo actually loads
+   * (some paintings have none; showing those looked broken, see
+   * PaintingImageFrame's placeholder for where the rest still get one).
+   *
+   * The backend has no "featured" flag, random sort, or "has an image"
+   * filter (image existence isn't even tracked in a queryable way — see
+   * mapPainting's ImageKit URL guess), so this fetches page-sized random
+   * batches — overfetching a bit to absorb the odd missing image — and
+   * probes each candidate's photo client-side, trying additional random
+   * batches until enough succeed or a round cap is hit.
    */
-  async getFeatured(limit = 6): Promise<Painting[]> {
-    const all = await this.getAll();
-    return all.slice(0, limit);
+  async getFeatured(limit = 12): Promise<Painting[]> {
+    const BATCH_SIZE = Math.min(ALL_LIMIT, limit * 2);
+    const MAX_ROUNDS = 4;
+
+    const found: Painting[] = [];
+    const seenIds = new Set<string>();
+
+    const consider = async (dtos: PaintingDto[]) => {
+      await Promise.all(
+        dtos.map(async (dto) => {
+          const painting = mapPainting(dto);
+          if (seenIds.has(painting.id) || found.length >= limit) return;
+          seenIds.add(painting.id);
+          if (await paintingHasImage(painting.images?.[0]?.src)) found.push(painting);
+        }),
+      );
+    };
+
+    // A cheap page-1 request just to learn the total. Its data is also kept
+    // as a last-resort fallback pool below — real candidates always come
+    // from a genuinely random page first, so this alone never determines
+    // what shows (that would just be "the first N" again).
+    const firstPage = await apiGet<PaintingListDto>(`/paintings?limit=${BATCH_SIZE}&page=1`);
+    const totalPages = Math.ceil(firstPage.pagination.total / BATCH_SIZE);
+
+    for (let round = 0; round < MAX_ROUNDS && found.length < limit; round++) {
+      const page = totalPages > 1 ? 1 + Math.floor(Math.random() * (totalPages - 1)) : 1;
+      const dtos =
+        page === 1
+          ? firstPage.data
+          : (await apiGet<PaintingListDto>(`/paintings?limit=${BATCH_SIZE}&page=${page}`)).data;
+      await consider(dtos);
+    }
+
+    // Pathological case (a random run of pages with unusually many missing
+    // images) — fall back to page 1's own candidates rather than come up short.
+    if (found.length < limit) await consider(firstPage.data);
+
+    return found.slice(0, limit);
   },
 
   /**

@@ -21,6 +21,9 @@ export default function PaintingDetailPage() {
   // Which Collection tab (Artists/Gallery) sent us here, if any — so the
   // back link returns to that tab instead of always defaulting to Artists.
   const collectionTab = searchParams.get('tab');
+  // Reached from the home page's Selected Works — the back link should
+  // return there instead of the paintings gallery.
+  const fromHome = searchParams.get('from') === 'home';
   const { t, i18n } = useTranslation(['paintings', 'common', 'collections']);
   const locale = (i18n.language?.split('-')[0] ?? 'en') as 'en' | 'tr';
   const { data: painting, isLoading } = usePainting(id);
@@ -90,13 +93,19 @@ export default function PaintingDetailPage() {
           <Link
             to={
               mainArtist
-                ? ROUTES.PAINTINGS
+                ? fromHome
+                  ? ROUTES.HOME
+                  : ROUTES.PAINTINGS
                 : `${ROUTES.COLLECTIONS}${collectionTab ? `?tab=${collectionTab}` : ''}`
             }
             className="mb-4 flex items-center gap-2 font-sans text-body-sm text-text-tertiary transition-colors hover:text-text-primary"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
-            {mainArtist ? t('page.title') : t('page.title', { ns: 'collections' })}
+            {mainArtist
+              ? fromHome
+                ? t('nav.home', { ns: 'common' })
+                : t('page.title')
+              : t('page.title', { ns: 'collections' })}
           </Link>
 
           <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-2 lg:gap-12 lg:pt-4">
