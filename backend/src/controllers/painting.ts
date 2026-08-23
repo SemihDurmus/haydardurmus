@@ -14,6 +14,7 @@ export async function list(req: Request, res: Response, next: NextFunction) {
     const { items, total } = await service.list({
       ...pg,
       artistId: q.artistId as number | undefined,
+      excludeArtistId: q.excludeArtistId as number | undefined,
       ownerId: q.ownerId as number[] | undefined,
       techniqueId: q.techniqueId as number[] | undefined,
       materialId: q.materialId as number[] | undefined,

@@ -32,6 +32,8 @@ export interface ListArgs {
   skip: number;
   take: number;
   artistId?: number;
+  /** Every painting EXCEPT this artist's — powers the collection gallery. */
+  excludeArtistId?: number;
   ownerId?: number[];
   techniqueId?: number[];
   materialId?: number[];
@@ -117,6 +119,7 @@ export async function list({
   skip,
   take,
   artistId,
+  excludeArtistId,
   ownerId,
   techniqueId,
   materialId,
@@ -134,9 +137,14 @@ export async function list({
   sort,
   forAdmin = false,
 }: ListArgs) {
-  const effectiveArtistId = artistId ?? (forAdmin ? undefined : GALLERY_ARTIST_ID);
+  // An explicit artist scope (equals OR excludes) always wins over the
+  // gallery-only default — only an unscoped public request gets defaulted.
+  const hasExplicitArtistScope = artistId !== undefined || excludeArtistId !== undefined;
+  const effectiveArtistId =
+    artistId ?? (forAdmin || hasExplicitArtistScope ? undefined : GALLERY_ARTIST_ID);
   const where: Prisma.PaintingWhereInput = {
     ...(effectiveArtistId !== undefined && { artistId: effectiveArtistId }),
+    ...(excludeArtistId !== undefined && { artistId: { not: excludeArtistId } }),
     ...(ownerId !== undefined && ownerId.length > 0 && { ownerId: { in: ownerId } }),
     ...(techniqueId !== undefined &&
       techniqueId.length > 0 && { techniqueId: { in: techniqueId } }),

@@ -7,6 +7,7 @@ import {
   type PaintingFilterOptionsDto,
 } from './mapPainting';
 import type { Painting, PaintingFilterOptions, PaintingFilters, PaintingSortKey } from '../types';
+import { GALLERY_ARTIST_ID } from '@domains/artists/utils/isMainArtist';
 
 /**
  * Paintings service — all data fetching for paintings goes through here.
@@ -105,5 +106,29 @@ export const paintingsService = {
   async getFeatured(limit = 6): Promise<Painting[]> {
     const all = await this.getAll();
     return all.slice(0, limit);
+  },
+
+  /**
+   * Every painting NOT by the gallery's own artist — the Collection page's
+   * Gallery tab. Pages through the full result since it can exceed the
+   * backend's one-page cap.
+   */
+  async getCollectionPaintings(): Promise<Painting[]> {
+    const all: Painting[] = [];
+    let page = 1;
+    let totalPages = 1;
+    do {
+      const params = new URLSearchParams({
+        excludeArtistId: String(GALLERY_ARTIST_ID),
+        page: String(page),
+        limit: String(ALL_LIMIT),
+      });
+      const res = await apiGet<PaintingListDto>(`/paintings?${params.toString()}`);
+      all.push(...res.data.map(mapPainting));
+      totalPages = res.pagination.totalPages;
+      page += 1;
+    } while (page <= totalPages);
+
+    return all;
   },
 };

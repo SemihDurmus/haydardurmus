@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router';
+import { useParams, useSearchParams, Link } from 'react-router';
 import { ArrowLeft, Expand } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Section } from '@shared/ui/Section';
@@ -17,6 +17,10 @@ import { ROUTES } from '@app/router/routes';
 
 export default function PaintingDetailPage() {
   const { id = '' } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
+  // Which Collection tab (Artists/Gallery) sent us here, if any — so the
+  // back link returns to that tab instead of always defaulting to Artists.
+  const collectionTab = searchParams.get('tab');
   const { t, i18n } = useTranslation(['paintings', 'common', 'collections']);
   const locale = (i18n.language?.split('-')[0] ?? 'en') as 'en' | 'tr';
   const { data: painting, isLoading } = usePainting(id);
@@ -84,7 +88,11 @@ export default function PaintingDetailPage() {
       <Section spacing="none" background="default" className="pb-8 pt-4 md:pb-section-sm md:pt-6">
         <Container width="wide">
           <Link
-            to={mainArtist ? ROUTES.PAINTINGS : ROUTES.COLLECTIONS}
+            to={
+              mainArtist
+                ? ROUTES.PAINTINGS
+                : `${ROUTES.COLLECTIONS}${collectionTab ? `?tab=${collectionTab}` : ''}`
+            }
             className="mb-4 flex items-center gap-2 font-sans text-body-sm text-text-tertiary transition-colors hover:text-text-primary"
           >
             <ArrowLeft className="h-3.5 w-3.5" />

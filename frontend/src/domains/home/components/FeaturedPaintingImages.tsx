@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { useFeaturedPaintings } from '@domains/paintings/hooks/usePaintings';
-import { PaintingImage } from '@domains/paintings/components/PaintingImage';
-import { isRadiusOnlyPainting } from '@domains/paintings/utils/isRadiusOnlyPainting';
+import { PaintingImageGrid } from '@domains/paintings/components/PaintingImageGrid';
 
 // One shuffle seed per page load — drawn at module scope so render stays pure.
 const SHUFFLE_SEED = Math.floor(Math.random() * 2 ** 32);
@@ -31,23 +30,5 @@ export function FeaturedPaintingImages() {
   // re-ordering on every render.
   const featuredPaintings = useMemo(() => seededShuffle(data ?? [], SHUFFLE_SEED), [data]);
 
-  return (
-    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
-      {featuredPaintings.map((painting) => (
-        <div key={painting.id} className="group relative aspect-[3/4] overflow-hidden bg-muted">
-          <PaintingImage
-            src={painting.images?.[0]?.src}
-            alt={painting.paintingNo || 'Painting'}
-            title={painting.paintingNo || 'Painting'}
-            fit={isRadiusOnlyPainting(painting) ? 'contain' : 'cover'}
-            className="h-full w-full"
-            loading="lazy"
-          />
-          <div className="absolute inset-0 flex items-center justify-center bg-primary-950/70 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-            <span className="font-heading text-[26px] text-white">#{painting.paintingNo}</span>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+  return <PaintingImageGrid paintings={featuredPaintings} />;
 }

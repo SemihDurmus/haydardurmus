@@ -3,6 +3,10 @@
     "title": "Koleksiyon",
     "subtitle": "Haydar Durmuş'un bir çok sanatçının eserinden oluşan seçkin koleksiyonu"
   },
+  "tabs": {
+    "artists": "Sanatçılar",
+    "gallery": "Galeri"
+  },
   "card": {
     "works": "{{count}} eser",
     "works_plural": "{{count}} eser",

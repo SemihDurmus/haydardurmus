@@ -11,6 +11,7 @@ export const paintingKeys = {
   detail: (id: string) => [...paintingKeys.details(), id] as const,
   featured: (limit?: number) => [...paintingKeys.all, 'featured', limit] as const,
   filterOptions: () => [...paintingKeys.all, 'filter-options'] as const,
+  collection: () => [...paintingKeys.all, 'collection'] as const,
 };
 
 /**
@@ -73,5 +74,14 @@ export function useFeaturedPaintings(limit = 6) {
     queryKey: paintingKeys.featured(limit),
     queryFn: () => paintingsService.getFeatured(limit),
     staleTime: 10 * 60 * 1000,
+  });
+}
+
+/** Every painting not by the gallery's own artist — the Collection page's Gallery tab. */
+export function useCollectionPaintings() {
+  return useQuery({
+    queryKey: paintingKeys.collection(),
+    queryFn: () => paintingsService.getCollectionPaintings(),
+    staleTime: 5 * 60 * 1000,
   });
 }

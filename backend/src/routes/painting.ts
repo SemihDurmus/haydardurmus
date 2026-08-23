@@ -200,6 +200,8 @@ const csvIntList = (example: string) =>
 
 const PaintingListQuery = z.object({
   artistId: z.coerce.number().int().positive().optional(),
+  // Every painting EXCEPT this artist's — powers the collection gallery.
+  excludeArtistId: z.coerce.number().int().positive().optional(),
   ownerId: csvIntList("4,7"),
   techniqueId: csvIntList("1,2"),
   materialId: csvIntList("3"),

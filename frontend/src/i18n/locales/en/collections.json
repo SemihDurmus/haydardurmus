@@ -3,6 +3,10 @@
     "title": "Collection",
     "subtitle": "Haydar Durmuş's art collection from various artists"
   },
+  "tabs": {
+    "artists": "Artists",
+    "gallery": "Gallery"
+  },
   "card": {
     "works": "{{count}} work",
     "works_plural": "{{count}} works",
