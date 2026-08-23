@@ -3,18 +3,5 @@
     "title": "Medya",
     "subtitle": "Basın, sergiler ve röportajlar"
   },
-  "tabs": {
-    "all": "Tümü",
-    "press": "Basın",
-    "interviews": "Röportajlar",
-    "exhibitions": "Sergiler",
-    "videos": "Videolar"
-  },
-  "card": {
-    "readMore": "Makaleyi Oku",
-    "watchVideo": "İzle",
-    "viewExhibition": "Sergi Detayları",
-    "source": "Kaynak",
-    "date": "Tarih"
-  }
+  "underConstruction": "Bu sayfa yapım aşamasındadır"
 }

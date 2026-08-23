@@ -1,6 +1,6 @@
 {
   "name": "ts-art-gallery-api",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "TypeScript REST API for the art gallery database",
   "main": "dist/src/server.js",

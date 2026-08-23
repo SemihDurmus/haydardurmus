@@ -73,3 +73,25 @@ Also, some numbers even do not exist in that excel list:
 ## Deployment
 
 Both `backend/` and `frontend/` have `railway.json` (Railway). The frontend also has `vercel.json` and a `Caddyfile`. Production env vars are set on the host, not committed — see the "Deployment only" section of `backend/.env.example`.
+
+## Version History
+
+Backend and frontend are versioned together (`backend/package.json`, `frontend/package.json`).
+
+### 0.2.0
+
+Collection & discovery features, plus general filtering and loading-state polish:
+
+- Collection page: an **Artists** tab (search + sort, browse by artist) and a **Gallery** tab (every collection painting in one grid)
+- Prev/next navigation between artists directly from a painting's detail page
+- Painting search now matches the catalogue number (it only matched the title before, which never worked — every painting is titled "Untitled")
+- Year filter changed from one chip per year to a min/max range, and no longer drops paintings with no recorded year
+- Public paintings gallery scoped to the gallery's own artist by default; other artists' work lives under Collection instead
+- Home page's "Selected Works" now shows a genuinely random set of paintings on every load (with a manual Refresh button), and skips paintings that have no photo
+- Loading skeletons for the paintings grid, the artists list, and the painting detail page
+- A proper sized placeholder (instead of a cramped one-line box) for paintings with no photo
+- Media page marked as under construction, replacing the old mock press-clippings placeholder
+
+### 0.1.x
+
+Initial public gallery: paintings list with pagination and filters, painting detail pages, Collection/Biography/Media/Book/Contact pages, and an admin panel for managing paintings.
