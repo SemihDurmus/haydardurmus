@@ -7,6 +7,13 @@
     "artists": "Sanatçılar",
     "gallery": "Galeri"
   },
+  "artistsTab": {
+    "search": "İsme göre ara",
+    "sortLabel": "Sırala",
+    "sortLastName": "Soyisim",
+    "sortFirstName": "İsim",
+    "noResults": "Aramanızla eşleşen sanatçı yok"
+  },
   "card": {
     "works": "{{count}} eser",
     "works_plural": "{{count}} eser",

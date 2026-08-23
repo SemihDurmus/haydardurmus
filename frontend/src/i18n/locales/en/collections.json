@@ -7,6 +7,13 @@
     "artists": "Artists",
     "gallery": "Gallery"
   },
+  "artistsTab": {
+    "search": "Search by name",
+    "sortLabel": "Sort",
+    "sortLastName": "Last Name",
+    "sortFirstName": "First Name",
+    "noResults": "No artists match your search"
+  },
   "card": {
     "works": "{{count}} work",
     "works_plural": "{{count}} works",
