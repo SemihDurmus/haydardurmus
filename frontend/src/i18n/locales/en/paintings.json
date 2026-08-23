@@ -42,6 +42,7 @@
     "viewDetail": "View Details"
   },
   "detail": {
+    "artist": "Artist",
     "paintingNumber": "Painting nr: {{number}}",
     "viewFullSize": "View full size image",
     "catalogueNumber": "Catalogue No.",

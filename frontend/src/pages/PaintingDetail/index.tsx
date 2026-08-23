@@ -6,6 +6,7 @@ import { Section } from '@shared/ui/Section';
 import { Container } from '@shared/ui/Container';
 import { Typography } from '@shared/ui/Typography';
 import { usePainting } from '@domains/paintings/hooks/usePaintings';
+import { isMainArtist } from '@domains/artists/utils/isMainArtist';
 import { usePaintingGalleryNavigation } from '@domains/paintings/hooks/usePaintingGalleryNavigation';
 import { PaintingImageGallery } from '@domains/paintings/components/PaintingImageGallery';
 import { PaintingLightbox } from '@domains/paintings/components/PaintingLightbox';
@@ -61,6 +62,11 @@ export default function PaintingDetailPage() {
   }
 
   const displayName = getPaintingDisplayName(painting.paintingName, t('card.untitled'));
+  // Collection paintings (any artist besides the gallery's own) currently
+  // carry no real catalogue data — technique, material, dimensions, year are
+  // all placeholders — so that info panel is hidden for them; the artist's
+  // name is shown instead, since that's the only genuine info available.
+  const mainArtist = isMainArtist(painting.artistNumericId);
   const technique = pickTranslated(painting.technique, locale);
   const material = pickTranslated(painting.material, locale);
   const dimensions = formatDimensions(painting.width, painting.height, painting.radius);
@@ -138,16 +144,27 @@ export default function PaintingDetailPage() {
                 </Typography>
               )}
 
-              <dl className="space-y-4 border-t border-border pt-6">
-                {metaItems.map(({ label, value }) => (
-                  <div key={label} className="flex gap-4">
-                    <dt className="w-32 shrink-0 font-sans text-body-sm text-text-tertiary">
-                      {label}
-                    </dt>
-                    <dd className="font-sans text-body-sm text-text-primary">{value}</dd>
-                  </div>
-                ))}
-              </dl>
+              {!mainArtist && painting.artistName && (
+                <div className="mb-8">
+                  <Typography level="overline" tone="tertiary" className="mb-1 block normal-case">
+                    {t('detail.artist')}
+                  </Typography>
+                  <Typography level="h2">{painting.artistName}</Typography>
+                </div>
+              )}
+
+              {mainArtist && (
+                <dl className="space-y-4 border-t border-border pt-6">
+                  {metaItems.map(({ label, value }) => (
+                    <div key={label} className="flex gap-4">
+                      <dt className="w-32 shrink-0 font-sans text-body-sm text-text-tertiary">
+                        {label}
+                      </dt>
+                      <dd className="font-sans text-body-sm text-text-primary">{value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
             </div>
           </div>
 

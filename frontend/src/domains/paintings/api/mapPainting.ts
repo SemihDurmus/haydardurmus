@@ -127,6 +127,8 @@ export function mapPainting(dto: PaintingDto): Painting {
     height: toNumber(dto.heightCm),
     radius: toNumber(dto.radiusCm),
     artistId: personSlug(dto.artist) ?? String(dto.artistId),
+    artistNumericId: dto.artistId,
+    artistName: personName(dto.artist),
     year: dto.year,
     techniqueId: lookupId(dto.technique),
     materialId: lookupId(dto.material),

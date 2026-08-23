@@ -42,6 +42,7 @@
     "viewDetail": "Detayları Gör"
   },
   "detail": {
+    "artist": "Sanatçı",
     "paintingNumber": "Eser no: {{number}}",
     "viewFullSize": "Tam boy görüntüle",
     "catalogueNumber": "Katalog No.",

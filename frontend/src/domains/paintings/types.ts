@@ -13,6 +13,14 @@ export interface Painting {
   height: number | null;
   radius: number | null;
   artistId: string;
+  /**
+   * The backend's real numeric artist id — unlike `artistId` above (a slug),
+   * this is what `isMainArtist` (domains/artists/utils/isMainArtist.ts) and
+   * similar checks compare against.
+   */
+  artistNumericId: number;
+  /** The artist's display name — not translated, so a plain string. */
+  artistName: string | null;
   year: number | null;
 
   // Lookup ids, used for filtering (server-side) and for URL query params.

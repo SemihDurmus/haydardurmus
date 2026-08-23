@@ -71,6 +71,22 @@ export const paintingsService = {
     return mapFilterOptions(dto);
   },
 
+  /**
+   * Fetch the first painting (by catalogue number) for a given artist —
+   * powers the Collection page, where clicking an artist jumps straight to
+   * one of their paintings. Returns null if the artist has none.
+   */
+  async getFirstByArtist(artistId: number): Promise<Painting | null> {
+    const params = new URLSearchParams({
+      artistId: String(artistId),
+      sort: 'no_asc',
+      page: '1',
+      limit: '1',
+    });
+    const res = await apiGet<PaintingListDto>(`/paintings?${params.toString()}`);
+    return res.data[0] ? mapPainting(res.data[0]) : null;
+  },
+
   /** Fetch a single painting by id. Returns null if it doesn't exist. */
   async getById(id: string): Promise<Painting | null> {
     try {
