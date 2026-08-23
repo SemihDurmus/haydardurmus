@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode, type SyntheticEvent } from 'react';
 import { cn } from '@shared/utils/cn';
 import { PaintingImage } from './PaintingImage';
+import { PaintingImagePlaceholder } from './PaintingImagePlaceholder';
 
 interface PaintingImageFrameProps {
   src?: string;
@@ -120,11 +121,7 @@ function PaintingImageFrameInner({
   // button (plus prev/next arrows, moot with zero images), and there's
   // nothing meaningful to expand when there's no real image.
   if (noImage) {
-    return (
-      <div className={cn('flex w-full items-center justify-center bg-muted', className)}>
-        <div className="relative aspect-[3/4] w-full max-w-sm">{fallback}</div>
-      </div>
-    );
+    return <PaintingImagePlaceholder className={className}>{fallback}</PaintingImagePlaceholder>;
   }
 
   return (

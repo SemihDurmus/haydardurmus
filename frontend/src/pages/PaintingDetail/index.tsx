@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, useSearchParams, Link } from 'react-router';
+import { useParams, useSearchParams, useNavigate, Link } from 'react-router';
 import { ArrowLeft, Expand } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Section } from '@shared/ui/Section';
@@ -7,13 +7,17 @@ import { Container } from '@shared/ui/Container';
 import { Typography } from '@shared/ui/Typography';
 import { usePainting } from '@domains/paintings/hooks/usePaintings';
 import { isMainArtist } from '@domains/artists/utils/isMainArtist';
+import type { Artist } from '@domains/artists/api/artistsService';
 import { usePaintingGalleryNavigation } from '@domains/paintings/hooks/usePaintingGalleryNavigation';
+import { useArtistPaintingNavigation } from '@domains/paintings/hooks/useArtistPaintingNavigation';
+import { paintingsService } from '@domains/paintings/api/paintingsService';
 import { PaintingImageGallery } from '@domains/paintings/components/PaintingImageGallery';
+import { PaintingImagePlaceholder } from '@domains/paintings/components/PaintingImagePlaceholder';
 import { PaintingLightbox } from '@domains/paintings/components/PaintingLightbox';
-import { PaintingDetailNavigation } from '@domains/paintings/components/PaintingDetailNavigation';
+import { PaintingDetailNavigation, type NavStep } from '@domains/paintings/components/PaintingDetailNavigation';
 import { pickTranslated } from '@shared/hooks/useTranslatedText';
 import { formatDimensions, formatYear, getPaintingDisplayName } from '@shared/utils/format';
-import { ROUTES } from '@app/router/routes';
+import { ROUTES, buildRoute } from '@app/router/routes';
 
 export default function PaintingDetailPage() {
   const { id = '' } = useParams<{ id: string }>();
@@ -28,7 +32,10 @@ export default function PaintingDetailPage() {
   const locale = (i18n.language?.split('-')[0] ?? 'en') as 'en' | 'tr';
   const { data: painting, isLoading } = usePainting(id);
   const galleryNav = usePaintingGalleryNavigation(id);
+  const artistNav = useArtistPaintingNavigation(painting?.artistNumericId);
+  const navigate = useNavigate();
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [isNavigatingArtist, setIsNavigatingArtist] = useState(false);
 
   // Which of the painting's images is on show. The API returns them primary
   // first, so 0 is the card image.
@@ -43,9 +50,28 @@ export default function PaintingDetailPage() {
 
   if (isLoading) {
     return (
-      <Section spacing="none" className="pb-8 pt-4 md:pt-6">
+      <Section spacing="none" background="default" className="pb-8 pt-4 md:pb-section-sm md:pt-6">
         <Container width="wide">
-          <div className="h-96 animate-pulse rounded bg-muted" />
+          <div className="mb-4 h-5 w-24 animate-pulse bg-grey-20" />
+          <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-2 lg:gap-12 lg:pt-4">
+            {/* Left — the same component PaintingImageFrame falls back to
+                when a painting has no image, so this is guaranteed the same size. */}
+            <PaintingImagePlaceholder animate />
+
+            {/* Right — catalogue number, title, and meta rows */}
+            <div className="flex flex-col justify-center">
+              <div className="mb-2 h-3 w-36 animate-pulse bg-grey-20" />
+              <div className="mb-8 h-8 w-3/4 animate-pulse bg-grey-20" />
+              <div className="space-y-4 border-t border-border pt-6">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="flex gap-4">
+                    <div className="h-4 w-32 shrink-0 animate-pulse bg-grey-20" />
+                    <div className="h-4 w-24 animate-pulse bg-grey-20" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </Container>
       </Section>
     );
@@ -85,6 +111,40 @@ export default function PaintingDetailPage() {
     { label: t('detail.material'), value: material },
     { label: t('detail.dimensions'), value: dimensions },
   ].filter((item) => item.value);
+
+  // Reached via the Collection page's Artists tab — step through artists
+  // instead of the (main-gallery-only) prev/next painting nav, which never
+  // applies to collection paintings anyway.
+  const showArtistNav = collectionTab === 'artists' && !mainArtist && artistNav.showNavigation;
+
+  const goToArtist = async (artist: Artist) => {
+    if (isNavigatingArtist) return;
+    setIsNavigatingArtist(true);
+    try {
+      const target = await paintingsService.getFirstByArtist(artist.id);
+      if (target) navigate(`${buildRoute.paintingDetail(target.id)}?tab=artists`);
+    } finally {
+      setIsNavigatingArtist(false);
+    }
+  };
+
+  const navPrev: NavStep | null = showArtistNav
+    ? artistNav.prevArtist
+      ? { onClick: () => goToArtist(artistNav.prevArtist!), disabled: isNavigatingArtist }
+      : null
+    : galleryNav.prev
+      ? { to: galleryNav.prev.to }
+      : null;
+  const navNext: NavStep | null = showArtistNav
+    ? artistNav.nextArtist
+      ? { onClick: () => goToArtist(artistNav.nextArtist!), disabled: isNavigatingArtist }
+      : null
+    : galleryNav.next
+      ? { to: galleryNav.next.to }
+      : null;
+  const navPrevLabel = showArtistNav ? t('detail.previousArtist') : t('detail.previousPainting');
+  const navNextLabel = showArtistNav ? t('detail.nextArtist') : t('detail.nextPainting');
+  const showNav = showArtistNav || galleryNav.showNavigation;
 
   return (
     <>
@@ -139,13 +199,13 @@ export default function PaintingDetailPage() {
                   </button>
                 }
               />
-              {galleryNav.showNavigation && (
+              {showNav && (
                 <PaintingDetailNavigation
                   variant="belowImage"
-                  prev={galleryNav.prev}
-                  next={galleryNav.next}
-                  prevLabel={t('detail.previousPainting')}
-                  nextLabel={t('detail.nextPainting')}
+                  prev={navPrev}
+                  next={navNext}
+                  prevLabel={navPrevLabel}
+                  nextLabel={navNextLabel}
                 />
               )}
             </div>
@@ -185,13 +245,13 @@ export default function PaintingDetailPage() {
             </div>
           </div>
 
-          {galleryNav.showNavigation && (
+          {showNav && (
             <PaintingDetailNavigation
               variant="bar"
-              prev={galleryNav.prev}
-              next={galleryNav.next}
-              prevLabel={t('detail.previousPainting')}
-              nextLabel={t('detail.nextPainting')}
+              prev={navPrev}
+              next={navNext}
+              prevLabel={navPrevLabel}
+              nextLabel={navNextLabel}
             />
           )}
         </Container>

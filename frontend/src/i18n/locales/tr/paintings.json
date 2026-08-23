@@ -55,6 +55,8 @@
     "relatedWorks": "İlgili Eserler",
     "previousPainting": "Önceki eser",
     "nextPainting": "Sonraki eser",
+    "previousArtist": "Önceki sanatçı",
+    "nextArtist": "Sonraki sanatçı",
     "previousImage": "Önceki görsel",
     "nextImage": "Sonraki görsel",
     "showImage": "{{number}}. görseli göster"

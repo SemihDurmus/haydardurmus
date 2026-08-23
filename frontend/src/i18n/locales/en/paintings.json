@@ -55,6 +55,8 @@
     "relatedWorks": "Related Works",
     "previousPainting": "Previous painting",
     "nextPainting": "Next painting",
+    "previousArtist": "Previous artist",
+    "nextArtist": "Next artist",
     "previousImage": "Previous image",
     "nextImage": "Next image",
     "showImage": "Show image {{number}}"
