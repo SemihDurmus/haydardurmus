@@ -145,11 +145,20 @@ export async function list({
     // locationCityId is the painting's OWN city (public), not the owner's city.
     ...(locationCityId !== undefined && { locationCityId }),
     ...(available !== undefined && { isAvailable: available }),
+    // A painting with no recorded year must never be silently dropped just
+    // because a year filter is active elsewhere — Postgres treats `NULL >=
+    // x` as unknown (never true), so on its own the range below would hide
+    // it regardless of how wide the range is. OR it with "year IS NULL".
     ...((yearMin !== undefined || yearMax !== undefined) && {
-      year: {
-        ...(yearMin !== undefined && { gte: yearMin }),
-        ...(yearMax !== undefined && { lte: yearMax }),
-      },
+      OR: [
+        { year: null },
+        {
+          year: {
+            ...(yearMin !== undefined && { gte: yearMin }),
+            ...(yearMax !== undefined && { lte: yearMax }),
+          },
+        },
+      ],
     }),
     ...((widthMin !== undefined || widthMax !== undefined) && {
       widthCm: {
@@ -163,9 +172,12 @@ export async function list({
         ...(heightMax !== undefined && { lte: heightMax }),
       },
     }),
-    // ?search= partial match on the painting's name (case-insensitive).
+    // ?search= partial match on the painting's catalogue number
+    // (case-insensitive). Not matched against paintingName: every painting
+    // currently carries the "Untitled" sentinel, so a name search would
+    // never narrow anything.
     ...(search !== undefined && {
-      paintingName: { contains: search, mode: "insensitive" },
+      paintingNo: { contains: search, mode: "insensitive" },
     }),
     // Price range filters on the painting's CURRENT price (the listed price) via
     // a relation `some` — a painting matches if its is_current price is in range.

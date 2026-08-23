@@ -15,7 +15,7 @@
     "location": "Konum",
     "owner": "Koleksiyon",
     "dimensions": "Boyutlar",
-    "search": "Başlık veya numara ile ara",
+    "search": "Numara ile ara",
     "resultCount_one": "{{count}} eser bulundu",
     "resultCount_other": "{{count}} eser bulundu",
     "noResults": "Seçilen filtrelere uyan tablo yok",

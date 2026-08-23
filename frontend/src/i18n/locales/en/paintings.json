@@ -15,7 +15,7 @@
     "location": "Location",
     "owner": "Collection",
     "dimensions": "Dimensions",
-    "search": "Search by title or number",
+    "search": "Search by number",
     "resultCount_one": "{{count}} painting found",
     "resultCount_other": "{{count}} paintings found",
     "noResults": "No paintings match the selected filters",

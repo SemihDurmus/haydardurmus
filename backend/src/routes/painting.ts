@@ -213,7 +213,7 @@ const PaintingListQuery = z.object({
   // Price range filters the current (listed) price.
   minPrice: z.coerce.number().min(0).optional(),
   maxPrice: z.coerce.number().min(0).optional(),
-  // ?search= partial match on the painting's name (case-insensitive).
+  // ?search= partial match on the painting's catalogue number (case-insensitive).
   search: NameSearchQuery.shape.search,
   yearMin: z.coerce.number().int().optional().openapi({ example: 1990 }),
   yearMax: z.coerce.number().int().optional().openapi({ example: 2005 }),
